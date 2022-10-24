@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "timestamps")
-public class TimeStampEntity {
+public class TimestampEntity {
 
     @javax.persistence.Id
     public UUID Id;
