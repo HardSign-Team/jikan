@@ -14,18 +14,20 @@ public class AuthService {
     private final UserService userService;
     private final Map<String, String> refreshStorage = new HashMap<>();
     private final JwtProvider jwtProvider;
+    private final PasswordService passwordService;
 
-    public AuthService(UserService userService, JwtProvider jwtProvider) {
+    public AuthService(UserService userService, JwtProvider jwtProvider, PasswordService passwordService) {
         this.userService = userService;
         this.jwtProvider = jwtProvider;
+        this.passwordService = passwordService;
     }
 
     public JwtResponse login(JwtRequest authRequest) throws AuthException {
         var user = userService.getUser(authRequest.getLogin())
                 .orElseThrow(() -> new AuthException("User not found"));
 
-        var password = authRequest.getPassword(); //TODO (lunev.d) add password hashing
-        if (!user.HashedPassword.equals(password))
+        var password = authRequest.getPassword();
+        if (!passwordService.verifyHash(password, user.HashedPassword))
             throw new AuthException("Wrong login or password");
 
         var accessToken = jwtProvider.generateAccessToken(user);

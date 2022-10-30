@@ -11,12 +11,12 @@ import java.util.UUID;
 public class UserService {
     private final List<UserEntity> users;
 
-    public UserService(){
+    public UserService(PasswordService passwordService){
         var user = new UserEntity();
         user.Id = UUID.randomUUID();
         user.Login = "I";
         user.Name = "hate";
-        user.HashedPassword = "java";
+        user.HashedPassword = passwordService.Hash("java");
 
         users = List.of(
                 user
