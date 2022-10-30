@@ -39,7 +39,8 @@ public class WebSecurityConfig {
         final var permittedEndpoints = new String[] {
                 "/api/auth/login",
                 "/api/auth/token",
-                "/ping"
+                "/ping",
+                "/api/users/**"
         };
         return http
                 .httpBasic().disable()

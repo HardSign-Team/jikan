@@ -13,8 +13,8 @@ public class UserService {
 
     public UserService(PasswordService passwordService){
         var user = new UserEntity();
+        user.setLogin("I");
         user.Id = UUID.randomUUID();
-        user.Login = "I";
         user.Name = "hate";
         user.HashedPassword = passwordService.Hash("java");
 
@@ -25,7 +25,7 @@ public class UserService {
 
     public Optional<UserEntity> getUser(String login){
         return users.stream()
-                .filter(x -> login.equals(x.Login))
+                .filter(x -> login.equals(x.getLogin()))
                 .findFirst();
     }
 }

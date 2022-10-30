@@ -47,7 +47,7 @@ public class JwtProvider {
         var refreshExpirationInstant = now.plusDays(refreshTokenLifeTime).atZone(ZoneId.systemDefault()).toInstant();
         var refreshExpiration = Date.from(refreshExpirationInstant);
         return Jwts.builder()
-                .setSubject(user.Login)
+                .setSubject(user.getLogin())
                 .setExpiration(refreshExpiration)
                 .signWith(secretKey)
                 .compact();

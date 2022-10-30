@@ -32,7 +32,7 @@ public class AuthService {
 
         var accessToken = jwtProvider.generateAccessToken(user);
         var refreshToken = jwtProvider.generateRefreshToken(user);
-        refreshStorage.put(user.Login, refreshToken);
+        refreshStorage.put(user.getLogin(), refreshToken);
         return new JwtResponse(accessToken, refreshToken);
     }
 
@@ -55,7 +55,7 @@ public class AuthService {
 
         var accessToken = jwtProvider.generateAccessToken(user);
         var newRefreshToken = jwtProvider.generateRefreshToken(user);
-        refreshStorage.put(user.Login, newRefreshToken);
+        refreshStorage.put(user.getLogin(), newRefreshToken);
 
         return new JwtResponse(accessToken, newRefreshToken);
     }
