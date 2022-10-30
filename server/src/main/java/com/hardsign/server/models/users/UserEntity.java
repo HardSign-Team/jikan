@@ -15,6 +15,9 @@ public class UserEntity {
     @Column(name="name", length = 32, nullable = false)
     public String Name;
 
+    @Column(name="login", length = 32, nullable = false)
+    public String Login;
+
     @Column(name="hashed_password", nullable = false)
     public String HashedPassword;
 
