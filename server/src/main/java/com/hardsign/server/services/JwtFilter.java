@@ -27,25 +27,29 @@ public class JwtFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain fc)
             throws IOException, ServletException {
-        final String token = getTokenFromRequest((HttpServletRequest) request);
-        if (token != null && jwtProvider.validateAccessToken(token)) {
-            var claims = jwtProvider.getAccessClaims(token);
+        var token = getTokenFromRequest((HttpServletRequest) request);
 
-            var jwtInfoToken = new JwtAuthentication();
-            jwtInfoToken.setFirstName(claims.get("name", String.class));
-            jwtInfoToken.setUsername(claims.getSubject());
-
-            jwtInfoToken.setAuthenticated(true);
-            SecurityContextHolder.getContext().setAuthentication(jwtInfoToken);
+        if (token == null || !jwtProvider.validateAccessToken(token)){
+            fc.doFilter(request, response);
+            return;
         }
-        fc.doFilter(request, response);
+
+        var claims = jwtProvider.getAccessClaims(token);
+
+        var jwtInfoToken = new JwtAuthentication();
+        jwtInfoToken.setFirstName(claims.get("name", String.class));
+        jwtInfoToken.setUsername(claims.getSubject());
+
+        jwtInfoToken.setAuthenticated(true);
+        SecurityContextHolder.getContext().setAuthentication(jwtInfoToken);
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {
-        final String bearer = request.getHeader(AUTHORIZATION);
-        if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) {
-            return bearer.substring(7);
-        }
-        return null;
+        var bearer = request.getHeader(AUTHORIZATION);
+
+        if (!StringUtils.hasText(bearer) || !bearer.startsWith("Bearer "))
+            return null;
+
+        return bearer.substring(7);
     }
 }

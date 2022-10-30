@@ -2,6 +2,7 @@ package com.hardsign.server.services;
 
 import com.hardsign.server.models.auth.JwtRequest;
 import com.hardsign.server.models.auth.JwtResponse;
+import com.hardsign.server.models.users.UserEntity;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.message.AuthException;
@@ -21,47 +22,52 @@ public class AuthService {
 
     public JwtResponse login(JwtRequest authRequest) throws AuthException {
         var user = userService.getUser(authRequest.getLogin())
-                .orElseThrow(() -> new AuthException("Пользователь не найден"));
+                .orElseThrow(() -> new AuthException("User not found"));
+
         var password = authRequest.getPassword(); //TODO (lunev.d) add password hashing
-        if (user.HashedPassword.equals(password)) {
-            var accessToken = jwtProvider.generateAccessToken(user);
-            var refreshToken = jwtProvider.generateRefreshToken(user);
-            refreshStorage.put(user.Login, refreshToken);
-            return new JwtResponse(accessToken, refreshToken);
-        } else {
-            throw new AuthException("Неправильный пароль");
-        }
+        if (!user.HashedPassword.equals(password))
+            throw new AuthException("Wrong login or password");
+
+        var accessToken = jwtProvider.generateAccessToken(user);
+        var refreshToken = jwtProvider.generateRefreshToken(user);
+        refreshStorage.put(user.Login, refreshToken);
+        return new JwtResponse(accessToken, refreshToken);
     }
 
     public JwtResponse getAccessToken(String refreshToken) throws AuthException {
-        if (jwtProvider.validateRefreshToken(refreshToken)) {
-            var claims = jwtProvider.getRefreshClaims(refreshToken);
-            var login = claims.getSubject();
-            var saveRefreshToken = refreshStorage.get(login);
-            if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
-                var user = userService.getUser(login)
-                        .orElseThrow(() -> new AuthException("Пользователь не найден"));
-                var accessToken = jwtProvider.generateAccessToken(user);
-                return new JwtResponse(accessToken, null);
-            }
-        }
-        return new JwtResponse(null, null);
+        if (jwtProvider.validateRefreshToken(refreshToken))
+            throw new AuthException("Invalid token");
+
+        var user = getUser(refreshToken);
+
+        var accessToken = jwtProvider.generateAccessToken(user);
+
+        return new JwtResponse(accessToken, null);
     }
 
     public JwtResponse refresh(String refreshToken) throws AuthException {
-        if (jwtProvider.validateRefreshToken(refreshToken)) {
-            var claims = jwtProvider.getRefreshClaims(refreshToken);
-            var login = claims.getSubject();
-            var saveRefreshToken = refreshStorage.get(login);
-            if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
-                var user = userService.getUser(login)
-                        .orElseThrow(() -> new AuthException("Пользователь не найден"));
-                var accessToken = jwtProvider.generateAccessToken(user);
-                var newRefreshToken = jwtProvider.generateRefreshToken(user);
-                refreshStorage.put(user.Login, newRefreshToken);
-                return new JwtResponse(accessToken, newRefreshToken);
-            }
-        }
-        throw new AuthException("Невалидный JWT токен");
+        if (!jwtProvider.validateRefreshToken(refreshToken))
+            throw new AuthException("Invalid token");
+
+        var user = getUser(refreshToken);
+
+        var accessToken = jwtProvider.generateAccessToken(user);
+        var newRefreshToken = jwtProvider.generateRefreshToken(user);
+        refreshStorage.put(user.Login, newRefreshToken);
+
+        return new JwtResponse(accessToken, newRefreshToken);
+    }
+
+    private UserEntity getUser(String refreshToken) throws AuthException {
+        var claims = jwtProvider.getRefreshClaims(refreshToken);
+        var login = claims.getSubject();
+        var saveRefreshToken = refreshStorage.get(login);
+
+        if (saveRefreshToken == null || !saveRefreshToken.equals(refreshToken))
+            throw new AuthException("Invalid token");
+
+        return userService
+                .getUser(login)
+                .orElseThrow(() -> new AuthException("User not found"));
     }
 }

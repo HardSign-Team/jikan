@@ -36,7 +36,11 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
+        final var permittedEndpoints = new String[] {
+                "/api/auth/login",
+                "/api/auth/token",
+                "/ping"
+        };
         return http
                 .httpBasic().disable()
                 .csrf().disable()
@@ -44,7 +48,7 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeHttpRequests(
                         auth -> auth
-                                .antMatchers("/api/auth/login", "/api/auth/token", "/ping").permitAll()
+                                .antMatchers(permittedEndpoints).permitAll()
                                 .anyRequest().authenticated()
                                 .and()
                                 .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)

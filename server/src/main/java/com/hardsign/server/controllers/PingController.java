@@ -18,10 +18,4 @@ public class PingController {
     public String ping2(){
         return "pong";
     }
-
-    @GetMapping(value = "/ping3")
-    @ResponseBody
-    public String ping3(){
-        return "pong";
-    }
 }
