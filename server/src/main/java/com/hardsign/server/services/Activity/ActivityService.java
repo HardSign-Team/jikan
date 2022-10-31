@@ -1,36 +1,43 @@
-package com.hardsign.server.Services.Activity;
+package com.hardsign.server.services.Activity;
 
 import com.hardsign.server.models.activities.ActivityEntity;
 import com.hardsign.server.repositories.ActivityRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-@Component
+@Service
 public class ActivityService implements IActivityService {
-    @Autowired
-    ActivityRepository repository;
+    final ActivityRepository repository;
 
-    @Override
+    public ActivityService(ActivityRepository repository) {
+        this.repository = repository;
+    }
+
     public List<ActivityEntity> findAllActivities() {
         return (List<ActivityEntity>)repository.findAll();
     }
 
-    @Override
     public ActivityEntity findById(UUID id) {
-        Optional<ActivityEntity> result = repository.findById(id);
-        return result.orElse(null);
+        try {
+            return repository.findById(id).orElse(null);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
-    @Override
-    public ActivityEntity insert(ActivityEntity p) {
-        return repository.save(p);
+    public boolean insert(ActivityEntity activityEntity) {
+        try {
+            repository.save(activityEntity);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 
-    @Override
     public boolean delete(UUID id) {
         try {
             repository.deleteById(id);
@@ -41,10 +48,9 @@ public class ActivityService implements IActivityService {
         }
     }
 
-    @Override
-    public boolean update(ActivityEntity p) {
+    public boolean update(ActivityEntity activityEntity) {
         try {
-            repository.save(p);
+            repository.save(activityEntity);
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());

@@ -11,12 +11,10 @@ import java.util.UUID;
 public class ActivityEntity {
 
     @javax.persistence.Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     public UUID Id;
 
     @ManyToOne(targetEntity = UserEntity.class)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonDeserialize
     public UUID UserId;
 
     @Column(name = "name", length = 64, nullable = false)

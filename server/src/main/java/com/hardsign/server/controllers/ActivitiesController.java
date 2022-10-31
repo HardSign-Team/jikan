@@ -1,62 +1,101 @@
 package com.hardsign.server.controllers;
 
 
-import com.hardsign.server.Services.Activity.ActivityService;
 import com.hardsign.server.models.activities.ActivityEntity;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.hardsign.server.models.activities.ActivityModel;
+import com.hardsign.server.services.Activity.ActivityService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/activity")
 public class ActivitiesController {
-    @Autowired
-    ActivityService activityService;
+    private final ActivityService activityService;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public List<ActivityEntity> getAllActivities() {
-        return activityService.findAllActivities();
+    public ActivitiesController(ActivityService activityService) {
+        this.activityService = activityService;
+    }
+
+    @GetMapping()
+    public List<ActivityModel> getAllActivities() {
+        System.out.println("PRONT");
+        return activityService
+                .findAllActivities()
+                .stream()
+                .map(entity -> new ActivityModel(entity.UserId.toString(), entity.Id.toString(), entity.Name))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public ActivityEntity getActivityById(@PathVariable("id") UUID id) {
-        return activityService.findById(id);
+    public ResponseEntity<ActivityModel> getActivityById(@PathVariable("id") String id) {
+        var uuid = getUUIDfromString(id);
+        var activity = Optional.of(activityService.findById(uuid));
+        return activity
+                .map(x -> new ActivityModel(x.UserId.toString(), x.Id.toString(), x.Name))
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@RequestBody ActivityEntity activityEntity) {
-        if (activityEntity != null) {
-            activityService.insert(activityEntity);
-            return "Added an activity";
-        } else {
-            return "Request does not contain a body";
+    @PostMapping(value = "/create")
+    @ResponseBody
+    public ResponseEntity<String> create(@RequestBody ActivityModel activityModel) {
+        if (activityModel.Id == null) {
+            return ResponseEntity.badRequest().body("Request does not contain a body");
         }
-        // return new RedirectView("/activity");
+
+        if (activityService.insert(getActivityEntityByActivityModel(activityModel))) {
+            return ResponseEntity.ok("Activity is created");
+        }
+
+        return ResponseEntity.badRequest().body("Can't create");
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-    public String delete(@PathVariable UUID id) {
-        if (id != null) {
-            if (activityService.delete(id)) {
-                return "Deleted the activity.";
-            } else {
-                return "Cannot delete the activity.";
-            }
+    @GetMapping(value = "/delete/{id}")
+    @ResponseBody
+    public ResponseEntity<String> delete(@PathVariable String id) {
+        var uuid = getUUIDfromString(id);
+        if (id == null) {
+            return ResponseEntity.badRequest().body("Request does not contain a body");
         }
-        return "The id is invalid for the activity.";
-        // return new RedirectView("/activity");
+        if (activityService.delete(uuid)) {
+            return ResponseEntity.ok("Activity is deleted");
+        }
+        return ResponseEntity.badRequest().body( "Cannot delete the activity");
     }
 
-    @RequestMapping("/update")
-    public String update(@RequestBody ActivityEntity activityEntity) {
-        if (activityEntity != null) {
-            activityService.update(activityEntity);
-            return "Updated activity.";
-        } else {
-            return "Request does not contain a body";
+    @GetMapping("/update")
+    @ResponseBody
+    public ResponseEntity<String> update(@RequestBody ActivityModel activityModel) {
+        if (activityModel.Id == null) {
+            return ResponseEntity.badRequest().body("Request does not contain id");
         }
-        // return new RedirectView("/activity");
+
+        if (activityService.update(getActivityEntityByActivityModel(activityModel))) {
+            return ResponseEntity.ok("Activity is updated");
+        }
+        return ResponseEntity.badRequest().body( "Cannot update the activity");
+    }
+
+    private UUID getUUIDfromString(String str) {
+        try {
+            return UUID.fromString(str);
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    private ActivityEntity getActivityEntityByActivityModel(ActivityModel activityModel) {
+        var activityEntity = new ActivityEntity();
+        activityEntity.Name = activityModel.Name;
+        activityEntity.UserId = getUUIDfromString(activityModel.UserId);
+        activityEntity.Id = getUUIDfromString(activityModel.Id);
+        return activityEntity;
     }
 }

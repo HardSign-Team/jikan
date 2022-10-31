@@ -1,4 +1,4 @@
-package com.hardsign.server.Services.Timestamp;
+package com.hardsign.server.services.Timestamp;
 
 import com.hardsign.server.models.timestamps.TimestampEntity;
 
@@ -10,7 +10,7 @@ public interface ITimestampService {
 
     TimestampEntity findById(UUID id);
 
-    TimestampEntity insert(TimestampEntity p);
+    boolean insert(TimestampEntity p);
 
     boolean delete(UUID id);
 

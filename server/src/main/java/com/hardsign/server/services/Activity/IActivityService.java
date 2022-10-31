@@ -1,4 +1,4 @@
-package com.hardsign.server.Services.Activity;
+package com.hardsign.server.services.Activity;
 
 import com.hardsign.server.models.activities.ActivityEntity;
 
@@ -10,7 +10,7 @@ public interface IActivityService {
 
     ActivityEntity findById(UUID id);
 
-    ActivityEntity insert(ActivityEntity p);
+    boolean insert(ActivityEntity p);
 
     boolean delete(UUID id);
 
