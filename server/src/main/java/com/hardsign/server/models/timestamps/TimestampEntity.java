@@ -10,8 +10,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "timestamps")
 public class TimestampEntity {
-
     @javax.persistence.Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public UUID Id;
 
     @ManyToOne(targetEntity = ActivityEntity.class)
@@ -25,4 +25,12 @@ public class TimestampEntity {
     @Column(name = "end_at")
     public Date End;
 
+    public TimestampEntity(UUID id, UUID activityId, Date start, Date end) {
+        this.Id = id;
+        this.ActivityId = activityId;
+        this.Start = start;
+        this.End = end;
+    }
+
+    public TimestampEntity() { }
 }
