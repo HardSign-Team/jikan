@@ -5,18 +5,17 @@ import net.bytebuddy.utility.nullability.MaybeNull;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.UUID;
 
 @Entity
 @Table(name = "timestamps")
 public class TimestampEntity {
 
     @javax.persistence.Id
-    public UUID Id;
+    public long Id;
 
     @ManyToOne(targetEntity = ActivityEntity.class)
     @JoinColumn(name="activity_id", nullable = false)
-    public UUID ActivityId;
+    public int ActivityId;
 
     @Column(name = "start_at", nullable = false)
     public Date Start;
