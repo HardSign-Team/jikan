@@ -20,6 +20,7 @@ public class JwtProvider {
     private final int refreshTokenLifeTime;
 
     //TODO (lunev.d): add datetime provider
+    // TODO: 01.11.2022 +
     public JwtProvider(
             @Value("${jwt.secret}") String secretKey,
             @Value("${jwt.access.lifetime}") Integer accessTokenLifeTime,
@@ -35,10 +36,10 @@ public class JwtProvider {
         var accessExpirationInstant = now.plusMinutes(accessTokenLifeTime).atZone(ZoneId.systemDefault()).toInstant();
         var accessExpiration = Date.from(accessExpirationInstant);
         return Jwts.builder()
-                .setSubject(user.Name)
+                .setSubject(user.getName())
                 .setExpiration(accessExpiration)
                 .signWith(secretKey)
-                .claim("name", user.Name)
+                .claim("name", user.getName())
                 .compact();
     }
 

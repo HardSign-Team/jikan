@@ -22,11 +22,10 @@ public class UserController {
 
     @GetMapping("{login}")
     public ResponseEntity<UserModel> getUser(@PathVariable String login){
-        var user = Optional
-                .of(userRepository.findByLogin(login));
+        var user = userRepository.findByLogin(login);
 
         return user
-                .map(x -> new UserModel(x.Name, x.getLogin()))
+                .map(x -> new UserModel(x.getName(), x.getLogin()))
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -34,9 +33,9 @@ public class UserController {
     @PostMapping
     public void addUser(@RequestBody AddUserModel addUserModel){
         var user = new UserEntity();
-        user.Name = addUserModel.getName();
+        user.setName(addUserModel.getName());
         user.setLogin(addUserModel.getLogin());
-        user.HashedPassword = addUserModel.getPassword();
+        user.setHashedPassword(addUserModel.getPassword()); // TODO: 01.11.2022 why???
 
         userRepository.save(user);
     }

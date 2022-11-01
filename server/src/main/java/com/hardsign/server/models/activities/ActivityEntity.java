@@ -3,27 +3,52 @@ package com.hardsign.server.models.activities;
 import com.hardsign.server.models.users.UserEntity;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "activities")
 public class ActivityEntity {
 
-    @javax.persistence.Id
-    public long Id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
     @ManyToOne(targetEntity = UserEntity.class)
     @JoinColumn(name = "user_id", nullable = false)
-    public int UserId;
+    private long userId;
 
     @Column(name = "name", length = 64, nullable = false)
-    public String Name;
+    private String name;
 
     public ActivityEntity() { }
 
-    public ActivityEntity(UUID id, UUID userId, String name) {
-        this.Id = id;
-        this.UserId = userId;
-        this.Name = name;
+    public ActivityEntity(long id, long userId, String name) {
+        this.id = id;
+        this.userId = userId;
+        this.name = name;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
+

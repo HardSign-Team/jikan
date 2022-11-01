@@ -4,11 +4,11 @@ import com.hardsign.server.models.users.UserEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
-//TODO (lunev.d): uncomment after fix database
 @Repository
-public interface UserRepository extends CrudRepository<UserEntity, UUID> {
+public interface UserRepository extends CrudRepository<UserEntity, Long> {
 
-    UserEntity findByLogin(String Login);
+    Optional<UserEntity> findByLogin(String Login);
 }

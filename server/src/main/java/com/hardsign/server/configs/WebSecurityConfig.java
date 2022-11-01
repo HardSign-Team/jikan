@@ -40,7 +40,8 @@ public class WebSecurityConfig {
                 "/api/auth/login",
                 "/api/auth/token",
                 "/ping",
-                "/api/activity/**",
+                "/api/activities/**",
+                "/api/timestamps/**",
                 "/api/users/**"
         };
         return http

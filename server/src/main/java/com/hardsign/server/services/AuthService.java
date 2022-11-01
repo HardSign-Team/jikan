@@ -27,7 +27,7 @@ public class AuthService {
                 .orElseThrow(() -> new AuthException("User not found"));
 
         var password = authRequest.getPassword();
-        if (!passwordService.verifyHash(password, user.HashedPassword))
+        if (!passwordService.verifyHash(password, user.getHashedPassword()))
             throw new AuthException("Wrong login or password");
 
         var accessToken = jwtProvider.generateAccessToken(user);

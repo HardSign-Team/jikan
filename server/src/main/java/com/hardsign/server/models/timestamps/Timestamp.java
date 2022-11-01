@@ -4,14 +4,14 @@ import net.bytebuddy.utility.nullability.MaybeNull;
 
 import java.util.Date;
 
-public class TimestampModel {
+public class Timestamp {
     private long id;
     private long activityId;
     private Date start;
     @MaybeNull
     private Date end;
 
-    public TimestampModel(long id, long activityId, Date start, @MaybeNull Date end) {
+    public Timestamp(long id, long activityId, Date start, @MaybeNull Date end) {
         this.id = id;
         this.activityId = activityId;
         this.start = start;

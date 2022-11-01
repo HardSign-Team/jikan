@@ -10,27 +10,61 @@ import java.util.Date;
 @Table(name = "timestamps")
 public class TimestampEntity {
 
-    @javax.persistence.Id
+    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public long Id;
+    private long id;
 
     @ManyToOne(targetEntity = ActivityEntity.class)
     @JoinColumn(name="activity_id", nullable = false)
-    public int ActivityId;
+    private long activityId;
 
     @Column(name = "start_at", nullable = false)
-    public Date Start;
+    private Date start;
 
     @MaybeNull
     @Column(name = "end_at")
-    public Date End;
+    private Date end;
 
-    public TimestampEntity(UUID id, UUID activityId, Date start, Date end) {
-        this.Id = id;
-        this.ActivityId = activityId;
-        this.Start = start;
-        this.End = end;
+    public TimestampEntity(long id, long activityId, Date start, @MaybeNull Date end) {
+        this.id = id;
+        this.activityId = activityId;
+        this.start = start;
+        this.end = end;
     }
 
     public TimestampEntity() { }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(long activityId) {
+        this.activityId = activityId;
+    }
+
+    public Date getStart() {
+        return start;
+    }
+
+    public void setStart(Date start) {
+        this.start = start;
+    }
+
+    @MaybeNull
+    public Date getEnd() {
+        return end;
+    }
+
+    public void setEnd(@MaybeNull Date end) {
+        this.end = end;
+    }
 }
+

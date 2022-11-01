@@ -8,7 +8,7 @@ public class PasswordService {
     // Define the BCrypt workload to use when generating password hashes. 10-31 is a valid value.
     private final static int workload = 12;
 
-    public String Hash(String password){
+    public String hash(String password){
         return BCrypt.hashpw(password, BCrypt.gensalt(workload));
     }
 

@@ -1,7 +1,7 @@
 package com.hardsign.server.models.auth;
 
 public class RefreshJwtRequest {
-    public String refreshToken;
+    private String refreshToken;
 
     public String getRefreshToken(){
         return refreshToken;

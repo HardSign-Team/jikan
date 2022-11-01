@@ -1,6 +1,7 @@
 package com.hardsign.server.services;
 
 import com.hardsign.server.models.users.UserEntity;
+import com.hardsign.server.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,23 +10,13 @@ import java.util.UUID;
 
 @Service
 public class UserService {
-    private final List<UserEntity> users;
+    private final UserRepository userRepository;
 
-    public UserService(PasswordService passwordService){
-        var user = new UserEntity();
-        user.setLogin("I");
-        user.Id = UUID.randomUUID();
-        user.Name = "hate";
-        user.HashedPassword = passwordService.Hash("java");
-
-        users = List.of(
-                user
-        );
+    public UserService(UserRepository userRepository, PasswordService passwordService){
+        this.userRepository = userRepository;
     }
 
     public Optional<UserEntity> getUser(String login){
-        return users.stream()
-                .filter(x -> login.equals(x.getLogin()))
-                .findFirst();
+        return userRepository.findByLogin(login);
     }
 }

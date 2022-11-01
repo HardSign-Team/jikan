@@ -1,15 +1,14 @@
 package com.hardsign.server.models.activities;
 
-import java.util.UUID;
-
 public class ActivityModel {
-    public String UserId;
-    public String Id;
+    public long Id;
+    public long UserId;
     public String Name;
 
-    public ActivityModel(String userId, String id, String name) {
-        this.UserId = userId;
+    public ActivityModel(long id, long userId, String name) {
         this.Id = id;
+        this.UserId = userId;
         this.Name = name;
     }
 }
+
