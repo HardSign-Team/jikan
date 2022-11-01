@@ -11,6 +11,7 @@ import java.util.Date;
 public class TimestampEntity {
 
     @javax.persistence.Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public long Id;
 
     @ManyToOne(targetEntity = ActivityEntity.class)
@@ -24,4 +25,12 @@ public class TimestampEntity {
     @Column(name = "end_at")
     public Date End;
 
+    public TimestampEntity(UUID id, UUID activityId, Date start, Date end) {
+        this.Id = id;
+        this.ActivityId = activityId;
+        this.Start = start;
+        this.End = end;
+    }
+
+    public TimestampEntity() { }
 }
