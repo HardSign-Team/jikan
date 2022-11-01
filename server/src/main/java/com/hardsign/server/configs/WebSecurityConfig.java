@@ -42,7 +42,10 @@ public class WebSecurityConfig {
                 "/ping",
                 "/api/activities/**",
                 "/api/timestamps/**",
-                "/api/users/**"
+                "/api/users/**",
+                "/swagger-ui/**",
+                "/swagger-resources/**",
+                "/v2/api-docs",
         };
         return http
                 .httpBasic().disable()
