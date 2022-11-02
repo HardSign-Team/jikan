@@ -1,6 +1,6 @@
 package com.hardsign.server.configs;
 
-import com.hardsign.server.services.JwtFilter;
+import com.hardsign.server.services.auth.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;

@@ -1,8 +1,9 @@
-package com.hardsign.server.services;
+package com.hardsign.server.services.auth;
 
 import com.hardsign.server.models.auth.JwtRequest;
 import com.hardsign.server.models.auth.JwtResponse;
 import com.hardsign.server.models.users.UserEntity;
+import com.hardsign.server.services.user.UserService;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.message.AuthException;

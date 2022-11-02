@@ -7,9 +7,6 @@ import com.hardsign.server.repositories.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
-//TODO (lunev.d): uncomment after fix database
 @RestController
 @RequestMapping("api/users")
 public class UserController {

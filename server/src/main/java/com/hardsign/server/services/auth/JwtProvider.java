@@ -1,4 +1,4 @@
-package com.hardsign.server.services;
+package com.hardsign.server.services.auth;
 
 import com.hardsign.server.models.users.UserEntity;
 import io.jsonwebtoken.*;

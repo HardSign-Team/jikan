@@ -1,7 +1,7 @@
 package com.hardsign.server.controllers;
 
 import com.hardsign.server.models.users.UserEntity;
-import com.hardsign.server.services.ICurrentUserProvider;
+import com.hardsign.server.services.user.ICurrentUserProvider;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;

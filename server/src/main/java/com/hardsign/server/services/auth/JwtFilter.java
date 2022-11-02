@@ -1,4 +1,4 @@
-package com.hardsign.server.services;
+package com.hardsign.server.services.auth;
 
 import com.hardsign.server.models.auth.JwtAuthentication;
 import org.springframework.security.core.context.SecurityContextHolder;
