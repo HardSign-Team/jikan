@@ -3,48 +3,71 @@ package org.hardsign;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.request.KeyboardButton;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.BaseResponse;
+import org.hardsign.keyboardPressHandlers.ActivitiesPressHandler;
+import org.hardsign.keyboardPressHandlers.ButtonNames;
+import org.hardsign.keyboardPressHandlers.KeyboardPressHandler;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class UpdateListenerImpl implements UpdatesListener {
     private static final Logger LOGGER = Logger.getLogger(UpdateListenerImpl.class.getName());
     private final TelegramBot bot;
+    private final Map<String, KeyboardPressHandler> keyboardHandlers = new HashMap<>();
 
     public UpdateListenerImpl(TelegramBot bot) {
         this.bot = bot;
+        keyboardHandlers.put(ButtonNames.ACTIVITIES.getName(), new ActivitiesPressHandler(bot));
     }
 
     @Override
     public int process(List<Update> list) {
-        Update lastUpdate = null;
-
-        for (var item : list) {
-            lastUpdate = item;
-            try {
-                process(item);
-            } catch (Exception e) {
-                LOGGER.severe(e.getMessage());
-            }
-        }
-
-        if (lastUpdate != null) {
-            return lastUpdate.updateId();
-        }
-
-        return CONFIRMED_UPDATES_ALL;
+        return list.stream()
+                .map(this::process)
+                .reduce((x, y) -> y).map(Update::updateId)
+                .orElse(CONFIRMED_UPDATES_ALL);
     }
 
-    private void process(Update update) throws Exception {
+    private Update process(Update update) {
         var content = update.message().text();
         if (Objects.equals(content, ""))
-            return;
-        long chatId = update.message().chat().id();
-        var response = bot.execute(new SendMessage(chatId, "Hello!"));
-        if (response.isOk()) {
-            throw new Exception(response.toString());
+            return update;
+        var parts = content.trim().split(" ");
+        var command = parts[0];
+
+        if (keyboardHandlers.containsKey(command)) {
+            keyboardHandlers.get(command).handle(update);
+            return update;
+        }
+
+        if ("/start".equals(command)) {
+            handleStart(update);
+        }
+        return update;
+    }
+
+    private void handleStart(Update update) {
+        var chatId = update.message().chat().id();
+        var replyMarkup = new ReplyKeyboardMarkup(
+        new KeyboardButton[] {
+                new KeyboardButton(ButtonNames.ACTIVITIES.getName()),
+        });
+        var request = new SendMessage(chatId, "Choose your variant or /start")
+                .replyMarkup(replyMarkup);
+        sendMessage(request);
+    }
+
+    private void sendMessage(SendMessage request) {
+        logError(bot.execute(request));
+    }
+
+    private void logError(BaseResponse response) {
+        if (!response.isOk()) {
+            LOGGER.severe(response.description());
         }
     }
 }

@@ -2,6 +2,8 @@ package org.hardsign;
 
 import com.pengrad.telegrambot.TelegramBot;
 import io.github.cdimascio.dotenv.Dotenv;
+import okhttp3.OkHttpClient;
+import org.hardsign.clients.JikanApiClientImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -9,7 +11,11 @@ import java.io.File;
 public class Main {
     public static void main(String[] args) {
         try {
-            Run();
+            var okClient = new OkHttpClient();
+            var jikanClient = new JikanApiClientImpl(okClient);
+            var activities = jikanClient.activities().getAll();
+            System.out.println(activities.getValue()[0].getName());
+            //Run();
         } catch (Exception e) {
             System.out.println("Fatal error. Error: " + e.getMessage());
         }
