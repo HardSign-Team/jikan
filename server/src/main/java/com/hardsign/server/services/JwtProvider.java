@@ -36,7 +36,7 @@ public class JwtProvider {
         var accessExpirationInstant = now.plusMinutes(accessTokenLifeTime).atZone(ZoneId.systemDefault()).toInstant();
         var accessExpiration = Date.from(accessExpirationInstant);
         return Jwts.builder()
-                .setSubject(user.getName())
+                .setSubject(user.getLogin())
                 .setExpiration(accessExpiration)
                 .signWith(secretKey)
                 .claim("name", user.getName())
