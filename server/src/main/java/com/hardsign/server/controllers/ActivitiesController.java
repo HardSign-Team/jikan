@@ -1,7 +1,6 @@
 package com.hardsign.server.controllers;
 
 
-import com.hardsign.server.exceptions.BadRequestException;
 import com.hardsign.server.exceptions.ForbiddenException;
 import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.activities.ActivityModel;
@@ -14,13 +13,17 @@ import com.hardsign.server.services.user.CurrentUserProvider;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "api/activities")
+@Validated
 public class ActivitiesController {
     private final ActivitiesService activityService;
     private final Mapper mapper;
@@ -47,7 +50,8 @@ public class ActivitiesController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ActivityModel> getActivityById(@PathVariable("id") long id) {
+    public ResponseEntity<ActivityModel> getActivityById(@Valid @Min(1) @PathVariable("id") long id) {
+
         var user = getUserOrThrow();
 
         return activityService.findById(user, id)
@@ -57,15 +61,7 @@ public class ActivitiesController {
     }
 
     @PostMapping(value = "create", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ActivityModel> create(@RequestBody CreateActivityRequest request) {
-        if (request == null) {
-            throw new BadRequestException("Request does not contain body.");
-        }
-
-        if (request.getName() == null) {
-            throw new BadRequestException("Name cannot be null.");
-        }
-
+    public ResponseEntity<ActivityModel> create(@Valid @RequestBody CreateActivityRequest request) {
         var user = getUserOrThrow();
 
         var activity = activityService.save(user, request.getName());
@@ -75,11 +71,7 @@ public class ActivitiesController {
     }
 
     @DeleteMapping(value = "{id}")
-    @ResponseBody
-    public ResponseEntity<Object> delete(@PathVariable long id) {
-        if (id == 0) {
-            return ResponseEntity.badRequest().body("Request does not contain a body");
-        }
+    public ResponseEntity<Object> delete(@Valid @Min(1) @PathVariable long id) {
 
         // TODO: 01.11.2022 validate user rights
         activityService.delete(id);
@@ -88,12 +80,7 @@ public class ActivitiesController {
     }
 
     @PatchMapping()
-    @ResponseBody
-    public HttpEntity<?> update(@RequestBody PatchActivityRequest request) {
-
-        if (request == null) {
-            return ResponseEntity.badRequest().body("Request does not contain id");
-        }
+    public HttpEntity<?> update(@Valid @RequestBody PatchActivityRequest request) {
 
         return activityService.update(request.getId(), new ActivityPatch(request.getName()))
                 .map(mapper::mapToModel)
