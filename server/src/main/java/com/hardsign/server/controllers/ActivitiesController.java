@@ -8,6 +8,7 @@ import com.hardsign.server.models.activities.ActivityModel;
 import com.hardsign.server.models.activities.ActivityPatch;
 import com.hardsign.server.models.activities.requests.CreateActivityRequest;
 import com.hardsign.server.models.activities.requests.PatchActivityRequest;
+import com.hardsign.server.models.users.User;
 import com.hardsign.server.services.activities.ActivitiesService;
 import com.hardsign.server.services.user.CurrentUserProvider;
 import org.springframework.http.HttpEntity;
@@ -36,7 +37,7 @@ public class ActivitiesController {
 
     @GetMapping
     public List<ActivityModel> getAllActivities() {
-        var user = currentUserProvider.getCurrentUser().orElseThrow(ForbiddenException::new);
+        var user = getUserOrThrow();
 
         return activityService
                 .findAllActivitiesByUser(user)
@@ -47,7 +48,7 @@ public class ActivitiesController {
 
     @GetMapping("{id}")
     public ResponseEntity<ActivityModel> getActivityById(@PathVariable("id") long id) {
-        var user = currentUserProvider.getCurrentUser().orElseThrow(ForbiddenException::new); // todo: (tebaikin) 04.11.2022 extract method
+        var user = getUserOrThrow();
 
         return activityService.findById(user, id)
                 .map(mapper::mapToModel)
@@ -65,7 +66,7 @@ public class ActivitiesController {
             throw new BadRequestException("Name cannot be null.");
         }
 
-        var user = currentUserProvider.getCurrentUser().orElseThrow(ForbiddenException::new);
+        var user = getUserOrThrow();
 
         var activity = activityService.save(user, request.getName());
         var activityModel = mapper.mapToModel(activity);
@@ -98,5 +99,10 @@ public class ActivitiesController {
                 .map(mapper::mapToModel)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.badRequest().build());
+    }
+
+    private User getUserOrThrow() {
+        return currentUserProvider.getCurrentUser()
+                .orElseThrow(ForbiddenException::new);
     }
 }
