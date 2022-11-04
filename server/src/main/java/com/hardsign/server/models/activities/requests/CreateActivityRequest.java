@@ -1,8 +1,10 @@
 package com.hardsign.server.models.activities.requests;
 
-import org.springframework.lang.Nullable;
+
+import com.sun.istack.Nullable;
 
 public class CreateActivityRequest {
+
     @Nullable
     private String name;
 

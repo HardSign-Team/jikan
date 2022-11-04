@@ -1,6 +1,7 @@
 package com.hardsign.server.services.timestamps;
 
 import com.hardsign.server.mappers.Mapper;
+import com.hardsign.server.models.activities.ActivityEntity;
 import com.hardsign.server.models.timestamps.Timestamp;
 import com.hardsign.server.models.timestamps.TimestampEntity;
 import com.hardsign.server.repositories.TimestampsRepository;
@@ -10,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class TimestampsServiceImpl implements TimestampsService {
@@ -23,7 +23,7 @@ public class TimestampsServiceImpl implements TimestampsService {
     }
 
     public List<Timestamp> findAllTimestamps() {
-        return StreamSupport.stream(repository.findAll().spliterator(), false)
+        return repository.findAll().stream()
                 .map(mapper::map)
                 .collect(Collectors.toList());
     }
@@ -37,7 +37,7 @@ public class TimestampsServiceImpl implements TimestampsService {
         var lastTimestamp = repository.findFirstByActivityIdAndEndIsNull(activityId);
         if (lastTimestamp.isPresent())
             throw new Exception("Active timestamp found");
-        var entity = new TimestampEntity(0, activityId, currentDate, null);
+        var entity = new TimestampEntity(0, new ActivityEntity(activityId), currentDate, null);
         var saved = repository.save(entity);
         return mapper.map(saved);
     }

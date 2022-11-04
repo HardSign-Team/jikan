@@ -8,7 +8,7 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    public long id;
 
     @Column(name="name", length = 32, nullable = false)
     private String name;
@@ -19,6 +19,14 @@ public class UserEntity {
     @Column(name="hashed_password", nullable = false)
     private String hashedPassword;
 
+    public UserEntity() {}
+
+    public UserEntity(long id, String name, String login, String hashedPassword) {
+        this.id = id;
+        this.name = name;
+        this.login = login;
+        this.hashedPassword = hashedPassword;
+    }
 
     public String getLogin() {
         return login;

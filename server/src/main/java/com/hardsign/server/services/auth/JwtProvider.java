@@ -4,6 +4,7 @@ import com.hardsign.server.models.users.UserEntity;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -54,7 +55,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public boolean validateAccessToken(String accessToken) {
+    public boolean validateAccessToken(@Nullable String accessToken) {
         return validateToken(accessToken, secretKey);
     }
 
@@ -62,7 +63,7 @@ public class JwtProvider {
         return validateToken(refreshToken, secretKey);
     }
 
-    private boolean validateToken(String token, Key secret) {
+    private boolean validateToken(@Nullable String token, Key secret) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(secret)

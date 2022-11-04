@@ -6,30 +6,42 @@ import com.hardsign.server.models.activities.ActivityModel;
 import com.hardsign.server.models.activities.ActivityPatch;
 import com.hardsign.server.models.activities.requests.CreateActivityRequest;
 import com.hardsign.server.models.activities.requests.PatchActivityRequest;
-import com.hardsign.server.services.activities.ActivitiesServiceImpl;
+import com.hardsign.server.services.activities.ActivitiesService;
+import com.hardsign.server.services.user.CurrentUserProvider;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.security.auth.message.AuthException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/api/activities/")
+@RequestMapping(value = "api/activities")
 public class ActivitiesController {
-    private final ActivitiesServiceImpl activityService;
+    private final ActivitiesService activityService;
     private final Mapper mapper;
+    private final CurrentUserProvider currentUserProvider;
 
-    public ActivitiesController(ActivitiesServiceImpl activityService, Mapper mapper) {
+    public ActivitiesController(
+            ActivitiesService activityService,
+            Mapper mapper,
+            CurrentUserProvider currentUserProvider) {
         this.activityService = activityService;
         this.mapper = mapper;
+        this.currentUserProvider = currentUserProvider;
     }
 
-    @GetMapping()
-    public List<ActivityModel> getAllActivities() {
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ActivityModel> getAllActivities() throws AuthException {
+        var user = currentUserProvider.getCurrentUser().orElseThrow(() -> new AuthException("User not found"));
         return activityService
                 .findAllActivities()
                 .stream()
+                .filter(x -> x.getUserId() == user.getId())
                 .map(mapper::mapToModel)
                 .collect(Collectors.toList());
     }
@@ -42,20 +54,19 @@ public class ActivitiesController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping(value = "create")
-    @ResponseBody
-    public ResponseEntity<Object> create(@RequestBody CreateActivityRequest request) {
+    @PostMapping(value = "create", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<ActivityModel> create(@RequestBody CreateActivityRequest request) throws Exception {
         if (request == null) {
-            return ResponseEntity.badRequest().body("Request does not contain body.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request does not contain body.");
         }
 
         if (request.getName() == null) {
-            return ResponseEntity.badRequest().body("Request does not contain name.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request does not contain name.");
         }
 
-        long userId = 0; // TODO: 01.11.2022 get user id
-        var activity = activityService.insert(userId, request.getName());
-
+        var user = currentUserProvider.getCurrentUser().orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "User not found"));
+        var activity = activityService.insert(user, request.getName());
         return ResponseEntity.ok(mapper.mapToModel(activity));
     }
 

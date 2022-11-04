@@ -6,6 +6,8 @@ import com.hardsign.server.models.activities.ActivityModel;
 import com.hardsign.server.models.timestamps.Timestamp;
 import com.hardsign.server.models.timestamps.TimestampEntity;
 import com.hardsign.server.models.timestamps.TimestampModel;
+import com.hardsign.server.models.users.User;
+import com.hardsign.server.models.users.UserEntity;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,7 +15,7 @@ public class MapperImpl implements Mapper {
 
     @Override
     public Activity map(ActivityEntity entity) {
-        return new Activity(entity.getId(), entity.getUserId(), entity.getName());
+        return new Activity(entity.getId(), entity.getUser().getId(), entity.getName());
     }
 
     @Override
@@ -23,12 +25,14 @@ public class MapperImpl implements Mapper {
 
     @Override
     public ActivityEntity mapToEntity(Activity activity) {
-        return new ActivityEntity(activity.getId(), activity.getUserId(), activity.getName());
+        final var user = new UserEntity();
+        user.setId(activity.getUserId());
+        return new ActivityEntity(activity.getId(), user, activity.getName());
     }
 
     @Override
     public Timestamp map(TimestampEntity entity) {
-        return new Timestamp(entity.getId(), entity.getActivityId(), entity.getStart(), entity.getEnd());
+        return new Timestamp(entity.getId(), entity.getActivity().getId(), entity.getStart(), entity.getEnd());
     }
 
     @Override
@@ -38,6 +42,22 @@ public class MapperImpl implements Mapper {
 
     @Override
     public TimestampEntity mapToEntity(Timestamp timestamp) {
-        return new TimestampEntity(timestamp.getId(), timestamp.getActivityId(), timestamp.getStart(), timestamp.getEnd());
+        var activityEntity = new ActivityEntity();
+        activityEntity.setId(timestamp.getActivityId());
+        return new TimestampEntity(timestamp.getId(), activityEntity, timestamp.getStart(), timestamp.getEnd());
+    }
+
+    @Override
+    public User map(UserEntity entity) {
+        return new User(entity.getId(), entity.getName(), entity.getLogin());
+    }
+
+    @Override
+    public UserEntity mapToEntity(User user) {
+        var entity = new UserEntity();
+        entity.setId(user.getId());
+        entity.setName(user.getName());
+        entity.setLogin(user.getLogin());
+        return entity;
     }
 }

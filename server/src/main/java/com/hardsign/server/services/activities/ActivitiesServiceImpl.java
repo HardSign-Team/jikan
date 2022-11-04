@@ -4,6 +4,7 @@ import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.activities.Activity;
 import com.hardsign.server.models.activities.ActivityEntity;
 import com.hardsign.server.models.activities.ActivityPatch;
+import com.hardsign.server.models.users.User;
 import com.hardsign.server.repositories.ActivitiesRepository;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +33,11 @@ public class ActivitiesServiceImpl implements ActivitiesService {
         return repository.findById(id).map(mapper::map);
     }
 
-    public Activity insert(long userId, String name) {
-        return mapper.map(repository.save(new ActivityEntity(0, userId, name)));
+    public Activity insert(User user, String name) {
+        var entity = new ActivityEntity();
+        entity.setUser(mapper.mapToEntity(user));
+        entity.setName(name);
+        return mapper.map(repository.save(entity));
     }
 
     public void delete(long id) {

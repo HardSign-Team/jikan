@@ -2,6 +2,7 @@ package com.hardsign.server.models.timestamps;
 
 import com.hardsign.server.models.activities.ActivityEntity;
 import net.bytebuddy.utility.nullability.MaybeNull;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -12,22 +13,22 @@ public class TimestampEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    public long id;
 
     @ManyToOne(targetEntity = ActivityEntity.class)
     @JoinColumn(name="activity_id", nullable = false)
-    private long activityId;
+    private ActivityEntity activity;
 
     @Column(name = "start_at", nullable = false)
     private Date start;
 
-    @MaybeNull
+    @Nullable
     @Column(name = "end_at")
     private Date end;
 
-    public TimestampEntity(long id, long activityId, Date start, @MaybeNull Date end) {
+    public TimestampEntity(long id, ActivityEntity activity, Date start, @MaybeNull Date end) {
         this.id = id;
-        this.activityId = activityId;
+        this.activity = activity;
         this.start = start;
         this.end = end;
     }
@@ -42,12 +43,12 @@ public class TimestampEntity {
         this.id = id;
     }
 
-    public long getActivityId() {
-        return activityId;
+    public ActivityEntity getActivity() {
+        return activity;
     }
 
-    public void setActivityId(long activityId) {
-        this.activityId = activityId;
+    public void setActivity(ActivityEntity activity) {
+        this.activity = activity;
     }
 
     public Date getStart() {
@@ -58,12 +59,12 @@ public class TimestampEntity {
         this.start = start;
     }
 
-    @MaybeNull
+    @Nullable
     public Date getEnd() {
         return end;
     }
 
-    public void setEnd(@MaybeNull Date end) {
+    public void setEnd(@Nullable Date end) {
         this.end = end;
     }
 }
