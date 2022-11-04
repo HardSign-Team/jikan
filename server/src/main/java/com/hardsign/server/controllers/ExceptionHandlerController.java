@@ -1,5 +1,6 @@
 package com.hardsign.server.controllers;
 
+import com.hardsign.server.exceptions.DomainException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,11 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AuthException.class)
     protected ResponseEntity<Object> handleAuthException(AuthException ex, WebRequest req) {
         return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.UNAUTHORIZED, req);
+    }
+
+    @ExceptionHandler(DomainException.class)
+    protected ResponseEntity<Object> handleDomainException(DomainException ex, WebRequest req) {
+        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT, req);
     }
 }
 

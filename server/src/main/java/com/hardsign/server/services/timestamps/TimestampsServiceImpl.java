@@ -1,7 +1,7 @@
 package com.hardsign.server.services.timestamps;
 
+import com.hardsign.server.exceptions.DomainException;
 import com.hardsign.server.mappers.Mapper;
-import com.hardsign.server.models.activities.ActivityEntity;
 import com.hardsign.server.models.timestamps.Timestamp;
 import com.hardsign.server.models.timestamps.TimestampEntity;
 import com.hardsign.server.repositories.TimestampsRepository;
@@ -34,23 +34,24 @@ public class TimestampsServiceImpl implements TimestampsService {
     }
 
     @Override
-    public Timestamp start(long activityId, Date currentDate) throws Exception {
+    public Timestamp start(long activityId, Date currentDate) throws DomainException {
         var lastTimestamp = repository.findFirstByActivityIdAndEndIsNull(activityId);
         if (lastTimestamp.isPresent())
-            throw new Exception("Active timestamp found");
-        var entity = new TimestampEntity(0, new ActivityEntity(activityId), currentDate, null);
-        var saved = repository.save(entity);
+            throw new DomainException("Active timestamp not completed.");
+
+        var saved = repository.save(new TimestampEntity(activityId, currentDate));
+
         return mapper.map(saved);
     }
 
     @Override
-    public Timestamp stop(long activityId, Date currentDate) throws Exception {
-        var lastTimestamp = repository.findFirstByActivityIdAndEndIsNull(activityId);
-        if (lastTimestamp.isEmpty())
-            throw new Exception("Active timestamp not found");
-        var entity = lastTimestamp.get();
-        entity.setEnd(currentDate);
-        var saved = repository.save(entity);
+    public Timestamp stop(long activityId, Date currentDate) throws DomainException {
+        var lastTimestamp = repository.findFirstByActivityIdAndEndIsNull(activityId)
+                .orElseThrow(() -> new DomainException("Active timestamp not found"));
+
+        lastTimestamp.setEnd(currentDate);
+
+        var saved = repository.save(lastTimestamp);
         return mapper.map(saved);
     }
 

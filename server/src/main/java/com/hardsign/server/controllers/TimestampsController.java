@@ -1,8 +1,10 @@
 package com.hardsign.server.controllers;
 
+import com.hardsign.server.exceptions.DomainException;
 import com.hardsign.server.exceptions.ForbiddenException;
 import com.hardsign.server.exceptions.NotFoundException;
 import com.hardsign.server.mappers.Mapper;
+import com.hardsign.server.models.activities.Activity;
 import com.hardsign.server.models.timestamps.TimestampModel;
 import com.hardsign.server.models.timestamps.requests.GetAllTimestampsRequest;
 import com.hardsign.server.models.timestamps.requests.StartTimestampRequest;
@@ -66,37 +68,35 @@ public class TimestampsController {
         var activity = activitiesService.findById(timestamp.getActivityId())
                 .orElseThrow(NotFoundException::new);
 
-        if (!user.hasAccess(activity))
-            throw new ForbiddenException("Has not access to activity.");
+        validateHasAccess(user, activity);
 
         return mapper.mapToModel(timestamp);
     }
 
     @PostMapping(value = "start")
-    @ResponseBody
-    public ResponseEntity<Object> start(@RequestBody StartTimestampRequest request) {
-        var activityId = request.getActivityId();
-        var currentDate = timeProviderService.getCurrentDate();
-        try {
-            // TODO: 01.11.2022 validate
-            var timestamp = timestampService.start(activityId, currentDate);
-            return ResponseEntity.ok(mapper.mapToModel(timestamp));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public TimestampModel start(@Valid @RequestBody StartTimestampRequest request) throws DomainException {
+        var user = getUserOrThrow();
+
+        var activity = activitiesService.findById(request.getActivityId())
+                .orElseThrow(NotFoundException::new);
+
+        validateHasAccess(user, activity);
+
+        var timestamp = timestampService.start(activity.getId(), timeProviderService.getCurrentDate());
+        return mapper.mapToModel(timestamp);
     }
 
     @PostMapping(value = "stop")
-    @ResponseBody
-    public ResponseEntity<Object> stop(@RequestBody StopTimestampRequest request) {
-        var activityId = request.getActivityId();
-        var currentDate = timeProviderService.getCurrentDate();
-        try {
-            var timestamp = timestampService.stop(activityId, currentDate);
-            return ResponseEntity.ok(mapper.mapToModel(timestamp));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public TimestampModel stop(@Valid @RequestBody StopTimestampRequest request) throws DomainException {
+        var user = getUserOrThrow();
+
+        var activity = activitiesService.findById(request.getActivityId())
+                .orElseThrow(NotFoundException::new);
+
+        validateHasAccess(user, activity);
+
+        var timestamp = timestampService.stop(activity.getId(), timeProviderService.getCurrentDate());
+        return mapper.mapToModel(timestamp);
     }
 
     @GetMapping(value = "delete/{id}")
@@ -108,5 +108,10 @@ public class TimestampsController {
 
     private User getUserOrThrow() {
         return UserUtils.getUserOrThrow(currentUserProvider);
+    }
+
+    private static void validateHasAccess(User user, Activity activity) {
+        if (!user.hasAccess(activity))
+            throw new ForbiddenException("Has not access to activity.");
     }
 }

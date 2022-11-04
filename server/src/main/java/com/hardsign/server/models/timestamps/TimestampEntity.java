@@ -26,14 +26,18 @@ public class TimestampEntity {
     @Column(name = "end_at")
     private Date end;
 
+    public TimestampEntity() { }
+
+    public TimestampEntity(long activityId, Date start) {
+        this(0, new ActivityEntity(activityId), start, null);
+    }
+
     public TimestampEntity(long id, ActivityEntity activity, Date start, @MaybeNull Date end) {
         this.id = id;
         this.activity = activity;
         this.start = start;
         this.end = end;
     }
-
-    public TimestampEntity() { }
 
     public long getId() {
         return id;
