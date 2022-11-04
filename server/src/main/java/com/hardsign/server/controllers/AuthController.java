@@ -1,6 +1,5 @@
 package com.hardsign.server.controllers;
 
-import com.hardsign.server.exceptions.UnauthorizedException;
 import com.hardsign.server.models.auth.JwtRequest;
 import com.hardsign.server.models.auth.JwtResponse;
 import com.hardsign.server.models.auth.RefreshJwtRequest;
@@ -23,32 +22,20 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest authRequest) {
-        try{
-            var token = authService.login(authRequest);
-            return ResponseEntity.ok(token);
-        } catch (AuthException e) {
-            throw new UnauthorizedException();
-        }
+    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest authRequest) throws AuthException {
+        var token = authService.login(authRequest);
+        return ResponseEntity.ok(token);
     }
 
     @PostMapping("token")
-    public ResponseEntity<JwtResponse> getNewAccessToken(@RequestBody RefreshJwtRequest request) {
-        try{
-            var token = authService.getAccessToken(request.getRefreshToken());
-            return ResponseEntity.ok(token);
-        } catch (AuthException e) {
-            throw new UnauthorizedException();
-        }
+    public ResponseEntity<JwtResponse> getNewAccessToken(@RequestBody RefreshJwtRequest request) throws AuthException {
+        var token = authService.getAccessToken(request.getRefreshToken());
+        return ResponseEntity.ok(token);
     }
 
     @PostMapping("refresh")
-    public ResponseEntity<JwtResponse> getNewRefreshToken(@RequestBody RefreshJwtRequest request) {
-        try{
-            var token = authService.refresh(request.getRefreshToken());
-            return ResponseEntity.ok(token);
-        } catch (AuthException e) {
-            throw new UnauthorizedException();
-        }
+    public ResponseEntity<JwtResponse> getNewRefreshToken(@RequestBody RefreshJwtRequest request) throws AuthException {
+        var token = authService.refresh(request.getRefreshToken());
+        return ResponseEntity.ok(token);
     }
 }
