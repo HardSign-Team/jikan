@@ -15,7 +15,7 @@ public class TimestampEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
 
-    @ManyToOne(targetEntity = ActivityEntity.class)
+    @ManyToOne(targetEntity = ActivityEntity.class, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinColumn(name="activity_id", nullable = false)
     private ActivityEntity activity;
 
