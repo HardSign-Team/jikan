@@ -1,20 +1,11 @@
 package com.hardsign.server.models.timestamps.requests;
 
+import lombok.Data;
+
+import javax.validation.constraints.Positive;
+
+@Data
 public class StopTimestampRequest {
+    @Positive
     private long activityId;
-
-    public StopTimestampRequest(long activityId) {
-        this.activityId = activityId;
-    }
-
-    public StopTimestampRequest() {
-    }
-
-    public long getActivityId() {
-        return activityId;
-    }
-
-    public void setActivityId(long activityId) {
-        this.activityId = activityId;
-    }
 }

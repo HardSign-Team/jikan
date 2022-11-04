@@ -22,8 +22,9 @@ public class TimestampsServiceImpl implements TimestampsService {
         this.mapper = mapper;
     }
 
-    public List<Timestamp> findAllTimestamps() {
-        return repository.findAll().stream()
+    public List<Timestamp> findAllTimestamps(long activityId) {
+        return repository.findTimestampEntitiesByActivityIdOrderByStartAsc(activityId)
+                .stream()
                 .map(mapper::map)
                 .collect(Collectors.toList());
     }

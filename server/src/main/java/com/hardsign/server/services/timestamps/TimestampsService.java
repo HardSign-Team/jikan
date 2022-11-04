@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TimestampsService {
-    List<Timestamp> findAllTimestamps();
+    List<Timestamp> findAllTimestamps(long activityId);
 
     Optional<Timestamp> findById(long id);
 

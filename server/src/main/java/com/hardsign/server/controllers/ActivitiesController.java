@@ -2,9 +2,7 @@ package com.hardsign.server.controllers;
 
 
 import com.hardsign.server.exceptions.NotFoundException;
-import com.hardsign.server.exceptions.UnauthorizedException;
 import com.hardsign.server.mappers.Mapper;
-import com.hardsign.server.models.activities.Activity;
 import com.hardsign.server.models.activities.ActivityModel;
 import com.hardsign.server.models.activities.ActivityPatch;
 import com.hardsign.server.models.activities.requests.CreateActivityRequest;
@@ -12,6 +10,8 @@ import com.hardsign.server.models.activities.requests.PatchActivityRequest;
 import com.hardsign.server.models.users.User;
 import com.hardsign.server.services.activities.ActivitiesService;
 import com.hardsign.server.services.user.CurrentUserProvider;
+import com.hardsign.server.utils.activities.ActivitiesUtils;
+import com.hardsign.server.utils.users.UserUtils;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RestController
@@ -55,7 +54,7 @@ public class ActivitiesController {
         var user = getUserOrThrow();
 
         return activityService.findById(id)
-                .filter(isOwnedBy(user))
+                .filter(ActivitiesUtils.isOwnedBy(user))
                 .map(mapper::mapToModel)
                 .orElseThrow(NotFoundException::new);
     }
@@ -74,7 +73,7 @@ public class ActivitiesController {
         var user = getUserOrThrow();
 
         var activity = activityService.findById(id)
-                .filter(isOwnedBy(user))
+                .filter(ActivitiesUtils.isOwnedBy(user))
                 .orElseThrow(NotFoundException::new);
 
         activityService.delete(activity.getId());
@@ -87,17 +86,12 @@ public class ActivitiesController {
         var patch = new ActivityPatch(request.getName());
 
         return activityService.update(request.getId(), patch)
-                .filter(isOwnedBy(user))
+                .filter(ActivitiesUtils.isOwnedBy(user))
                 .map(mapper::mapToModel)
                 .orElseThrow(NotFoundException::new);
     }
 
-    private Predicate<Activity> isOwnedBy(User user) {
-        return x -> x.getUserId() == user.getId();
-    }
-
     private User getUserOrThrow() {
-        return currentUserProvider.getCurrentUser()
-                .orElseThrow(UnauthorizedException::new);
+        return UserUtils.getUserOrThrow(currentUserProvider);
     }
 }
