@@ -2,6 +2,8 @@ package org.hardsign.models;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 public class JikanResponse<T> {
     @Nullable
     private final T value;
@@ -23,10 +25,8 @@ public class JikanResponse<T> {
         this.error = error;
     }
 
-    public T getValue() throws Exception {
-        if (error != null)
-            throw new Exception(error);
-        return value;
+    public Optional<T> getValue() {
+        return Optional.ofNullable(this.value);
     }
 
     public int getCode() {
@@ -36,5 +36,9 @@ public class JikanResponse<T> {
     @Nullable
     public String getError() {
         return error;
+    }
+
+    public boolean isFail() {
+        return error != null;
     }
 }
