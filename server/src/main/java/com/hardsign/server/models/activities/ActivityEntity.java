@@ -20,6 +20,10 @@ public class ActivityEntity {
 
     public ActivityEntity() { }
 
+    public ActivityEntity(long id) {
+        this(id, null, null);
+    }
+
     public ActivityEntity(UserEntity user, String name) {
         this(0, user, name);
     }
@@ -28,10 +32,6 @@ public class ActivityEntity {
         this.id = id;
         this.user = user;
         this.name = name;
-    }
-
-    public ActivityEntity(long id) {
-        this(id, null, null);
     }
 
 
