@@ -45,7 +45,7 @@ public class AuthController {
     @PostMapping("refresh")
     public ResponseEntity<JwtResponse> getNewRefreshToken(@RequestBody RefreshJwtRequest request) {
         try{
-            final JwtResponse token = authService.refresh(request.getRefreshToken());
+            var token = authService.refresh(request.getRefreshToken());
             return ResponseEntity.ok(token);
         } catch (AuthException e) {
             throw new UnauthorizedException();
