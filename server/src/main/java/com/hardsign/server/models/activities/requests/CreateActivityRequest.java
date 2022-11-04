@@ -3,12 +3,12 @@ package com.hardsign.server.models.activities.requests;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 
 @Data
 public class CreateActivityRequest {
 
-    @NotEmpty
+    @NotBlank
     private String name;
 }
 

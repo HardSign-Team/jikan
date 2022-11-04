@@ -1,5 +1,6 @@
 package com.hardsign.server.services.activities;
 
+import com.hardsign.server.exceptions.DomainException;
 import com.hardsign.server.models.activities.Activity;
 import com.hardsign.server.models.activities.ActivityPatch;
 import com.hardsign.server.models.users.User;
@@ -12,9 +13,9 @@ public interface ActivitiesService {
 
     Optional<Activity> findById(long id);
 
-    Activity save(User user, String name);
+    Activity save(User user, String name) throws DomainException;
 
     void delete(long id);
 
-    Optional<Activity> update(long id, ActivityPatch patch);
+    Optional<Activity> update(long id, ActivityPatch patch) throws DomainException;
 }

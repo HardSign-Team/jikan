@@ -11,4 +11,9 @@ public class ActivityPatch {
     public ActivityPatch(@Nullable String name) {
         this.name = name;
     }
+
+    public ActivityEntity apply(ActivityEntity entity) {
+        entity.setName(entity.getName());
+        return entity;
+    }
 }

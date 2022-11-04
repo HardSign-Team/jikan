@@ -1,11 +1,11 @@
 package com.hardsign.server.services.activities;
 
+import com.hardsign.server.exceptions.DomainException;
 import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.activities.Activity;
 import com.hardsign.server.models.activities.ActivityEntity;
 import com.hardsign.server.models.activities.ActivityPatch;
 import com.hardsign.server.models.users.User;
-import com.hardsign.server.models.users.UserEntity;
 import com.hardsign.server.repositories.ActivitiesRepository;
 import org.springframework.stereotype.Service;
 
@@ -35,10 +35,10 @@ public class ActivitiesServiceImpl implements ActivitiesService {
         return entity.map(mapper::map);
     }
 
-    public Activity save(User user, String name) {
-        var entity = new ActivityEntity();
-        entity.setUser(new UserEntity(user.getId()));
-        entity.setName(name);
+    public Activity save(User user, String name) throws DomainException {
+        var entity = new ActivityEntity(user.getId(), name);
+
+        validateName(name);
 
         var savedEntity = repository.save(entity);
 
@@ -49,10 +49,21 @@ public class ActivitiesServiceImpl implements ActivitiesService {
         repository.deleteById(id);
     }
 
-    public Optional<Activity> update(long id, ActivityPatch patch) {
+    public Optional<Activity> update(long id, ActivityPatch patch) throws DomainException {
+        if (patch.getName() != null)
+            validateName(patch.getName());
         return repository
                 .findById(id)
+                .map(patch::apply)
                 .map(repository::save)
                 .map(mapper::map);
+    }
+
+    private void validateName(String name) throws DomainException {
+        if (name.isBlank())
+            throw new DomainException("Name is blank");
+
+        if (repository.findActivityEntityByName(name).isPresent())
+            throw new DomainException("Activity with this name exists already.");
     }
 }

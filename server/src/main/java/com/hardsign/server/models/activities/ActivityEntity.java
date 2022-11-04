@@ -24,8 +24,8 @@ public class ActivityEntity {
         this(id, null, null);
     }
 
-    public ActivityEntity(UserEntity user, String name) {
-        this(0, user, name);
+    public ActivityEntity(long userId, String name) {
+        this(0, new UserEntity(userId), name);
     }
 
     public ActivityEntity(long id, UserEntity user, String name) {
@@ -51,7 +51,6 @@ public class ActivityEntity {
     public void setUser(UserEntity user) {
         this.user = user;
     }
-
 
     public String getName() {
         return name;
