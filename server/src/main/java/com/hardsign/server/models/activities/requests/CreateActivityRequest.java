@@ -1,23 +1,14 @@
 package com.hardsign.server.models.activities.requests;
 
-import org.springframework.lang.Nullable;
 
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+
+@Data
 public class CreateActivityRequest {
-    @Nullable
+
+    @NotBlank
     private String name;
-
-    public CreateActivityRequest(String name) {
-        this.name = name;
-    }
-
-    public CreateActivityRequest() {}
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }
 

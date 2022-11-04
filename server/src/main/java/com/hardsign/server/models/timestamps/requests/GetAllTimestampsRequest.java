@@ -5,8 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.Positive;
 
 @Data
-public class StartTimestampRequest {
+public class GetAllTimestampsRequest {
     @Positive
     private long activityId;
 }
-

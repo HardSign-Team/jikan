@@ -66,7 +66,7 @@ public class WebSecurityConfig {
                                 .antMatchers(permittedEndpoints).permitAll()
                                 .anyRequest().authenticated()
                                 .and()
-                                .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 ).build();
     }
 

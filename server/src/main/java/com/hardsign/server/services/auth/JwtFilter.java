@@ -1,9 +1,9 @@
 package com.hardsign.server.services.auth;
 
 import com.hardsign.server.models.auth.JwtAuthentication;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -19,18 +19,17 @@ public class JwtFilter extends GenericFilterBean {
 
     private final JwtProvider jwtProvider;
 
-
     public JwtFilter(JwtProvider jwtProvider) {
         this.jwtProvider = jwtProvider;
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain fc)
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         var token = getTokenFromRequest((HttpServletRequest) request);
 
-        if (token == null || !jwtProvider.validateAccessToken(token)){
-            fc.doFilter(request, response);
+        if (!jwtProvider.validateAccessToken(token)){
+            chain.doFilter(request, response);
             return;
         }
 
@@ -39,17 +38,20 @@ public class JwtFilter extends GenericFilterBean {
         var jwtInfoToken = new JwtAuthentication();
         jwtInfoToken.setFirstName(claims.get("name", String.class));
         jwtInfoToken.setUsername(claims.getSubject());
-
         jwtInfoToken.setAuthenticated(true);
         SecurityContextHolder.getContext().setAuthentication(jwtInfoToken);
+
+        chain.doFilter(request, response);
     }
 
+    @Nullable
     private String getTokenFromRequest(HttpServletRequest request) {
         var bearer = request.getHeader(AUTHORIZATION);
+        var prefix = "Bearer ";
 
-        if (!StringUtils.hasText(bearer) || !bearer.startsWith("Bearer "))
+        if (bearer == null || !bearer.startsWith(prefix))
             return null;
 
-        return bearer.substring(7);
+        return bearer.substring(prefix.length());
     }
 }

@@ -16,6 +16,6 @@ public class UserService {
     }
 
     public Optional<UserEntity> getUser(String login) {
-        return userRepository.findByLogin(login);
+        return userRepository.findFirstByLogin(login);
     }
 }

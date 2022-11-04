@@ -1,88 +1,102 @@
 package com.hardsign.server.controllers;
 
 
+import com.hardsign.server.exceptions.DomainException;
+import com.hardsign.server.exceptions.ForbiddenException;
+import com.hardsign.server.exceptions.NotFoundException;
 import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.activities.ActivityModel;
 import com.hardsign.server.models.activities.ActivityPatch;
 import com.hardsign.server.models.activities.requests.CreateActivityRequest;
 import com.hardsign.server.models.activities.requests.PatchActivityRequest;
-import com.hardsign.server.services.activities.ActivitiesServiceImpl;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
+import com.hardsign.server.models.users.User;
+import com.hardsign.server.services.activities.ActivitiesService;
+import com.hardsign.server.services.user.CurrentUserProvider;
+import com.hardsign.server.utils.users.UserUtils;
+import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/api/activities/")
+@RequestMapping(value = "api/activities")
+@Validated
 public class ActivitiesController {
-    private final ActivitiesServiceImpl activityService;
+    private final ActivitiesService activityService;
     private final Mapper mapper;
+    private final CurrentUserProvider currentUserProvider;
 
-    public ActivitiesController(ActivitiesServiceImpl activityService, Mapper mapper) {
+    public ActivitiesController(
+            ActivitiesService activityService,
+            Mapper mapper,
+            CurrentUserProvider currentUserProvider) {
         this.activityService = activityService;
         this.mapper = mapper;
+        this.currentUserProvider = currentUserProvider;
     }
 
     @GetMapping()
     public List<ActivityModel> getAllActivities() {
+        var user = getUserOrThrow();
+
         return activityService
-                .findAllActivities()
+                .findAllActivitiesByUser(user)
                 .stream()
                 .map(mapper::mapToModel)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ActivityModel> getActivityById(@PathVariable("id") long id) {
+    public ActivityModel getActivityById(@Valid @Min(1) @PathVariable long id) {
+        var user = getUserOrThrow();
+
         return activityService.findById(id)
+                .filter(user::hasAccess)
                 .map(mapper::mapToModel)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(NotFoundException::new);
     }
 
-    @PostMapping(value = "create")
-    @ResponseBody
-    public ResponseEntity<Object> create(@RequestBody CreateActivityRequest request) {
-        if (request == null) {
-            return ResponseEntity.badRequest().body("Request does not contain body.");
-        }
+    @PostMapping(value = "create", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ActivityModel create(@Valid @RequestBody CreateActivityRequest request) throws DomainException {
+        var user = getUserOrThrow();
 
-        if (request.getName() == null) {
-            return ResponseEntity.badRequest().body("Request does not contain name.");
-        }
+        var activity = activityService.save(user, request.getName());
 
-        long userId = 0; // TODO: 01.11.2022 get user id
-        var activity = activityService.insert(userId, request.getName());
-
-        return ResponseEntity.ok(mapper.mapToModel(activity));
+        return mapper.mapToModel(activity);
     }
 
     @DeleteMapping(value = "{id}")
-    @ResponseBody
-    public ResponseEntity<Object> delete(@PathVariable long id) {
-        if (id == 0) {
-            return ResponseEntity.badRequest().body("Request does not contain a body");
-        }
+    public void delete(@Valid @Min(1) @PathVariable long id) {
+        var user = getUserOrThrow();
 
-        // TODO: 01.11.2022 validate user rights
-        activityService.delete(id);
+        var activity = activityService.findById(id)
+                .filter(user::hasAccess)
+                .orElseThrow(NotFoundException::new);
 
-        return ResponseEntity.ok("Activity is deleted");
+        activityService.delete(activity.getId());
     }
 
     @PatchMapping()
-    @ResponseBody
-    public HttpEntity<?> update(@RequestBody PatchActivityRequest request) {
+    public ActivityModel update(@Valid @RequestBody PatchActivityRequest request) throws DomainException {
+        var user = getUserOrThrow();
+        var patch = new ActivityPatch(request.getName());
 
-        if (request == null) {
-            return ResponseEntity.badRequest().body("Request does not contain id");
-        }
+        var activity = activityService.findById(request.getId())
+                .orElseThrow(NotFoundException::new);
 
-        return activityService.update(request.getId(), new ActivityPatch(request.getName()))
+        if (!user.hasAccess(activity))
+            throw new ForbiddenException("Has not access to activity.");
+
+        return activityService.update(request.getId(), patch)
                 .map(mapper::mapToModel)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.badRequest().build());
+                .orElseThrow(NotFoundException::new);
+    }
+
+    private User getUserOrThrow() {
+        return UserUtils.getUserOrThrow(currentUserProvider);
     }
 }
