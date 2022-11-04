@@ -2,6 +2,7 @@ package com.hardsign.server.controllers;
 
 
 import com.hardsign.server.exceptions.ForbiddenException;
+import com.hardsign.server.exceptions.NotFoundException;
 import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.activities.ActivityModel;
 import com.hardsign.server.models.activities.ActivityPatch;
@@ -50,8 +51,7 @@ public class ActivitiesController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ActivityModel> getActivityById(@Valid @Min(1) @PathVariable("id") long id) {
-
+    public ResponseEntity<ActivityModel> getActivityById(@Valid @Min(1) @PathVariable long id) {
         var user = getUserOrThrow();
 
         return activityService.findById(user, id)
@@ -71,12 +71,15 @@ public class ActivitiesController {
     }
 
     @DeleteMapping(value = "{id}")
-    public ResponseEntity<Object> delete(@Valid @Min(1) @PathVariable long id) {
+    public ResponseEntity<?> delete(@Valid @Min(1) @PathVariable long id) {
+        var user = getUserOrThrow();
 
-        // TODO: 01.11.2022 validate user rights
-        activityService.delete(id);
+        var activity = activityService.findById(user, id)
+                .orElseThrow(NotFoundException::new);
 
-        return ResponseEntity.ok("Activity is deleted");
+        activityService.delete(activity.getId());
+
+        return ResponseEntity.ok("Success.");
     }
 
     @PatchMapping()

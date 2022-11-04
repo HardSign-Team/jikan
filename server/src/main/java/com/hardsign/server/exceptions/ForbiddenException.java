@@ -13,3 +13,4 @@ public class ForbiddenException extends ResponseStatusException {
         super(HttpStatus.FORBIDDEN, message);
     }
 }
+
