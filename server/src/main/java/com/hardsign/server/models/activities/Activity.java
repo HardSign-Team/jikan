@@ -1,5 +1,8 @@
 package com.hardsign.server.models.activities;
 
+import lombok.Data;
+
+@Data
 public class Activity {
     private final long id;
     private final long userId;
@@ -9,17 +12,5 @@ public class Activity {
         this.id = id;
         this.userId = userId;
         this.name = name;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public String getName() {
-        return name;
     }
 }
