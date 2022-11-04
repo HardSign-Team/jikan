@@ -36,11 +36,11 @@ public class ActivitiesServiceImpl implements ActivitiesService {
     }
 
     public Activity save(User user, String name) {
-        final var entity = new ActivityEntity();
+        var entity = new ActivityEntity();
         entity.setUser(new UserEntity(user.getId()));
         entity.setName(name);
 
-        final var savedEntity = repository.save(entity);
+        var savedEntity = repository.save(entity);
 
         return mapper.map(savedEntity);
     }
