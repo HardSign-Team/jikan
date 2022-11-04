@@ -8,6 +8,7 @@ import com.hardsign.server.models.timestamps.TimestampEntity;
 import com.hardsign.server.models.timestamps.TimestampModel;
 import com.hardsign.server.models.users.User;
 import com.hardsign.server.models.users.UserEntity;
+import com.hardsign.server.models.users.UserModel;
 
 public interface Mapper {
     Activity map(ActivityEntity entity);
@@ -20,5 +21,6 @@ public interface Mapper {
 
     User map(UserEntity entity);
     UserEntity mapToEntity(User user);
+    UserModel mapToModel(User user);
 }
 

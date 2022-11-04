@@ -8,6 +8,7 @@ import com.hardsign.server.models.timestamps.TimestampEntity;
 import com.hardsign.server.models.timestamps.TimestampModel;
 import com.hardsign.server.models.users.User;
 import com.hardsign.server.models.users.UserEntity;
+import com.hardsign.server.models.users.UserModel;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -59,5 +60,10 @@ public class MapperImpl implements Mapper {
         entity.setName(user.getName());
         entity.setLogin(user.getLogin());
         return entity;
+    }
+
+    @Override
+    public UserModel mapToModel(User user) {
+        return new UserModel(user.getId(), user.getName(), user.getLogin());
     }
 }
