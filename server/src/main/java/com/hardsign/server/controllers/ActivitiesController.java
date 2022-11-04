@@ -1,6 +1,8 @@
 package com.hardsign.server.controllers;
 
 
+import com.hardsign.server.exceptions.BadRequestException;
+import com.hardsign.server.exceptions.ForbiddenException;
 import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.activities.ActivityModel;
 import com.hardsign.server.models.activities.ActivityPatch;
@@ -9,11 +11,9 @@ import com.hardsign.server.models.activities.requests.PatchActivityRequest;
 import com.hardsign.server.services.activities.ActivitiesService;
 import com.hardsign.server.services.user.CurrentUserProvider;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.security.auth.message.AuthException;
 import java.util.List;
@@ -55,19 +55,21 @@ public class ActivitiesController {
     }
 
     @PostMapping(value = "create", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<ActivityModel> create(@RequestBody CreateActivityRequest request) throws Exception {
+    public ResponseEntity<ActivityModel> create(@RequestBody CreateActivityRequest request) {
         if (request == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request does not contain body.");
+            throw new BadRequestException("Request does not contain body.");
         }
 
         if (request.getName() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request does not contain name.");
+            throw new BadRequestException("Name cannot be null.");
         }
 
-        var user = currentUserProvider.getCurrentUser().orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "User not found"));
-        var activity = activityService.insert(user, request.getName());
-        return ResponseEntity.ok(mapper.mapToModel(activity));
+        var user = currentUserProvider.getCurrentUser().orElseThrow(ForbiddenException::new);
+
+        var activity = activityService.save(user, request.getName());
+        var activityModel = mapper.mapToModel(activity);
+
+        return ResponseEntity.ok(activityModel);
     }
 
     @DeleteMapping(value = "{id}")

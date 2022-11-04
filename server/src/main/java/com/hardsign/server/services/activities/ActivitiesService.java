@@ -12,7 +12,7 @@ public interface ActivitiesService {
 
     Optional<Activity> findById(long id);
 
-    Activity insert(User user, String name);
+    Activity save(User user, String name);
 
     void delete(long id);
 

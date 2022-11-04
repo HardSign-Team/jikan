@@ -21,6 +21,10 @@ public class UserEntity {
 
     public UserEntity() {}
 
+    public UserEntity(long id) {
+        this(id, null, null, null);
+    }
+
     public UserEntity(long id, String name, String login, String hashedPassword) {
         this.id = id;
         this.name = name;
