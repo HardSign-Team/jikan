@@ -12,7 +12,7 @@ import java.util.Date;
 public class TimestampEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
 
     @ManyToOne(targetEntity = ActivityEntity.class, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
