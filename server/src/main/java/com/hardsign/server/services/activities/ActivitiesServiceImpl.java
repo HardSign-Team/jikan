@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class ActivitiesServiceImpl implements ActivitiesService {
@@ -24,8 +23,9 @@ public class ActivitiesServiceImpl implements ActivitiesService {
         this.mapper = mapper;
     }
 
-    public List<Activity> findAllActivities() {
-        return StreamSupport.stream(repository.findAll().spliterator(), false)
+    public List<Activity> findAllActivitiesByUser(User user) {
+        return repository.findActivityEntitiesByUserId(user.getId())
+                .stream()
                 .map(mapper::map)
                 .collect(Collectors.toList());
     }

@@ -15,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.security.auth.message.AuthException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,13 +34,13 @@ public class ActivitiesController {
         this.currentUserProvider = currentUserProvider;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ActivityModel> getAllActivities() throws AuthException {
-        var user = currentUserProvider.getCurrentUser().orElseThrow(() -> new AuthException("User not found"));
+    @GetMapping
+    public List<ActivityModel> getAllActivities() {
+        var user = currentUserProvider.getCurrentUser().orElseThrow(ForbiddenException::new);
+
         return activityService
-                .findAllActivities()
+                .findAllActivitiesByUser(user)
                 .stream()
-                .filter(x -> x.getUserId() == user.getId())
                 .map(mapper::mapToModel)
                 .collect(Collectors.toList());
     }
