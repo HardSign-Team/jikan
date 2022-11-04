@@ -10,7 +10,6 @@ import com.hardsign.server.models.activities.requests.PatchActivityRequest;
 import com.hardsign.server.models.users.User;
 import com.hardsign.server.services.activities.ActivitiesService;
 import com.hardsign.server.services.user.CurrentUserProvider;
-import com.hardsign.server.utils.activities.ActivitiesUtils;
 import com.hardsign.server.utils.users.UserUtils;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -54,7 +53,7 @@ public class ActivitiesController {
         var user = getUserOrThrow();
 
         return activityService.findById(id)
-                .filter(ActivitiesUtils.isOwnedBy(user))
+                .filter(user::hasAccess)
                 .map(mapper::mapToModel)
                 .orElseThrow(NotFoundException::new);
     }
@@ -73,7 +72,7 @@ public class ActivitiesController {
         var user = getUserOrThrow();
 
         var activity = activityService.findById(id)
-                .filter(ActivitiesUtils.isOwnedBy(user))
+                .filter(user::hasAccess)
                 .orElseThrow(NotFoundException::new);
 
         activityService.delete(activity.getId());
@@ -86,7 +85,7 @@ public class ActivitiesController {
         var patch = new ActivityPatch(request.getName());
 
         return activityService.update(request.getId(), patch)
-                .filter(ActivitiesUtils.isOwnedBy(user))
+                .filter(user::hasAccess)
                 .map(mapper::mapToModel)
                 .orElseThrow(NotFoundException::new);
     }
