@@ -10,7 +10,6 @@ import org.hardsign.models.requests.BaseBotRequest;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class StopActivityRequest extends BaseBotRequest {
+public class DeleteTimestampByIdRequest extends BaseBotRequest {
     private long activityId;
 }
-

@@ -4,8 +4,7 @@ import okhttp3.OkHttpClient;
 import org.hardsign.clients.RpcBaseClient;
 import org.hardsign.models.JikanResponse;
 import org.hardsign.models.activities.ActivityDto;
-import org.hardsign.models.activities.CreateActivityRequest;
-import org.hardsign.models.activities.UpdateActivityRequest;
+import org.hardsign.models.activities.requests.*;
 import org.hardsign.models.settings.BotSettings;
 import org.hardsign.services.Authorizer;
 
@@ -17,13 +16,13 @@ public class ActivitiesClientImpl extends RpcBaseClient implements ActivitiesCli
     }
 
     @Override
-    public JikanResponse<ActivityDto[]> getAll() {
+    public JikanResponse<ActivityDto[]> getAll(GetAllActivitiesRequest request) {
         return get("", ActivityDto[].class);
     }
 
     @Override
-    public JikanResponse<ActivityDto> getById(long id) {
-        return get(Long.toString(id), ActivityDto.class);
+    public JikanResponse<ActivityDto> getById(GetActivityByIdRequest request) {
+        return get(Long.toString(request.getActivityId()), ActivityDto.class);
     }
 
     @Override
@@ -37,8 +36,8 @@ public class ActivitiesClientImpl extends RpcBaseClient implements ActivitiesCli
     }
 
     @Override
-    public JikanResponse<?> delete(long id) {
-        return delete(Long.toString(id), null, Object.class);
+    public JikanResponse<?> delete(DeleteActivityRequest request) {
+        return delete(Long.toString(request.getActivityId()), null, Object.class);
     }
 }
 

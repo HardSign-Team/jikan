@@ -5,9 +5,7 @@ import org.hardsign.clients.RpcBaseClient;
 import org.hardsign.models.JikanResponse;
 import org.hardsign.models.settings.BotSettings;
 import org.hardsign.models.timestamps.TimestampDto;
-import org.hardsign.models.timestamps.requests.GetAllTimestampsRequest;
-import org.hardsign.models.timestamps.requests.StartActivityRequest;
-import org.hardsign.models.timestamps.requests.StopActivityRequest;
+import org.hardsign.models.timestamps.requests.*;
 import org.hardsign.services.Authorizer;
 
 import java.util.function.Supplier;
@@ -26,8 +24,8 @@ public class TimestampsClientImpl extends RpcBaseClient implements TimestampsCli
     }
 
     @Override
-    public JikanResponse<TimestampDto> getById(long id) {
-        return get(Long.toString(id), TimestampDto.class);
+    public JikanResponse<TimestampDto> getById(GetTimestampByIdRequest request) {
+        return get(Long.toString(request.getTimestampId()), TimestampDto.class);
     }
 
     @Override
@@ -41,7 +39,7 @@ public class TimestampsClientImpl extends RpcBaseClient implements TimestampsCli
     }
 
     @Override
-    public JikanResponse<?> delete(long id) {
-        return delete(Long.toString(id), null, Object.class);
+    public JikanResponse<?> delete(DeleteTimestampByIdRequest request) {
+        return delete(Long.toString(request.getActivityId()), null, Object.class);
     }
 }

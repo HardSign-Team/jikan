@@ -1,4 +1,4 @@
-package org.hardsign.models.timestamps.requests;
+package org.hardsign.models.activities.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,6 @@ import org.hardsign.models.requests.BaseBotRequest;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class StopActivityRequest extends BaseBotRequest {
+public class DeleteActivityRequest extends BaseBotRequest {
     private long activityId;
 }
-
