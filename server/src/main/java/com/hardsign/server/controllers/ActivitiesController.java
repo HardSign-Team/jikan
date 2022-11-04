@@ -11,9 +11,7 @@ import com.hardsign.server.models.activities.requests.PatchActivityRequest;
 import com.hardsign.server.models.users.User;
 import com.hardsign.server.services.activities.ActivitiesService;
 import com.hardsign.server.services.user.CurrentUserProvider;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,44 +49,38 @@ public class ActivitiesController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ActivityModel> getActivityById(@Valid @Min(1) @PathVariable long id) {
+    public ActivityModel getActivityById(@Valid @Min(1) @PathVariable long id) {
         var user = getUserOrThrow();
 
         return activityService.findById(user, id)
                 .map(mapper::mapToModel)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(NotFoundException::new);
     }
 
     @PostMapping(value = "create", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ActivityModel> create(@Valid @RequestBody CreateActivityRequest request) {
+    public ActivityModel create(@Valid @RequestBody CreateActivityRequest request) {
         var user = getUserOrThrow();
 
         var activity = activityService.save(user, request.getName());
-        var activityModel = mapper.mapToModel(activity);
 
-        return ResponseEntity.ok(activityModel);
+        return mapper.mapToModel(activity);
     }
 
     @DeleteMapping(value = "{id}")
-    public ResponseEntity<?> delete(@Valid @Min(1) @PathVariable long id) {
+    public void delete(@Valid @Min(1) @PathVariable long id) {
         var user = getUserOrThrow();
 
         var activity = activityService.findById(user, id)
                 .orElseThrow(NotFoundException::new);
 
         activityService.delete(activity.getId());
-
-        return ResponseEntity.ok("Success.");
     }
 
     @PatchMapping()
-    public HttpEntity<?> update(@Valid @RequestBody PatchActivityRequest request) {
-
+    public ActivityModel update(@Valid @RequestBody PatchActivityRequest request) {
         return activityService.update(request.getId(), new ActivityPatch(request.getName()))
                 .map(mapper::mapToModel)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.badRequest().build());
+                .orElseThrow(NotFoundException::new);
     }
 
     private User getUserOrThrow() {
