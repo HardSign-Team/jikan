@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface ActivitiesService {
     List<Activity> findAllActivitiesByUser(User user);
 
-    Optional<Activity> findById(long id);
+    Optional<Activity> findById(User user, long id);
 
     Activity save(User user, String name);
 

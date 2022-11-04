@@ -47,7 +47,9 @@ public class ActivitiesController {
 
     @GetMapping("{id}")
     public ResponseEntity<ActivityModel> getActivityById(@PathVariable("id") long id) {
-        return activityService.findById(id)
+        var user = currentUserProvider.getCurrentUser().orElseThrow(ForbiddenException::new); // todo: (tebaikin) 04.11.2022 extract method
+
+        return activityService.findById(user, id)
                 .map(mapper::mapToModel)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

@@ -30,8 +30,9 @@ public class ActivitiesServiceImpl implements ActivitiesService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<Activity> findById(long id) {
-        return repository.findById(id).map(mapper::map);
+    public Optional<Activity> findById(User user, long id) {
+        var entity = repository.findActivityEntityByIdAndUserId(id, user.getId());
+        return entity.map(mapper::map);
     }
 
     public Activity save(User user, String name) {
