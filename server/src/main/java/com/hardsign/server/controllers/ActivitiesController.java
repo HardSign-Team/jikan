@@ -4,6 +4,7 @@ package com.hardsign.server.controllers;
 import com.hardsign.server.exceptions.NotFoundException;
 import com.hardsign.server.exceptions.UnauthorizedException;
 import com.hardsign.server.mappers.Mapper;
+import com.hardsign.server.models.activities.Activity;
 import com.hardsign.server.models.activities.ActivityModel;
 import com.hardsign.server.models.activities.ActivityPatch;
 import com.hardsign.server.models.activities.requests.CreateActivityRequest;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RestController
@@ -52,7 +54,8 @@ public class ActivitiesController {
     public ActivityModel getActivityById(@Valid @Min(1) @PathVariable long id) {
         var user = getUserOrThrow();
 
-        return activityService.findById(user, id)
+        return activityService.findById(id)
+                .filter(isOwnedBy(user))
                 .map(mapper::mapToModel)
                 .orElseThrow(NotFoundException::new);
     }
@@ -70,7 +73,8 @@ public class ActivitiesController {
     public void delete(@Valid @Min(1) @PathVariable long id) {
         var user = getUserOrThrow();
 
-        var activity = activityService.findById(user, id)
+        var activity = activityService.findById(id)
+                .filter(isOwnedBy(user))
                 .orElseThrow(NotFoundException::new);
 
         activityService.delete(activity.getId());
@@ -78,9 +82,18 @@ public class ActivitiesController {
 
     @PatchMapping()
     public ActivityModel update(@Valid @RequestBody PatchActivityRequest request) {
-        return activityService.update(request.getId(), new ActivityPatch(request.getName()))
+        var user = getUserOrThrow();
+
+        var patch = new ActivityPatch(request.getName());
+
+        return activityService.update(request.getId(), patch)
+                .filter(isOwnedBy(user))
                 .map(mapper::mapToModel)
                 .orElseThrow(NotFoundException::new);
+    }
+
+    private Predicate<Activity> isOwnedBy(User user) {
+        return x -> x.getUserId() == user.getId();
     }
 
     private User getUserOrThrow() {

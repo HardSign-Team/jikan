@@ -7,4 +7,8 @@ import org.springframework.lang.Nullable;
 public class ActivityPatch {
     @Nullable
     private String name;
+
+    public ActivityPatch(@Nullable String name) {
+        this.name = name;
+    }
 }
