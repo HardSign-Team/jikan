@@ -1,17 +1,16 @@
-package com.hardsign.server.models.timestamps;
+package org.hardsign.models.timestamps;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TimestampModel {
+public class TimestampDto {
     private long id;
     private long activityId;
     private Date start;

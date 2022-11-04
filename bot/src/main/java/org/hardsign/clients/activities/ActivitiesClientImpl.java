@@ -38,7 +38,7 @@ public class ActivitiesClientImpl extends RpcBaseClient implements ActivitiesCli
 
     @Override
     public JikanResponse<?> delete(long id) {
-        return delete(Long.toString(id), null, ActivityDto.class);
+        return delete(Long.toString(id), null, Object.class);
     }
 }
 

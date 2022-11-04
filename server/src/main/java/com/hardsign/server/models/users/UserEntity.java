@@ -1,9 +1,12 @@
 package com.hardsign.server.models.users;
 
+import lombok.Builder;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
+@Builder
 public class UserEntity {
 
     @Id
