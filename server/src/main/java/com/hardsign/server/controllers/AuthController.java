@@ -1,5 +1,6 @@
 package com.hardsign.server.controllers;
 
+import com.hardsign.server.exceptions.UnauthorizedException;
 import com.hardsign.server.models.auth.JwtRequest;
 import com.hardsign.server.models.auth.JwtResponse;
 import com.hardsign.server.models.auth.RefreshJwtRequest;
@@ -27,9 +28,7 @@ public class AuthController {
             var token = authService.login(authRequest);
             return ResponseEntity.ok(token);
         } catch (AuthException e) {
-            return ResponseEntity
-                    .status(401)
-                    .build();
+            throw new UnauthorizedException();
         }
     }
 
@@ -39,9 +38,7 @@ public class AuthController {
             var token = authService.getAccessToken(request.getRefreshToken());
             return ResponseEntity.ok(token);
         } catch (AuthException e) {
-            return ResponseEntity
-                    .status(401)
-                    .build();
+            throw new UnauthorizedException();
         }
     }
 
@@ -51,9 +48,7 @@ public class AuthController {
             final JwtResponse token = authService.refresh(request.getRefreshToken());
             return ResponseEntity.ok(token);
         } catch (AuthException e) {
-            return ResponseEntity
-                    .status(401)
-                    .build();
+            throw new UnauthorizedException();
         }
     }
 }
