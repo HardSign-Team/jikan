@@ -38,6 +38,7 @@ public abstract class RpcBaseClient {
         var request = new Request.Builder()
                 .url(endpoint)
                 .get()
+                .header("Authorization", "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHJpbmciLCJleHAiOjE2Njc1ODM3MTgsIm5hbWUiOiJzdHJpbmcifQ.rnWJTdjBMJlsnLAx9apKucHl-i5Tc1GhAHjDjP2ml6H7GFQG5B4BYvqUkT3R5jIHU4wsA30YRZzpbkN1tep9bQ")
                 .build();
         try {
             try (var response = client.newCall(request).execute()) {

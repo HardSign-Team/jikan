@@ -23,7 +23,6 @@ public class JikanResponse<T> {
         this.error = error;
     }
 
-    @Nullable
     public T getValue() throws Exception {
         if (error != null)
             throw new Exception(error);

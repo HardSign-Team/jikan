@@ -1,21 +1,14 @@
 package org.hardsign.models.activities;
 
-import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ActivityDto {
-    private final UUID id;
-    private final String name;
-
-    public ActivityDto(UUID id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
+    private long id;
+    private long userId;
+    private String name;
 }

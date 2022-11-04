@@ -7,8 +7,6 @@ import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.models.activities.ActivityDto;
 
-import java.util.UUID;
-
 public class ActivitiesPressHandler implements KeyboardPressHandler {
     private final TelegramBot bot;
 
@@ -32,7 +30,7 @@ public class ActivitiesPressHandler implements KeyboardPressHandler {
 
     private String toText(ActivityDto[] activities) {
         var sb = new StringBuilder();
-        for (int i = 0; i < activities.length; i++) {
+        for (var i = 0; i < activities.length; i++) {
             sb.append(i)
                     .append(". ")
                     .append(activities[i].getName())
@@ -48,10 +46,10 @@ public class ActivitiesPressHandler implements KeyboardPressHandler {
     private ActivityDto[] getActivities(Long userId) {
         // TODO: 30.10.2022 not implemented. Uses mocked values
         return new ActivityDto[] {
-          new ActivityDto(UUID.randomUUID(), "Work"),
-          new ActivityDto(UUID.randomUUID(), "Study"),
-          new ActivityDto(UUID.randomUUID(), "Books"),
-          new ActivityDto(UUID.randomUUID(), "Games"),
+          new ActivityDto(1, 0, "Work"),
+          new ActivityDto(1, 0, "Study"),
+          new ActivityDto(1, 0, "Books"),
+          new ActivityDto(1, 0, "Games"),
         };
     }
 }
