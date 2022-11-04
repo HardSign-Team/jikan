@@ -1,5 +1,6 @@
 package com.hardsign.server.controllers;
 
+import com.hardsign.server.exceptions.ForbiddenException;
 import com.hardsign.server.exceptions.NotFoundException;
 import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.timestamps.TimestampModel;
@@ -57,12 +58,19 @@ public class TimestampsController {
     }
 
     @GetMapping("{id}")
-    @ResponseBody
-    public ResponseEntity<TimestampModel> getTimestampById(@PathVariable("id") long id) {
-        return timestampService.findById(id)
-                .map(mapper::mapToModel)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public TimestampModel getTimestampById(@PathVariable("id") long id) {
+        var user = getUserOrThrow();
+
+        var timestamp = timestampService.findById(id)
+                .orElseThrow(NotFoundException::new);
+
+        var activity = activitiesService.findById(timestamp.getActivityId())
+                .orElseThrow(NotFoundException::new);
+
+        if (!user.hasAccess(activity))
+            throw new ForbiddenException("Has not access to activity.");
+
+        return mapper.mapToModel(timestamp);
     }
 
     @PostMapping(value = "start")

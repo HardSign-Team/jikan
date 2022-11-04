@@ -7,6 +7,6 @@ import java.util.function.Predicate;
 
 public class ActivitiesUtils {
     public static Predicate<? super Activity> isOwnedBy(User user) {
-        return x -> x.getUserId() == user.getId();
+        return user::hasAccess; // todo: (tebaikin) 04.11.2022 inline
     }
 }

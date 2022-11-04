@@ -1,5 +1,7 @@
 package com.hardsign.server.models.users;
 
+import com.hardsign.server.models.activities.Activity;
+
 public class User {
     private final long id;
     private final String name;
@@ -21,5 +23,9 @@ public class User {
 
     public String getLogin() {
         return login;
+    }
+
+    public boolean hasAccess(Activity activity) {
+        return activity.getUserId() == id;
     }
 }
