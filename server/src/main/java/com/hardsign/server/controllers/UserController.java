@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @GetMapping("{login}")
-    public UserModel getUser(@PathVariable String login){
+    public UserModel getUserByLogin(@PathVariable String login){
         var userEntity = userRepository.findFirstByLogin(login)
                 .orElseThrow(NotFoundException::new);
 
