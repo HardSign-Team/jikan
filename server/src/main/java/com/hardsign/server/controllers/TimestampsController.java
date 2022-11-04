@@ -6,6 +6,7 @@ import com.hardsign.server.exceptions.NotFoundException;
 import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.activities.Activity;
 import com.hardsign.server.models.timestamps.TimestampModel;
+import com.hardsign.server.models.timestamps.requests.DeleteTimestampRequest;
 import com.hardsign.server.models.timestamps.requests.GetAllTimestampsRequest;
 import com.hardsign.server.models.timestamps.requests.StartTimestampRequest;
 import com.hardsign.server.models.timestamps.requests.StopTimestampRequest;
@@ -15,7 +16,6 @@ import com.hardsign.server.services.time.TimeProviderService;
 import com.hardsign.server.services.timestamps.TimestampsService;
 import com.hardsign.server.services.user.CurrentUserProvider;
 import com.hardsign.server.utils.users.UserUtils;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -99,11 +99,19 @@ public class TimestampsController {
         return mapper.mapToModel(timestamp);
     }
 
-    @GetMapping(value = "delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable long id) {
-        timestampService.delete(id);
+    @PostMapping(value = "delete")
+    public void delete(@Valid @RequestBody DeleteTimestampRequest request) {
+        var user = getUserOrThrow();
 
-        return ResponseEntity.ok("OK");
+        var timestamp = timestampService.findById(request.getTimestampId())
+                .orElseThrow(NotFoundException::new);
+
+        var activity = activitiesService.findById(timestamp.getActivityId())
+                        .orElseThrow(NotFoundException::new);
+
+        validateHasAccess(user, activity);
+
+        timestampService.delete(timestamp.getId());
     }
 
     private User getUserOrThrow() {
