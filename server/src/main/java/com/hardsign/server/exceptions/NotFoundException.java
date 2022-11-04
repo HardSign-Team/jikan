@@ -9,3 +9,4 @@ public class NotFoundException extends ResponseStatusException {
         super(HttpStatus.NOT_FOUND, "Not found.");
     }
 }
+

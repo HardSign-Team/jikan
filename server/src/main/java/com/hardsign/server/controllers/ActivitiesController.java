@@ -1,8 +1,8 @@
 package com.hardsign.server.controllers;
 
 
-import com.hardsign.server.exceptions.ForbiddenException;
 import com.hardsign.server.exceptions.NotFoundException;
+import com.hardsign.server.exceptions.UnauthorizedException;
 import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.activities.ActivityModel;
 import com.hardsign.server.models.activities.ActivityPatch;
@@ -93,6 +93,6 @@ public class ActivitiesController {
 
     private User getUserOrThrow() {
         return currentUserProvider.getCurrentUser()
-                .orElseThrow(ForbiddenException::new);
+                .orElseThrow(UnauthorizedException::new);
     }
 }
