@@ -37,7 +37,7 @@ public class ActivitiesController {
         this.currentUserProvider = currentUserProvider;
     }
 
-    @GetMapping
+    @GetMapping()
     public List<ActivityModel> getAllActivities() {
         var user = getUserOrThrow();
 
