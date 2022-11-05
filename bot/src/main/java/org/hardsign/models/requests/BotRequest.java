@@ -6,7 +6,7 @@ import org.hardsign.models.auth.TelegramUserAuthMeta;
 
 @Getter
 @AllArgsConstructor
-public abstract class BotRequest<TRequest> {
+public class BotRequest<TRequest> {
     private final TRequest request;
     private final TelegramUserAuthMeta userMeta;
 }

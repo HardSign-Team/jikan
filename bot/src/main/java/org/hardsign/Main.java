@@ -35,7 +35,7 @@ public class Main {
 
         var token = settings.getBotTelegramToken();
         var bot = new TelegramBot(token);
-        var updateListener = new UpdateListenerImpl(jikanApiClient, bot);
+        var updateListener = new UpdateListenerImpl(jikanApiClient, authorizer, bot);
         bot.setUpdatesListener(updateListener);
     }
 
