@@ -1,4 +1,4 @@
-package org.hardsign.models.timestamps.requests;
+package org.hardsign.models.users.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetTimestampByIdRequest {
-    private long timestampId;
+public class GetUserByIdRequest {
+    private long userId;
 }

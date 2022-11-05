@@ -31,10 +31,16 @@ public class JikanResponse<T> {
         return Optional.ofNullable(this.value);
     }
 
-    public Optional<T> getValueOrThrow() throws Exception {
+    public T getValueOrThrow() throws Exception {
+        ensureSuccess();
+        if (value == null)
+            throw new Exception("Value was null");
+        return value;
+    }
+
+    public void ensureSuccess() throws Exception {
         if (isFail())
             throw new Exception("Jikan response with code " + code + ". Error: " + error);
-        return Optional.ofNullable(this.value);
     }
 
     public int getCode() {

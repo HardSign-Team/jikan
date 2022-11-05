@@ -9,6 +9,7 @@ import org.hardsign.models.settings.BotSettings;
 import org.hardsign.models.users.UserDto;
 import org.hardsign.models.users.requests.CreateUserRequest;
 import org.hardsign.models.users.requests.FindUserByLoginRequest;
+import org.hardsign.models.users.requests.GetUserByIdRequest;
 import org.hardsign.services.auth.Authorizer;
 
 import java.util.function.Supplier;
@@ -36,6 +37,18 @@ public class UsersClientImpl extends BotBaseClient implements UsersClient {
         var login = request.getRequest().getLogin();
         return send(
                 "login/" + login,
+                request.getUserMeta(),
+                r -> r
+                        .removeHeader(BotBaseClient.JIKAN_SERVICE_AUTHORIZATION)
+                        .get(),
+                UserDto.class);
+    }
+
+    @Override
+    public JikanResponse<UserDto> getUserById(BotRequest<GetUserByIdRequest> request) {
+        var userId = request.getRequest().getUserId();
+        return send(
+                Long.toString(userId),
                 request.getUserMeta(),
                 r -> r
                         .removeHeader(BotBaseClient.JIKAN_SERVICE_AUTHORIZATION)

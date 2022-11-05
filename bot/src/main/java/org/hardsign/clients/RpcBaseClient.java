@@ -8,7 +8,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.hardsign.models.JikanResponse;
-import org.hardsign.models.errors.SpringErrorDto;
 import org.hardsign.models.settings.BotSettings;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,8 +74,7 @@ public abstract class RpcBaseClient {
         try {
             return new JikanResponse<>(objectMapper.readValue(responseBodyBytes, type), response.code());
         } catch (JsonMappingException e) {
-            var err = objectMapper.readValue(responseBodyBytes, SpringErrorDto.class);
-            return new JikanResponse<>(err.getStatus(), err.getError());
+            return new JikanResponse<>(response.code(), response.message());
         }
     }
 

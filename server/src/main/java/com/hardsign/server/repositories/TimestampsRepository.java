@@ -11,5 +11,7 @@ import java.util.Optional;
 public interface TimestampsRepository extends JpaRepository<TimestampEntity, Long> {
     Optional<TimestampEntity> findFirstByActivityIdAndEndIsNull(long id);
 
+    Optional<TimestampEntity> findTopByActivityIdOrderByStartDesc(long id);
+
     List<TimestampEntity> findTimestampEntitiesByActivityIdOrderByStartAsc(long id);
 }

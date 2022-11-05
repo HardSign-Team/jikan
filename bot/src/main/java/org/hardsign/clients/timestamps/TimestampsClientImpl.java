@@ -30,6 +30,12 @@ public class TimestampsClientImpl extends BotBaseClient implements TimestampsCli
     }
 
     @Override
+    public JikanResponse<TimestampDto> getLast(BotRequest<GetLastTimestampByActivityIdRequest> request) {
+        var url = "newest/" + request.getRequest().getActivityId();
+        return get(url, request, TimestampDto.class);
+    }
+
+    @Override
     public JikanResponse<TimestampDto> start(BotRequest<StartActivityRequest> request) {
         return post("start", request, TimestampDto.class);
     }

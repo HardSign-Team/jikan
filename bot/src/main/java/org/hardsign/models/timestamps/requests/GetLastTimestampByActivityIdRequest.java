@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetTimestampByIdRequest {
-    private long timestampId;
+public class GetLastTimestampByActivityIdRequest {
+    private long activityId;
 }

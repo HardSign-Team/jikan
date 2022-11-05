@@ -4,9 +4,11 @@ import com.pengrad.telegrambot.TelegramBot;
 import okhttp3.OkHttpClient;
 import org.hardsign.clients.JikanApiClientImpl;
 import org.hardsign.models.settings.BotSettings;
+import org.hardsign.repositories.UserStateRepositoryImpl;
 import org.hardsign.services.auth.AuthorizerImpl;
 import org.hardsign.services.settings.EnvironmentSettingsParserImpl;
 import org.hardsign.services.UpdateListenerImpl;
+import org.hardsign.services.users.UserStateServiceImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
@@ -27,6 +29,9 @@ public class Main {
         var settings = parser.parse();
         Supplier<BotSettings> settingsProvider = () -> settings;
 
+        var userStateRepository = new UserStateRepositoryImpl();
+        var userStateService = new UserStateServiceImpl(userStateRepository);
+
         var okClient = new OkHttpClient();
         var authorizer = new AuthorizerImpl(okClient, settingsProvider);
         authorizer.init();
@@ -35,7 +40,7 @@ public class Main {
 
         var token = settings.getBotTelegramToken();
         var bot = new TelegramBot(token);
-        var updateListener = new UpdateListenerImpl(jikanApiClient, authorizer, bot);
+        var updateListener = new UpdateListenerImpl(jikanApiClient, bot, userStateService);
         bot.setUpdatesListener(updateListener);
     }
 

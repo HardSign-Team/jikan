@@ -5,51 +5,66 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
+import org.hardsign.clients.JikanApiClient;
+import org.hardsign.models.ButtonNames;
+import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
+import org.hardsign.models.activities.requests.GetAllActivitiesRequest;
+import org.hardsign.models.auth.TelegramUserMeta;
+import org.hardsign.models.requests.BotRequest;
+
+import java.util.Objects;
 
 public class ActivitiesPressHandler implements KeyboardPressHandler {
     private final TelegramBot bot;
+    private final JikanApiClient jikanApiClient;
 
-    public ActivitiesPressHandler(TelegramBot bot) {
+    public ActivitiesPressHandler(TelegramBot bot, JikanApiClient jikanApiClient) {
         this.bot = bot;
+        this.jikanApiClient = jikanApiClient;
     }
 
     @Override
-    public void handle(Update update) {
-        var userId = update.message().from().id();
-        var activities = getActivities(userId);
+    public void handle(Update update, UpdateContext context) throws Exception {
+        if (!context.isRegistered())
+            return;
+
+        var user = update.message().from();
+        if (user.isBot())
+            return;
+
+        if (!context.getState().isDefault())
+            return;
+
+        var message = update.message().text();
+        if (!Objects.equals(message, ButtonNames.ACTIVITIES.getName()))
+            return;
+
+        var activities = getActivities(context.getMeta());
         var text = toText(activities);
-        var request = new SendMessage(update.message().chat().id(), text)
-                .replyMarkup(new ReplyKeyboardMarkup(new KeyboardButton[][]{
-                        new KeyboardButton[] {
-                                new KeyboardButton(ButtonNames.CREATE_ACTIVITY.getName())
-                        }
-                }));
-        var response = bot.execute(request);
+        var replyMarkup = new ReplyKeyboardMarkup(new KeyboardButton(ButtonNames.CREATE_ACTIVITY.getName()))
+                .resizeKeyboard(true)
+                .oneTimeKeyboard(true);
+        var sendMessage = new SendMessage(update.message().chat().id(), text)
+                .replyMarkup(replyMarkup);
+        bot.execute(sendMessage);
     }
 
     private String toText(ActivityDto[] activities) {
+        if (activities.length == 0)
+            return "У тебя еще нет активностей. Можешь добавить их :)";
+
         var sb = new StringBuilder();
         for (var i = 0; i < activities.length; i++) {
-            sb.append(i)
-                    .append(". ")
-                    .append(activities[i].getName())
-                    .append(".")
-                    .append(System.lineSeparator())
-                    .append("Select: ")
-                    .append("/sa_")
+            sb.append(i + 1)
+                    .append(". ").append(activities[i].getName()).append(". /sa_")
                     .append(activities[i].getId()).append(System.lineSeparator());
         }
         return sb.toString();
     }
 
-    private ActivityDto[] getActivities(Long userId) {
-        // TODO: 30.10.2022 not implemented. Uses mocked values
-        return new ActivityDto[] {
-          new ActivityDto(1, 0, "Work"),
-          new ActivityDto(1, 0, "Study"),
-          new ActivityDto(1, 0, "Books"),
-          new ActivityDto(1, 0, "Games"),
-        };
+    private ActivityDto[] getActivities(TelegramUserMeta meta) throws Exception {
+        var request = new BotRequest<>(new GetAllActivitiesRequest(), meta);
+        return jikanApiClient.activities().getAll(request).getValueOrThrow();
     }
 }

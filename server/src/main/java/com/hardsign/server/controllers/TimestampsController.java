@@ -73,6 +73,21 @@ public class TimestampsController {
         return mapper.mapToModel(timestamp);
     }
 
+    @GetMapping("newest/{activityId}")
+    public TimestampModel getLastTimestampByActivityId(@PathVariable("activityId") long activityId) {
+        var user = getUserOrThrow();
+
+        var activity = activitiesService.findById(activityId)
+                .orElseThrow(NotFoundException::new);
+
+        validateHasAccess(user, activity);
+
+        var timestamp = timestampService.getLast(activityId)
+                .orElseThrow(NotFoundException::new);
+
+        return mapper.mapToModel(timestamp);
+    }
+
     @PostMapping(value = "start")
     public TimestampModel start(@Valid @RequestBody StartTimestampRequest request) throws DomainException {
         var user = getUserOrThrow();

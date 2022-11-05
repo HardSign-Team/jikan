@@ -8,7 +8,7 @@ import org.hardsign.clients.RpcBaseClient;
 import org.hardsign.clients.RpcClient;
 import org.hardsign.models.JikanResponse;
 import org.hardsign.models.auth.JwtTokenDto;
-import org.hardsign.models.auth.TelegramUserAuthMeta;
+import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.auth.requests.LoginRequest;
 import org.hardsign.models.settings.BotSettings;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +33,7 @@ public class AuthorizerImpl implements Authorizer {
         var settings = settingsProvider.get();
         var request = new LoginRequest(settings.getBotLogin(), settings.getBotPassword());
 
-        jwtToken = requestLogin(request).getValueOrThrow().orElseThrow(() -> new Exception("JWT was null."));
+        jwtToken = requestLogin(request).getValueOrThrow();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class AuthorizerImpl implements Authorizer {
     }
 
     @Override
-    public String authorizeUser(TelegramUserAuthMeta meta) {
+    public String authorizeUser(TelegramUserMeta meta) {
         var result = toJsonSafety(meta);
         return result == null ? "" : Base64.getEncoder().encodeToString(result.getBytes());
     }

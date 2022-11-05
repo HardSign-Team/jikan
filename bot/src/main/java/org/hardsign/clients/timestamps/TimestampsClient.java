@@ -8,6 +8,7 @@ import org.hardsign.models.timestamps.requests.*;
 public interface TimestampsClient {
     JikanResponse<TimestampDto[]> getAll(BotRequest<GetAllTimestampsRequest> request);
     JikanResponse<TimestampDto> getById(BotRequest<GetTimestampByIdRequest> request);
+    JikanResponse<TimestampDto> getLast(BotRequest<GetLastTimestampByActivityIdRequest> request);
     JikanResponse<TimestampDto> start(BotRequest<StartActivityRequest> request);
     JikanResponse<TimestampDto> stop(BotRequest<StopActivityRequest> request);
     JikanResponse<?> delete(BotRequest<DeleteTimestampByIdRequest> request);

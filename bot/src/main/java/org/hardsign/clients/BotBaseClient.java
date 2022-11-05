@@ -4,7 +4,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.hardsign.models.JikanResponse;
-import org.hardsign.models.auth.TelegramUserAuthMeta;
+import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.settings.BotSettings;
 import org.hardsign.services.auth.Authorizer;
@@ -50,7 +50,7 @@ public abstract class BotBaseClient extends RpcBaseClient{
 
     public  <TResponse> JikanResponse<TResponse> send(
             String url,
-            TelegramUserAuthMeta meta,
+            TelegramUserMeta meta,
             Function<Request.Builder, Request.Builder> requestSetup,
             Class<TResponse> typeHint) {
         return super.send(

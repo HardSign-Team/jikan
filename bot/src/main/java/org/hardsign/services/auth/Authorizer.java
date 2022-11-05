@@ -1,8 +1,8 @@
 package org.hardsign.services.auth;
 
-import org.hardsign.models.auth.TelegramUserAuthMeta;
+import org.hardsign.models.auth.TelegramUserMeta;
 
 public interface Authorizer {
     String authorizeBot();
-    String authorizeUser(TelegramUserAuthMeta meta);
+    String authorizeUser(TelegramUserMeta meta);
 }

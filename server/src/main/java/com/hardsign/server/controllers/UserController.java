@@ -37,6 +37,16 @@ public class UserController {
         return mapper.mapToModel(user);
     }
 
+    @GetMapping("{id}")
+    public UserModel getUserById(@PathVariable long id){
+        var userEntity = userRepository.findById(id)
+                .orElseThrow(NotFoundException::new);
+
+        var user = mapper.map(userEntity);
+
+        return mapper.mapToModel(user);
+    }
+
     @PostMapping
     public UserModel addUser(@RequestBody AddUserModel addUserModel){
         var user = UserEntity.builder()
