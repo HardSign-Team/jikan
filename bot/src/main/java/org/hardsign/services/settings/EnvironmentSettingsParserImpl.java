@@ -1,4 +1,4 @@
-package org.hardsign.services;
+package org.hardsign.services.settings;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.hardsign.models.settings.BotSettings;

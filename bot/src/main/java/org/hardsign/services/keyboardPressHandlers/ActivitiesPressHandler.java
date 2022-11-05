@@ -1,4 +1,4 @@
-package org.hardsign.keyboardPressHandlers;
+package org.hardsign.services.keyboardPressHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;

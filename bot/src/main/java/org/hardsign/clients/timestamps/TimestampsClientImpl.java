@@ -7,7 +7,7 @@ import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.settings.BotSettings;
 import org.hardsign.models.timestamps.TimestampDto;
 import org.hardsign.models.timestamps.requests.*;
-import org.hardsign.services.Authorizer;
+import org.hardsign.services.auth.Authorizer;
 
 import java.util.function.Supplier;
 

@@ -1,4 +1,4 @@
-package org.hardsign.services;
+package org.hardsign.services.auth;
 
 import org.hardsign.models.auth.TelegramUserAuthMeta;
 

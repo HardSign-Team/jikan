@@ -1,4 +1,4 @@
-package org.hardsign.services;
+package org.hardsign.services.settings;
 
 import org.hardsign.models.settings.BotSettings;
 

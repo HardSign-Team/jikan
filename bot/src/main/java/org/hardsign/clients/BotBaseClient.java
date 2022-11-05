@@ -7,7 +7,7 @@ import org.hardsign.models.JikanResponse;
 import org.hardsign.models.auth.TelegramUserAuthMeta;
 import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.settings.BotSettings;
-import org.hardsign.services.Authorizer;
+import org.hardsign.services.auth.Authorizer;
 
 import java.util.function.Function;
 import java.util.function.Supplier;

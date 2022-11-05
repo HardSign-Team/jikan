@@ -6,7 +6,7 @@ import org.hardsign.clients.activities.ActivitiesClientImpl;
 import org.hardsign.clients.timestamps.TimestampsClient;
 import org.hardsign.clients.timestamps.TimestampsClientImpl;
 import org.hardsign.models.settings.BotSettings;
-import org.hardsign.services.Authorizer;
+import org.hardsign.services.auth.Authorizer;
 
 import java.util.function.Supplier;
 

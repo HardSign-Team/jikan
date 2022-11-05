@@ -8,9 +8,9 @@ import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.BaseResponse;
 import org.hardsign.clients.JikanApiClient;
-import org.hardsign.keyboardPressHandlers.ActivitiesPressHandler;
-import org.hardsign.keyboardPressHandlers.ButtonNames;
-import org.hardsign.keyboardPressHandlers.KeyboardPressHandler;
+import org.hardsign.services.keyboardPressHandlers.ActivitiesPressHandler;
+import org.hardsign.services.keyboardPressHandlers.ButtonNames;
+import org.hardsign.services.keyboardPressHandlers.KeyboardPressHandler;
 
 import java.util.*;
 import java.util.logging.Logger;

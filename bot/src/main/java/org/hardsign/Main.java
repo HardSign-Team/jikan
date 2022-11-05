@@ -4,8 +4,8 @@ import com.pengrad.telegrambot.TelegramBot;
 import okhttp3.OkHttpClient;
 import org.hardsign.clients.JikanApiClientImpl;
 import org.hardsign.models.settings.BotSettings;
-import org.hardsign.services.AuthorizerImpl;
-import org.hardsign.services.EnvironmentSettingsParserImpl;
+import org.hardsign.services.auth.AuthorizerImpl;
+import org.hardsign.services.settings.EnvironmentSettingsParserImpl;
 import org.hardsign.services.UpdateListenerImpl;
 import org.jetbrains.annotations.NotNull;
 
