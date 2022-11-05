@@ -1,10 +1,16 @@
 package org.hardsign;
 
 import com.pengrad.telegrambot.TelegramBot;
-import io.github.cdimascio.dotenv.Dotenv;
+import okhttp3.OkHttpClient;
+import org.hardsign.clients.JikanApiClientImpl;
+import org.hardsign.models.settings.BotSettings;
+import org.hardsign.services.AuthorizerImpl;
+import org.hardsign.services.EnvironmentSettingsParserImpl;
+import org.hardsign.services.UpdateListenerImpl;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
+import java.net.URL;
+import java.util.function.Supplier;
 
 public class Main {
     public static void main(String[] args) {
@@ -16,26 +22,28 @@ public class Main {
     }
 
     private static void Run() throws Exception {
-        var environment = getEnvironment();
-        var token = getBotToken(environment);
+        var resourceUrl = getResourceUrl();
+        var parser = new EnvironmentSettingsParserImpl(resourceUrl);
+        var settings = parser.parse();
+        Supplier<BotSettings> settingsProvider = () -> settings;
+
+        var okClient = new OkHttpClient();
+        var authorizer = new AuthorizerImpl(okClient, settingsProvider);
+        authorizer.init();
+
+        var jikanApiClient = new JikanApiClientImpl(okClient, authorizer, settingsProvider);
+
+        var token = settings.getBotTelegramToken();
         var bot = new TelegramBot(token);
-        var updateListener = new UpdateListenerImpl(bot);
+        var updateListener = new UpdateListenerImpl(jikanApiClient, bot);
         bot.setUpdatesListener(updateListener);
     }
 
-    private static String getBotToken(@NotNull Dotenv environment) {
-        return environment.get("TELEGRAM_BOT_TOKEN");
-    }
-
-    private static Dotenv getEnvironment() throws Exception {
+    @NotNull
+    private static URL getResourceUrl() throws Exception {
         var resource = Main.class.getClassLoader().getResource("env.properties");
         if (resource == null)
             throw new Exception("Resources not found. Please, create 'env.properties' file in resources.");
-        var envProperties = new File(resource.getPath());
-        return Dotenv
-                .configure()
-                .directory(envProperties.getParent())
-                .filename(envProperties.getName())
-                .load();
+        return resource;
     }
 }

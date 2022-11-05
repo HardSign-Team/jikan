@@ -1,4 +1,4 @@
-package org.hardsign;
+package org.hardsign.services;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
@@ -7,6 +7,7 @@ import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.BaseResponse;
+import org.hardsign.clients.JikanApiClient;
 import org.hardsign.keyboardPressHandlers.ActivitiesPressHandler;
 import org.hardsign.keyboardPressHandlers.ButtonNames;
 import org.hardsign.keyboardPressHandlers.KeyboardPressHandler;
@@ -16,10 +17,12 @@ import java.util.logging.Logger;
 
 public class UpdateListenerImpl implements UpdatesListener {
     private static final Logger LOGGER = Logger.getLogger(UpdateListenerImpl.class.getName());
+    private final JikanApiClient jikanApiClient;
     private final TelegramBot bot;
     private final Map<String, KeyboardPressHandler> keyboardHandlers = new HashMap<>();
 
-    public UpdateListenerImpl(TelegramBot bot) {
+    public UpdateListenerImpl(JikanApiClient jikanApiClient, TelegramBot bot) {
+        this.jikanApiClient = jikanApiClient;
         this.bot = bot;
         keyboardHandlers.put(ButtonNames.ACTIVITIES.getName(), new ActivitiesPressHandler(bot));
     }

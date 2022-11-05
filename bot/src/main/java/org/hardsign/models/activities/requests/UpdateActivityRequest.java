@@ -3,10 +3,10 @@ package org.hardsign.models.activities.requests;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hardsign.models.requests.BaseBotRequest;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateActivityRequest extends BaseBotRequest {
+public class UpdateActivityRequest {
     private String name;
 }
