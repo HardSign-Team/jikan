@@ -26,6 +26,11 @@
             <artifactId>java-telegram-bot-api</artifactId>
             <version>6.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
+        </dependency>
     </dependencies>
 
 </project>

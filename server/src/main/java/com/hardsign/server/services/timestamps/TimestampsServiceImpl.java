@@ -59,4 +59,9 @@ public class TimestampsServiceImpl implements TimestampsService {
     public void delete(long id) {
         repository.deleteById(id);
     }
+
+    @Override
+    public Optional<Timestamp> getLast(long activityId) {
+        return repository.findTopByActivityIdOrderByStartDesc(activityId).map(mapper::map);
+    }
 }

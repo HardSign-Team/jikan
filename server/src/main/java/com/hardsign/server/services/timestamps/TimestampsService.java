@@ -17,4 +17,6 @@ public interface TimestampsService {
     Timestamp stop(long activityId, Date currentDate) throws DomainException;
 
     void delete(long id);
+
+    Optional<Timestamp> getLast(long activityId);
 }

@@ -1,10 +1,12 @@
 package com.hardsign.server.models.auth;
 
+import lombok.Builder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
+@Builder
 public class JwtAuthentication implements Authentication {
 
     private boolean authenticated;
@@ -44,13 +46,5 @@ public class JwtAuthentication implements Authentication {
     @Override
     public String getName() {
         return firstName;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
     }
 }

@@ -1,9 +1,13 @@
 package com.hardsign.server.models.users;
 
+import lombok.Builder;
+
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
+@Builder
 public class UserEntity {
 
     @Id
@@ -62,5 +66,9 @@ public class UserEntity {
 
     public void setHashedPassword(String hashedPassword) {
         this.hashedPassword = hashedPassword;
+    }
+
+    public boolean isService() {
+        return Objects.equals(login, "JikanBot"); // todo: (tebaikin) 05.11.2022 fix security
     }
 }

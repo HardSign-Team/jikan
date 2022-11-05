@@ -27,7 +27,7 @@ public class UserController {
         this.mapper = mapper;
     }
 
-    @GetMapping("{login}")
+    @GetMapping("login/{login}")
     public UserModel getUserByLogin(@PathVariable String login){
         var userEntity = userRepository.findFirstByLogin(login)
                 .orElseThrow(NotFoundException::new);
@@ -37,18 +37,28 @@ public class UserController {
         return mapper.mapToModel(user);
     }
 
+    @GetMapping("{id}")
+    public UserModel getUserById(@PathVariable long id){
+        var userEntity = userRepository.findById(id)
+                .orElseThrow(NotFoundException::new);
+
+        var user = mapper.map(userEntity);
+
+        return mapper.mapToModel(user);
+    }
+
     @PostMapping
     public UserModel addUser(@RequestBody AddUserModel addUserModel){
-        var user = new UserEntity();
-        user.setName(addUserModel.getName());
-        user.setLogin(addUserModel.getLogin());
-        user.setHashedPassword(passwordService.hash(addUserModel.getPassword()));
+        var user = UserEntity.builder()
+                .name(addUserModel.getName())
+                .login(addUserModel.getLogin())
+                .hashedPassword(passwordService.hash(addUserModel.getPassword()))
+                .build();
 
         if (userRepository.findFirstByLogin(addUserModel.getLogin()).isPresent())
             throw new BadRequestException("User with same login exists.");
 
         var result = userRepository.save(user);
-
         return mapper.mapToModel(mapper.map(result));
     }
 }
