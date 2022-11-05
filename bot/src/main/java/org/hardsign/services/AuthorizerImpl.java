@@ -13,10 +13,8 @@ import org.hardsign.models.settings.BotSettings;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
-import java.util.logging.Logger;
 
 public class AuthorizerImpl implements Authorizer {
-    private static final Logger LOGGER = Logger.getLogger("AuthorizerImpl");
     private final RpcClient client;
     private final Supplier<BotSettings> settingsProvider;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -29,8 +27,18 @@ public class AuthorizerImpl implements Authorizer {
         this.settingsProvider = settingsProvider;
     }
 
-    public void init() {
-        jwtToken = obtainJwtToken();
+    public void init() throws Exception {
+        var settings = settingsProvider.get();
+        var request = new LoginRequest(settings.getBotLogin(), settings.getBotPassword());
+
+        var json = toJsonSafety(request);
+        if (json == null) {
+            throw new Exception("Cannot obtain jwt token. To json error.");
+        }
+
+        var body = RequestBody.create(json, RpcBaseClient.JSON);
+        var result = client.send("auth/login", r -> r.post(body), JwtTokenDto.class);
+        jwtToken = result.getValueOrThrow().orElseThrow(() -> new Exception("JWT was null."));
     }
 
     @Override
@@ -43,23 +51,6 @@ public class AuthorizerImpl implements Authorizer {
     public String authorizeUser(TelegramUserAuthMeta meta) {
         var result = toJsonSafety(meta);
         return result == null ? "" : result;
-    }
-
-    @Nullable
-    private JwtTokenDto obtainJwtToken() {
-        var settings = settingsProvider.get();
-        var url = "api/auth/login";
-        var request = new LoginRequest(settings.getBotLogin(), settings.getBotPassword());
-        var json = toJsonSafety(request);
-
-        if (json == null) {
-            LOGGER.severe("Cannot obtain jwt token. To json error.");
-            return null;
-        }
-
-        var body = RequestBody.create(json, RpcBaseClient.JSON);
-        var result = client.send(url, r -> r.post(body), JwtTokenDto.class);
-        return result.getValue().orElse(null);
     }
 
     @Nullable

@@ -19,7 +19,8 @@ public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser 
                 .botTelegramToken(getOrThrow("TELEGRAM_BOT_TOKEN"))
                 .botLogin(getOrThrow("JIKAN_BOT_LOGIN"))
                 .botPassword(getOrThrow("JIKAN_BOT_PASSWORD"))
-                .baseUrl(getOrThrow("JIKAN_API_URL"))
+                .baseUrlHost(getOrThrow("JIKAN_API_HOST"))
+                .baseUrlPort(getOrThrow("JIKAN_API_PORT"))
                 .build();
     }
 

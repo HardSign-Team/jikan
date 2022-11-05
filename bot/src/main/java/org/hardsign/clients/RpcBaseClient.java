@@ -19,14 +19,16 @@ public abstract class RpcBaseClient {
     public static final MediaType JSON = MediaType.get("application/json");
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final OkHttpClient client;
-    private final Supplier<String> baseUrl;
+    private final String baseUrl;
+    private final Supplier<BotSettings> settingsProvider;
 
     protected RpcBaseClient(
             OkHttpClient client,
             String baseUrl,
             Supplier<BotSettings> settingsProvider) {
         this.client = client;
-        this.baseUrl = () -> settingsProvider.get().getBaseUrl() + baseUrl;
+        this.baseUrl = baseUrl;
+        this.settingsProvider = settingsProvider;
     }
 
     protected <TResponse> JikanResponse<TResponse> sendBody(
@@ -70,8 +72,15 @@ public abstract class RpcBaseClient {
     }
 
     private String getEndpoint(String url) {
-        var prefixUrl = baseUrl.get();
+        var prefixUrl = getBaseUrl();
         return Objects.equals(url, "") ? prefixUrl : String.format("%s/%s", prefixUrl, url);
     }
+
+    private String getBaseUrl() {
+        var host = settingsProvider.get().getBaseUrlHost();
+        var port = settingsProvider.get().getBaseUrlPort();
+        return "http://" + host + ":" + port + "/" + baseUrl;
+    }
+
 }
 

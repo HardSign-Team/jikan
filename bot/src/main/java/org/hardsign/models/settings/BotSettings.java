@@ -8,6 +8,7 @@ import lombok.Data;
 public class BotSettings {
     private String botLogin;
     private String botPassword;
-    private String baseUrl;
+    private String baseUrlHost;
+    private String baseUrlPort;
     private String botTelegramToken;
 }

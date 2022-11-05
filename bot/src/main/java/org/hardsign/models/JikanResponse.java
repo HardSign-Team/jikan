@@ -26,6 +26,14 @@ public class JikanResponse<T> {
     }
 
     public Optional<T> getValue() {
+        if (isFail())
+            return Optional.empty();
+        return Optional.ofNullable(this.value);
+    }
+
+    public Optional<T> getValueOrThrow() throws Exception {
+        if (isFail())
+            throw new Exception("Jikan response with code " + code + ". Error: " + error);
         return Optional.ofNullable(this.value);
     }
 
