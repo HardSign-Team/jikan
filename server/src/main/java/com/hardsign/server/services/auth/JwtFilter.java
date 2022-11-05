@@ -1,6 +1,10 @@
 package com.hardsign.server.services.auth;
 
 import com.hardsign.server.models.auth.JwtAuthentication;
+import com.hardsign.server.models.users.UserEntity;
+import com.hardsign.server.services.auth.authentication.ServiceJwtAuthenticator;
+import com.hardsign.server.services.auth.authentication.UserJwtAuthenticator;
+import com.hardsign.server.services.user.UserService;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -15,43 +19,41 @@ import java.io.IOException;
 
 @Component
 public class JwtFilter extends GenericFilterBean {
-    private static final String AUTHORIZATION = "Authorization";
+    private final UserJwtAuthenticator userAuthenticator;
+    private final ServiceJwtAuthenticator serviceJwtAuthenticator;
+    private final UserService userService;
 
-    private final JwtProvider jwtProvider;
-
-    public JwtFilter(JwtProvider jwtProvider) {
-        this.jwtProvider = jwtProvider;
+    public JwtFilter(
+            UserJwtAuthenticator userAuthenticator,
+            ServiceJwtAuthenticator serviceJwtAuthenticator,
+            UserService userService) {
+        this.userAuthenticator = userAuthenticator;
+        this.serviceJwtAuthenticator = serviceJwtAuthenticator;
+        this.userService = userService;
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        var token = getTokenFromRequest((HttpServletRequest) request);
-
-        if (!jwtProvider.validateAccessToken(token)){
-            chain.doFilter(request, response);
-            return;
+        var authentication = authenticate((HttpServletRequest) request);
+        if (authentication != null) {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
-        var claims = jwtProvider.getAccessClaims(token);
-
-        var jwtInfoToken = new JwtAuthentication();
-        jwtInfoToken.setFirstName(claims.get("name", String.class));
-        jwtInfoToken.setUsername(claims.getSubject());
-        jwtInfoToken.setAuthenticated(true);
-        SecurityContextHolder.getContext().setAuthentication(jwtInfoToken);
-
         chain.doFilter(request, response);
     }
 
     @Nullable
-    private String getTokenFromRequest(HttpServletRequest request) {
-        var bearer = request.getHeader(AUTHORIZATION);
-        var prefix = "Bearer ";
+    private JwtAuthentication authenticate(HttpServletRequest servletRequest) {
+        var userAuthentication = userAuthenticator.authenticate(servletRequest);
+        return userAuthentication != null && isService((String) userAuthentication.getPrincipal())
+                ? serviceJwtAuthenticator.authenticate(servletRequest)
+                : userAuthentication;
 
-        if (bearer == null || !bearer.startsWith(prefix))
-            return null;
+    }
 
-        return bearer.substring(prefix.length());
+    private boolean isService(String login) {
+        return userService.getUser(login)
+                .map(UserEntity::isService)
+                .orElse(false);
     }
 }
