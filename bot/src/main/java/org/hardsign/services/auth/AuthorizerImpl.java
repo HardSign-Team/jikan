@@ -11,11 +11,9 @@ import org.hardsign.models.auth.JwtTokenDto;
 import org.hardsign.models.auth.TelegramUserAuthMeta;
 import org.hardsign.models.auth.requests.LoginRequest;
 import org.hardsign.models.settings.BotSettings;
-import org.hardsign.models.users.UserDto;
-import org.hardsign.models.users.requests.CreateUserRequest;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
+import java.util.Base64;
 import java.util.function.Supplier;
 
 public class AuthorizerImpl implements Authorizer {
@@ -47,22 +45,7 @@ public class AuthorizerImpl implements Authorizer {
     @Override
     public String authorizeUser(TelegramUserAuthMeta meta) {
         var result = toJsonSafety(meta);
-        return result == null ? "" : result;
-    }
-
-    @Override
-    public UserDto createUser(TelegramUserAuthMeta meta) throws Exception {
-        var name = meta.getLogin();
-        var login = Long.toString(meta.getId());
-        var password = UUID.randomUUID().toString();
-        var request = new CreateUserRequest(name, login, password);
-        return requestCreateUser(request).getValueOrThrow().orElseThrow();
-    }
-
-    private JikanResponse<UserDto> requestCreateUser(CreateUserRequest request) throws JsonProcessingException {
-        var json = toJson(request);
-        var body = RequestBody.create(json, RpcBaseClient.JSON);
-        return client.send("users", r -> r.post(body), UserDto.class);
+        return result == null ? "" : Base64.getEncoder().encodeToString(result.getBytes());
     }
 
     private JikanResponse<JwtTokenDto> requestLogin(LoginRequest request) throws Exception {

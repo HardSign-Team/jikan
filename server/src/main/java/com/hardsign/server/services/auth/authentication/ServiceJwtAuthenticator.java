@@ -8,6 +8,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Base64;
 import java.util.Optional;
 
 @Service
@@ -19,6 +20,7 @@ public class ServiceJwtAuthenticator implements Authenticator {
     @Override
     public JwtAuthentication authenticate(HttpServletRequest request) {
         return obtainJson(request)
+                .map(this::decodeBase64)
                 .flatMap(this::parseJson)
                 .map(this::getAuthentication)
                 .orElse(null);
@@ -26,6 +28,10 @@ public class ServiceJwtAuthenticator implements Authenticator {
 
     private Optional<String> obtainJson(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(SERVICE_AUTHORIZATION));
+    }
+
+    private String decodeBase64(String encodedString) {
+        return new String(Base64.getDecoder().decode(encodedString.getBytes()));
     }
 
     private Optional<UserAuthMetaModel> parseJson(String json) {

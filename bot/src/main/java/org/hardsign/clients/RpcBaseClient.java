@@ -1,12 +1,14 @@
 package org.hardsign.clients;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.hardsign.models.JikanResponse;
+import org.hardsign.models.errors.SpringErrorDto;
 import org.hardsign.models.settings.BotSettings;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,7 +54,7 @@ public abstract class RpcBaseClient {
                 return toJikanResponse(response, typeHint);
             }
         } catch (Exception e) {
-            return new JikanResponse<>(500, e.getMessage());
+            return new JikanResponse<>(418, e.getMessage());
         }
     }
 
@@ -66,9 +68,16 @@ public abstract class RpcBaseClient {
 
     private <T> JikanResponse<T> toJikanResponse(Response response, Class<T> type) throws IOException {
         var responseBody = response.body();
-        return responseBody != null
-                ? new JikanResponse<>(objectMapper.readValue(responseBody.bytes(), type), response.code())
-                : new JikanResponse<>(response.code(), response.message());
+        if (responseBody == null) {
+            return new JikanResponse<>(response.code(), response.message());
+        }
+        var responseBodyBytes = responseBody.bytes();
+        try {
+            return new JikanResponse<>(objectMapper.readValue(responseBodyBytes, type), response.code());
+        } catch (JsonMappingException e) {
+            var err = objectMapper.readValue(responseBodyBytes, SpringErrorDto.class);
+            return new JikanResponse<>(err.getStatus(), err.getError());
+        }
     }
 
     private String getEndpoint(String url) {

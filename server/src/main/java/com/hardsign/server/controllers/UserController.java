@@ -3,7 +3,6 @@ package com.hardsign.server.controllers;
 import com.hardsign.server.exceptions.BadRequestException;
 import com.hardsign.server.exceptions.NotFoundException;
 import com.hardsign.server.mappers.Mapper;
-import com.hardsign.server.models.timestamps.TimestampModel;
 import com.hardsign.server.models.users.AddUserModel;
 import com.hardsign.server.models.users.UserEntity;
 import com.hardsign.server.models.users.UserModel;
@@ -28,7 +27,7 @@ public class UserController {
         this.mapper = mapper;
     }
 
-    @GetMapping("{login}")
+    @GetMapping("login/{login}")
     public UserModel getUserByLogin(@PathVariable String login){
         var userEntity = userRepository.findFirstByLogin(login)
                 .orElseThrow(NotFoundException::new);

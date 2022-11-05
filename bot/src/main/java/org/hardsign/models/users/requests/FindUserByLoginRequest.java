@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateUserRequest {
-    private String name;
+public class FindUserByLoginRequest {
     private String login;
-    private String password;
 }
-

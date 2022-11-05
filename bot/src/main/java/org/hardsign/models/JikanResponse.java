@@ -49,4 +49,6 @@ public class JikanResponse<T> {
     public boolean isFail() {
         return error != null;
     }
+
+    public boolean isSuccess() { return error == null; }
 }

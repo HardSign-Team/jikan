@@ -1,4 +1,4 @@
-package org.hardsign.services.keyboardPressHandlers;
+package org.hardsign.services.updateHandlers.keyboardPressHandlers;
 
 public enum ButtonNames {
     ACTIVITIES("Активности"),
