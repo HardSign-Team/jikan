@@ -57,4 +57,8 @@ public class JikanResponse<T> {
     }
 
     public boolean isSuccess() { return error == null; }
+
+    public boolean notFound() {
+        return HttpCodes.NotFound.is(code);
+    }
 }

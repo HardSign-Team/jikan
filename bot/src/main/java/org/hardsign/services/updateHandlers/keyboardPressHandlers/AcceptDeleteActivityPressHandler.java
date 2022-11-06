@@ -2,22 +2,22 @@ package org.hardsign.services.updateHandlers.keyboardPressHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.Emoji;
 import org.hardsign.models.UpdateContext;
+import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.activities.requests.DeleteActivityRequest;
 import org.hardsign.models.activities.requests.GetActivityByIdRequest;
 import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.users.UserState;
-import org.hardsign.models.users.UserStatePatch;
+import org.hardsign.services.updateHandlers.keyboardPressHandlers.abstracts.ConfirmationDeleteActivityPressHandler;
 import org.hardsign.services.users.UserStateService;
 
-import java.util.Objects;
-
-public class AcceptDeleteActivityPressHandler implements KeyboardPressHandler {
+public class AcceptDeleteActivityPressHandler extends ConfirmationDeleteActivityPressHandler implements KeyboardPressHandler {
 
     private final TelegramBot bot;
     private final JikanApiClient jikanApiClient;
@@ -33,42 +33,49 @@ public class AcceptDeleteActivityPressHandler implements KeyboardPressHandler {
     }
 
     @Override
-    public void handle(Update update, UpdateContext context) throws Exception {
-        if (!context.isRegistered())
-            return;
+    protected String expectedText() {
+        return ButtonNames.ACCEPT_DELETE.getName();
+    }
 
-        var user = update.message().from();
-        if (user.isBot())
-            return;
+    @Override
+    protected UserState requiredState() {
+        return UserState.DeleteActivityConfirmation;
+    }
 
-        if (context.getState() != UserState.DeleteActivityConfirmation)
-            return;
-
-        var message = update.message().text();
-        if (!Objects.equals(message, ButtonNames.ACCEPT_DELETE.getName()))
-            return;
-
-        var chatId = update.message().chat().id();
+    @Override
+    protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var state = userStateService.getState(user);
         var activityId = state.getDeleteActivityId();
 
-        userStateService.update(user, UserStatePatch.builder().state(UserState.None).deleteActivityId(0L).build());
-        context.setState(UserState.None);
+        clearState(user, userStateService, context);
 
+        var chatId = update.message().chat().id();
         if (activityId == 0) {
-            var noActivityMessage = "Произошла ошибка! Не нашли выбранную активность. Попробуйте заново (по-братски)";
-            bot.execute(new SendMessage(chatId, noActivityMessage)
-                                .replyMarkup(KeyboardFactory.createMainMenu(context, jikanApiClient)));
+            handleNotFoundActivity(bot, jikanApiClient, chatId, context);
             return;
         }
 
-        var activityRequest = new BotRequest<>(new GetActivityByIdRequest(activityId), context.getMeta());
-        var activity = jikanApiClient.activities().getById(activityRequest).getValueOrThrow();
+        var activity = getActivity(context, activityId);
+        if (activity == null) {
+            handleNotFoundActivity(bot, jikanApiClient, chatId, context);
+            return;
+        }
 
+        deleteActivity(activity, context);
+
+        var keyboard = KeyboardFactory.createMainMenu(context, jikanApiClient);
+        var text = "Вы удалили активность " + activity.getName() + " " + Emoji.Pensive.value();
+        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
+    }
+
+    private void deleteActivity(ActivityDto activity, UpdateContext context) throws Exception {
         var request = new BotRequest<>(new DeleteActivityRequest(activity.getId()), context.getMeta());
         jikanApiClient.activities().delete(request).ensureSuccess();
+    }
 
-        bot.execute(new SendMessage(chatId, "Вы удалили активность " + activity.getName() + " " + Emoji.Pensive.value())
-                            .replyMarkup(KeyboardFactory.createMainMenu(context, jikanApiClient)));
+    private ActivityDto getActivity(UpdateContext context, long activityId) throws Exception {
+        var request = new BotRequest<>(new GetActivityByIdRequest(activityId), context.getMeta());
+        var response = jikanApiClient.activities().getById(request);
+        return response.notFound() ? null : response.getValueOrThrow();
     }
 }

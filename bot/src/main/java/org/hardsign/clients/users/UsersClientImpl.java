@@ -14,6 +14,7 @@ import org.hardsign.services.auth.Authorizer;
 
 import java.util.function.Supplier;
 
+// todo: (tebaikin) 06.11.2022 refactor
 public class UsersClientImpl extends BotBaseClient implements UsersClient {
     public UsersClientImpl(OkHttpClient client, Authorizer authorizer, Supplier<BotSettings> settingsProvider) {
         super(client, "api/users", authorizer, settingsProvider);

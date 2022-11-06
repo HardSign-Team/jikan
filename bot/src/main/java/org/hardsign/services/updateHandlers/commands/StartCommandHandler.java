@@ -9,65 +9,63 @@ import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.requests.BotRequest;
+import org.hardsign.models.users.UserDto;
+import org.hardsign.models.users.UserState;
 import org.hardsign.models.users.requests.CreateUserRequest;
+import org.hardsign.services.updateHandlers.BaseTextUpdateHandler;
+import org.hardsign.services.users.UserStateService;
 
-import java.util.Objects;
 import java.util.UUID;
-import java.util.logging.Logger;
 
-public class StartCommandHandler implements CommandHandler {
-    private static final Logger LOGGER = Logger.getLogger("StartCommandHandler");
+public class StartCommandHandler extends BaseTextUpdateHandler implements CommandHandler {
     private final TelegramBot bot;
     private final JikanApiClient jikanApiClient;
+    private final UserStateService userStateService;
 
-    public StartCommandHandler(TelegramBot bot, JikanApiClient jikanApiClient) {
+    public StartCommandHandler(TelegramBot bot, JikanApiClient jikanApiClient, UserStateService userStateService) {
         this.bot = bot;
         this.jikanApiClient = jikanApiClient;
+        this.userStateService = userStateService;
     }
 
     @Override
-    public void handle(Update update, UpdateContext context) throws Exception {
-        var user = update.message().from();
-        if (user.isBot())
-            return;
+    protected String expectedText() {
+        return "/start";
+    }
 
-        if (!context.getState().isDefault())
-            return;
-
-        if (!Objects.equals(update.message().text(), "/start"))
-            return;
+    @Override
+    protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
+        if (!context.getState().isDefault()) {
+            userStateService.setState(user, UserState.None);
+            context.setState(UserState.None);
+        }
 
         var chatId = update.message().chat().id();
-
         if (!context.isRegistered()) {
-            var registered = registerUser(user, context.getMeta());
-            if (!registered) {
-                var request = new SendMessage(chatId, "Произошла ошибка при создании аккаунта. Пожалуйста, попробуйте еще раз.");
-                bot.execute(request);
-                return;
-            }
+            var apiUser = registerUser(context.getMeta());
+            context.setRegistered(true);
+            context.setUser(apiUser);
         }
 
-        bot.execute(new SendMessage(chatId, "Выберите действие")
-                .replyMarkup(KeyboardFactory.createMainMenu(context, jikanApiClient)));
+        var keyboard = KeyboardFactory.createMainMenu(context, jikanApiClient);
+        bot.execute(new SendMessage(chatId, "Выберите действие").replyMarkup(keyboard));
     }
 
-    private boolean registerUser(User user, TelegramUserMeta meta) {
-        try {
-            createUser(meta);
-            LOGGER.info("Create user id = " + user.id() + " and username = " + user.username());
-            return true;
-        } catch (Exception e) {
-            LOGGER.severe(e.getMessage());
-            return false;
-        }
+    @Override
+    protected boolean shouldBeRegistered() {
+        return false;
     }
 
-    public void createUser(TelegramUserMeta meta) throws Exception {
+    @Override
+    protected boolean shouldRequireState() {
+        return false;
+    }
+
+    public UserDto registerUser(TelegramUserMeta meta) throws Exception {
         var name = meta.getLogin();
         var login = Long.toString(meta.getId());
         var password = UUID.randomUUID().toString();
         var request = new CreateUserRequest(name, login, password);
-        jikanApiClient.users().create(new BotRequest<>(request, meta)).getValueOrThrow();
+        return jikanApiClient.users().create(new BotRequest<>(request, meta)).getValueOrThrow();
     }
 }

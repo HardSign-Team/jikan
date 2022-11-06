@@ -2,6 +2,7 @@ package org.hardsign.services.updateHandlers.commands;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
@@ -9,15 +10,19 @@ import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.Emoji;
 import org.hardsign.models.UpdateContext;
+import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.activities.requests.GetActivityByIdRequest;
+import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.users.UserState;
+import org.hardsign.models.users.UserStatePatch;
+import org.hardsign.services.updateHandlers.BaseUpdateHandler;
 import org.hardsign.services.users.UserStateService;
+import org.hardsign.utils.ValidationHelper;
 
-import java.util.Optional;
 import java.util.regex.Pattern;
 
-public class DeleteActivityCommandHandler implements CommandHandler {
+public class DeleteActivityCommandHandler extends BaseUpdateHandler implements CommandHandler {
 
     private final TelegramBot bot;
     private final JikanApiClient jikanApiClient;
@@ -34,17 +39,7 @@ public class DeleteActivityCommandHandler implements CommandHandler {
     }
 
     @Override
-    public void handle(Update update, UpdateContext context) throws Exception {
-        var user = update.message().from();
-        if (user.isBot())
-            return;
-
-        if (!context.isRegistered())
-            return;
-
-        if (!context.getState().isDefault())
-            return;
-
+    protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var text = update.message().text();
         if (text == null)
             return;
@@ -55,29 +50,28 @@ public class DeleteActivityCommandHandler implements CommandHandler {
         }
 
         var activityId = Long.parseLong(matcher.group(1));
-
         var chatId = update.message().chat().id();
         if (context.getActivityId() == activityId) {
-            bot.execute(new SendMessage(chatId, "Ай-яй-яй! Нельзя удалить текущую активность.")
-                                .replyMarkup(KeyboardFactory.createMainMenu(context, jikanApiClient)));
+            handleCurrentActivityError(chatId, context);
             return;
         }
 
-        var request = new BotRequest<>(new GetActivityByIdRequest(activityId), context.getMeta());
-        var activity = jikanApiClient.activities().getById(request).getValueOrThrow();
-
-        var isOwnActivity = Optional.ofNullable(context.getUser())
-                .map(x -> x.getId() == activity.getUserId())
-                .orElse(false);
-        if (!isOwnActivity) {
-            var notOwnText = "Ой! А это не ваша активность, вы ее удалить не можете " + Emoji.FaceWithTongue.value();
-            bot.execute(new SendMessage(chatId, notOwnText));
+        var activity = getActivity(activityId, context.getMeta());
+        if (!ValidationHelper.isOwnActivity(context.getUser(), activity)) {
+            handleNotOwnActivityError(chatId, context);
             return;
         }
 
+        handleSuccess(user, context, chatId, activity);
+    }
 
-        userStateService.setState(user, UserState.DeleteActivityConfirmation);
-        userStateService.setDeleteActivity(user, activityId);
+    private ActivityDto getActivity(long activityId, TelegramUserMeta meta) throws Exception {
+        var request = new BotRequest<>(new GetActivityByIdRequest(activityId), meta);
+        return jikanApiClient.activities().getById(request).getValueOrThrow();
+    }
+
+    private void handleSuccess(User user, UpdateContext context, Long chatId, ActivityDto activity) {
+        userStateService.update(user, createPatch(activity.getId()));
         context.setState(UserState.DeleteActivityConfirmation);
 
         var replyMarkup = new ReplyKeyboardMarkup(
@@ -85,7 +79,26 @@ public class DeleteActivityCommandHandler implements CommandHandler {
                 ButtonNames.CANCEL_DELETE.getName())
                 .resizeKeyboard(true)
                 .oneTimeKeyboard(true);
-        bot.execute(new SendMessage(chatId, "Вы уверены, что хотите удалить активность " + activity.getName() + "?")
-                            .replyMarkup(replyMarkup));
+        var text = "Вы уверены, что хотите удалить активность " + activity.getName() + "?";
+        bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup));
+    }
+
+    private void handleNotOwnActivityError(Long chatId, UpdateContext context) throws Exception {
+        var notOwnText = "Ой! А это не ваша активность, вы ее удалить не можете " + Emoji.FaceWithTongue.value();
+        bot.execute(new SendMessage(chatId, notOwnText)
+                            .replyMarkup(KeyboardFactory.createMainMenu(context, jikanApiClient)));
+    }
+
+    private void handleCurrentActivityError(Long chatId, UpdateContext context) throws Exception {
+        var text = "Ай-яй-яй! Нельзя удалить текущую активность.";
+        var keyboard = KeyboardFactory.createMainMenu(context, jikanApiClient);
+        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
+    }
+
+    private static UserStatePatch createPatch(long activityId) {
+        return UserStatePatch.builder()
+                .state(UserState.DeleteActivityConfirmation)
+                .deleteActivityId(activityId)
+                .build();
     }
 }

@@ -2,6 +2,7 @@ package org.hardsign.services.updateHandlers.keyboardPressHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
@@ -11,10 +12,9 @@ import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.activities.requests.GetAllActivitiesRequest;
 import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.requests.BotRequest;
+import org.hardsign.services.updateHandlers.BaseTextUpdateHandler;
 
-import java.util.Objects;
-
-public class DeleteActivityPressHandler implements KeyboardPressHandler {
+public class DeleteActivityPressHandler extends BaseTextUpdateHandler implements KeyboardPressHandler {
 
     private final TelegramBot bot;
     private final JikanApiClient jikanApiClient;
@@ -27,28 +27,18 @@ public class DeleteActivityPressHandler implements KeyboardPressHandler {
     }
 
     @Override
-    public void handle(Update update, UpdateContext context) throws Exception {
-        if (!context.isRegistered())
-            return;
-
-        var user = update.message().from();
-        if (user.isBot())
-            return;
-
-        if (!context.getState().isDefault())
-            return;
-
-        var message = update.message().text();
-        if (!Objects.equals(message, ButtonNames.DELETE_ACTIVITY.getName()))
-            return;
-
+    protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var activities = getActivities(context.getMeta());
         var chatId = update.message().chat().id();
         var replyMarkup = new ReplyKeyboardMarkup(ButtonNames.BACK.getName())
                 .resizeKeyboard(true)
                 .oneTimeKeyboard(true);
-        bot.execute(new SendMessage(chatId, toText(activities))
-                            .replyMarkup(replyMarkup));
+        bot.execute(new SendMessage(chatId, toText(activities)).replyMarkup(replyMarkup));
+    }
+
+    @Override
+    protected String expectedText() {
+        return ButtonNames.DELETE_ACTIVITY.getName();
     }
 
     private String toText(ActivityDto[] activities) {

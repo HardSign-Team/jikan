@@ -8,17 +8,16 @@ import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
-import org.hardsign.models.users.UserState;
-import org.hardsign.services.updateHandlers.keyboardPressHandlers.abstracts.ConfirmationDeleteActivityPressHandler;
+import org.hardsign.services.updateHandlers.BaseTextUpdateHandler;
 import org.hardsign.services.users.UserStateService;
 
-public class CancelDeleteActivityPressHandler extends ConfirmationDeleteActivityPressHandler implements KeyboardPressHandler {
+public class UnselectActivityPressHandler extends BaseTextUpdateHandler implements KeyboardPressHandler {
 
     private final TelegramBot bot;
     private final JikanApiClient jikanApiClient;
     private final UserStateService userStateService;
 
-    public CancelDeleteActivityPressHandler(
+    public UnselectActivityPressHandler(
             TelegramBot bot,
             JikanApiClient jikanApiClient,
             UserStateService userStateService) {
@@ -30,28 +29,29 @@ public class CancelDeleteActivityPressHandler extends ConfirmationDeleteActivity
     @Override
     protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var chatId = update.message().chat().id();
-        var state = userStateService.getState(user);
-        var activityId = state.getDeleteActivityId();
 
-        clearState(user, userStateService, context);
-
-        if (activityId == 0) {
-            handleNotFoundActivity(bot, jikanApiClient, chatId, context);
+        if (context.getActivityId() == 0) {
+            handleNoActivity(context, chatId);
             return;
         }
 
-        var text = "Ура! Активность не была удалена! Можете продолжать трекать время :)";
+        userStateService.setActivity(user, 0);
+        context.setActivityId(0);
+
+        var text = "Вы убрали текущую активность. Лентяйкин! :)";
+        var keyboard = KeyboardFactory.createMainMenu(context, jikanApiClient);
+        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
+    }
+
+    private void handleNoActivity(UpdateContext context, Long chatId) throws Exception {
+        var text = "Вы еще ничем не занимались. Лентяйкин! :)";
         var keyboard = KeyboardFactory.createMainMenu(context, jikanApiClient);
         bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
     }
 
     @Override
     protected String expectedText() {
-        return ButtonNames.CANCEL_DELETE.getName();
-    }
-
-    @Override
-    protected UserState requiredState() {
-        return UserState.DeleteActivityConfirmation;
+        return ButtonNames.UNSELECT_ACTIVITY.getName();
     }
 }
+

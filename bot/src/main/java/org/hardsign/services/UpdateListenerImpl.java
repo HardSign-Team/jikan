@@ -39,7 +39,7 @@ public class UpdateListenerImpl implements UpdatesListener {
         this.jikanApiClient = jikanApiClient;
         this.userStateService = userStateService;
 
-        updateHandlers.add(new StartCommandHandler(bot, jikanApiClient));
+        updateHandlers.add(new StartCommandHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new CreateActivityCommandHandler(bot, userStateService));
         updateHandlers.add(new SelectActivityCommandHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new DeleteActivityCommandHandler(bot, jikanApiClient, userStateService));
@@ -47,7 +47,7 @@ public class UpdateListenerImpl implements UpdatesListener {
         updateHandlers.add(new CreateActivityInputHandler(bot, jikanApiClient, userStateService));
 
         updateHandlers.add(new ActivitiesPressHandler(bot, jikanApiClient));
-        updateHandlers.add(new UnSelectActivityPressHandler(bot, jikanApiClient, userStateService));
+        updateHandlers.add(new UnselectActivityPressHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new BackPressHandler(bot, jikanApiClient));
         updateHandlers.add(new AcceptDeleteActivityPressHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new CancelDeleteActivityPressHandler(bot, jikanApiClient, userStateService));

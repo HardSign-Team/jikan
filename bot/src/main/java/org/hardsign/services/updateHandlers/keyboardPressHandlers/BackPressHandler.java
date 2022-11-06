@@ -2,15 +2,15 @@ package org.hardsign.services.updateHandlers.keyboardPressHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
+import org.hardsign.services.updateHandlers.BaseTextUpdateHandler;
 
-import java.util.Objects;
-
-public class BackPressHandler implements KeyboardPressHandler {
+public class BackPressHandler extends BaseTextUpdateHandler implements KeyboardPressHandler {
 
     private final TelegramBot bot;
     private final JikanApiClient jikanApiClient;
@@ -21,23 +21,14 @@ public class BackPressHandler implements KeyboardPressHandler {
     }
 
     @Override
-    public void handle(Update update, UpdateContext context) throws Exception {
-        if (!context.isRegistered())
-            return;
-
-        var user = update.message().from();
-        if (user.isBot())
-            return;
-
-        if (!context.getState().isDefault())
-            return;
-
-        var message = update.message().text();
-        if (!Objects.equals(message, ButtonNames.BACK.getName()))
-            return;
-
+    protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var chatId = update.message().chat().id();
-        bot.execute(new SendMessage(chatId, "Выберите действие")
-                            .replyMarkup(KeyboardFactory.createMainMenu(context, jikanApiClient)));
+        var keyboard = KeyboardFactory.createMainMenu(context, jikanApiClient);
+        bot.execute(new SendMessage(chatId, "Выберите действие").replyMarkup(keyboard));
+    }
+
+    @Override
+    protected String expectedText() {
+        return ButtonNames.BACK.getName();
     }
 }
