@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Service
 public class ServiceJwtAuthenticator implements Authenticator {
-    private static final String SERVICE_AUTHORIZATION = "Jikan-Service-Authorization";
+    private static final String SERVICE_AUTHORIZATION = "jikan-service-authorization";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Nullable
@@ -27,7 +27,8 @@ public class ServiceJwtAuthenticator implements Authenticator {
     }
 
     private Optional<String> obtainJson(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(SERVICE_AUTHORIZATION));
+        var header = request.getHeader(SERVICE_AUTHORIZATION);
+        return Optional.ofNullable(header);
     }
 
     private String decodeBase64(String encodedString) {

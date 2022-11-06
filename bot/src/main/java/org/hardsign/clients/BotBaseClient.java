@@ -48,7 +48,7 @@ public abstract class BotBaseClient extends RpcBaseClient{
         return send(url, request.getUserMeta(), Request.Builder::get, typeHint);
     }
 
-    public  <TResponse> JikanResponse<TResponse> send(
+    public <TResponse> JikanResponse<TResponse> send(
             String url,
             TelegramUserMeta meta,
             Function<Request.Builder, Request.Builder> requestSetup,

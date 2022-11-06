@@ -3,7 +3,6 @@ package com.hardsign.server.models.users;
 import lombok.Builder;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -23,17 +22,21 @@ public class UserEntity {
     @Column(name="hashed_password", nullable = false)
     private String hashedPassword;
 
+    @Column(name="role")
+    private UserRole role;
+
     public UserEntity() {}
 
     public UserEntity(long id) {
-        this(id, null, null, null);
+        this(id, null, null, null, UserRole.USER);
     }
 
-    public UserEntity(long id, String name, String login, String hashedPassword) {
+    public UserEntity(long id, String name, String login, String hashedPassword, UserRole role) {
         this.id = id;
         this.name = name;
         this.login = login;
         this.hashedPassword = hashedPassword;
+        this.role = role;
     }
 
     public String getLogin() {
@@ -69,6 +72,14 @@ public class UserEntity {
     }
 
     public boolean isService() {
-        return Objects.equals(login, "JikanBot"); // todo: (tebaikin) 05.11.2022 fix security
+        return getRole() == UserRole.SERVICE;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 }
