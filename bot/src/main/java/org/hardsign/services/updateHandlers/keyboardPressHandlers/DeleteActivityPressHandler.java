@@ -11,16 +11,17 @@ import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.activities.requests.GetAllActivitiesRequest;
 import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.requests.BotRequest;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
-public class ActivitiesPressHandler implements KeyboardPressHandler {
+public class DeleteActivityPressHandler implements KeyboardPressHandler {
+
     private final TelegramBot bot;
     private final JikanApiClient jikanApiClient;
 
-    public ActivitiesPressHandler(TelegramBot bot, JikanApiClient jikanApiClient) {
+    public DeleteActivityPressHandler(
+            TelegramBot bot,
+            JikanApiClient jikanApiClient) {
         this.bot = bot;
         this.jikanApiClient = jikanApiClient;
     }
@@ -38,28 +39,16 @@ public class ActivitiesPressHandler implements KeyboardPressHandler {
             return;
 
         var message = update.message().text();
-        if (!Objects.equals(message, ButtonNames.ACTIVITIES.getName()))
+        if (!Objects.equals(message, ButtonNames.DELETE_ACTIVITY.getName()))
             return;
 
         var activities = getActivities(context.getMeta());
-        var text = toText(activities);
-        var replyMarkup = new ReplyKeyboardMarkup(getButtons(context))
+        var chatId = update.message().chat().id();
+        var replyMarkup = new ReplyKeyboardMarkup(ButtonNames.BACK.getName())
                 .resizeKeyboard(true)
                 .oneTimeKeyboard(true);
-        var sendMessage = new SendMessage(update.message().chat().id(), text)
-                .replyMarkup(replyMarkup);
-        bot.execute(sendMessage);
-    }
-
-    @NotNull
-    private static String[] getButtons(UpdateContext context) {
-        var buttons = new ArrayList<String>();
-        buttons.add(ButtonNames.CREATE_ACTIVITY.getName());
-        buttons.add(ButtonNames.DELETE_ACTIVITY.getName());
-        if (context.getActivityId() != 0)
-            buttons.add(ButtonNames.UNSELECT_ACTIVITY.getName());
-        buttons.add(ButtonNames.BACK.getName());
-        return buttons.toArray(new String[0]);
+        bot.execute(new SendMessage(chatId, toText(activities))
+                            .replyMarkup(replyMarkup));
     }
 
     private String toText(ActivityDto[] activities) {
@@ -69,7 +58,7 @@ public class ActivitiesPressHandler implements KeyboardPressHandler {
         var sb = new StringBuilder();
         for (var i = 0; i < activities.length; i++) {
             sb.append(i + 1)
-                    .append(". ").append(activities[i].getName()).append(". Выбрать: /sa_")
+                    .append(". ").append(activities[i].getName()).append(". Удалить: /dela_")
                     .append(activities[i].getId()).append(System.lineSeparator());
         }
         return sb.toString();

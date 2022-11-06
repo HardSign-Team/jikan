@@ -1,4 +1,4 @@
-package org.hardsign.services.updateHandlers.keyboardPressHandlers;
+package org.hardsign.services.updateHandlers.commands;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -14,14 +14,14 @@ import org.hardsign.services.users.UserStateService;
 
 import java.util.regex.Pattern;
 
-public class SelectActivityPressHandler implements KeyboardPressHandler {
+public class SelectActivityCommandHandler implements CommandHandler {
 
     private final TelegramBot bot;
     private final JikanApiClient jikanApiClient;
     private final UserStateService userStateService;
     private final Pattern commandPattern = Pattern.compile("/sa_(\\d+)");
 
-    public SelectActivityPressHandler(TelegramBot bot, JikanApiClient jikanApiClient, UserStateService userStateService) {
+    public SelectActivityCommandHandler(TelegramBot bot, JikanApiClient jikanApiClient, UserStateService userStateService) {
         this.bot = bot;
         this.jikanApiClient = jikanApiClient;
         this.userStateService = userStateService;

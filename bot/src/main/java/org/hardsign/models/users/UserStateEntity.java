@@ -13,4 +13,5 @@ public class UserStateEntity {
     private long userId;
     private UserState state;
     private long activityId;
+    private long deleteActivityId;
 }

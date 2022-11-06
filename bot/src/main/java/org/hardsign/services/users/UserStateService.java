@@ -7,7 +7,8 @@ import org.hardsign.models.users.UserStateEntity;
 public interface UserStateService {
     UserStateEntity getState(User user);
     UserStateEntity getState(long userId);
-    UserStateEntity setState(User user, UserState state);
-    UserStateEntity setActivity(User user, long activityId);
+    void setState(User user, UserState state);
+    void setActivity(User user, long activityId);
+    void setDeleteActivity(User user, long activityId);
 }
 

@@ -21,20 +21,27 @@ public class UserStateServiceImpl implements UserStateService {
     @Override
     public UserStateEntity getState(long userId) {
         return repository.findByUserId(userId)
-                .orElseGet(() -> repository.save(new UserStateEntity(userId, UserState.None, 0)));
+                .orElseGet(() -> repository.save(new UserStateEntity(userId, UserState.None, 0, 0)));
     }
 
     @Override
-    public UserStateEntity setState(User user, UserState state) {
+    public void setState(User user, UserState state) {
         var entity = getState(user);
         entity.setState(state);
-        return repository.save(entity);
+        repository.save(entity);
     }
 
     @Override
-    public UserStateEntity setActivity(User user, long activityId) {
+    public void setActivity(User user, long activityId) {
         var entity = getState(user);
         entity.setActivityId(activityId);
-        return repository.save(entity);
+        repository.save(entity);
+    }
+
+    @Override
+    public void setDeleteActivity(User user, long activityId) {
+        var entity = getState(user);
+        entity.setDeleteActivityId(activityId);
+        repository.save(entity);
     }
 }

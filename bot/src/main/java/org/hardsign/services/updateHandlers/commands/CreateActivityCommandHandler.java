@@ -26,8 +26,11 @@ public class CreateActivityCommandHandler implements CommandHandler {
         if (!context.isRegistered())
             return;
 
+        if (!context.getState().isDefault())
+            return;
+
         var text = update.message().text();
-        if (!text.equals("/create_activity") && !text.equals(ButtonNames.CREATE_ACTIVITY.getName()))
+        if (!text.equals(ButtonNames.CREATE_ACTIVITY.getName()))
             return;
 
         userStateService.setState(user, UserState.CreateActivityName);
