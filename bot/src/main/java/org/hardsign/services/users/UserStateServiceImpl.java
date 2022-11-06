@@ -3,7 +3,11 @@ package org.hardsign.services.users;
 import com.pengrad.telegrambot.model.User;
 import org.hardsign.models.users.UserState;
 import org.hardsign.models.users.UserStateEntity;
+import org.hardsign.models.users.UserStatePatch;
 import org.hardsign.repositories.UserStateRepository;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class UserStateServiceImpl implements UserStateService {
 
@@ -25,23 +29,36 @@ public class UserStateServiceImpl implements UserStateService {
     }
 
     @Override
-    public void setState(User user, UserState state) {
+    public void update(User user, UserStatePatch patch) {
         var entity = getState(user);
-        entity.setState(state);
+        applyPatch(patch, UserStatePatch::getDeleteActivityId, entity::setDeleteActivityId);
+        applyPatch(patch, UserStatePatch::getState, entity::setState);
+        applyPatch(patch, UserStatePatch::getActivityId, entity::setActivityId);
         repository.save(entity);
+    }
+
+    @Override
+    public void setState(User user, UserState state) {
+        update(user, UserStatePatch.builder().state(state).build());
     }
 
     @Override
     public void setActivity(User user, long activityId) {
-        var entity = getState(user);
-        entity.setActivityId(activityId);
-        repository.save(entity);
+        update(user, UserStatePatch.builder().activityId(activityId).build());
     }
 
     @Override
     public void setDeleteActivity(User user, long activityId) {
-        var entity = getState(user);
-        entity.setDeleteActivityId(activityId);
-        repository.save(entity);
+        update(user, UserStatePatch.builder().deleteActivityId(activityId).build());
+    }
+
+    private <TProperty> void applyPatch(
+            UserStatePatch patch,
+            Function<UserStatePatch, TProperty> propertyProvider,
+            Consumer<TProperty> consumer) {
+        var property = propertyProvider.apply(patch);
+        if (property != null) {
+            consumer.accept(property);
+        }
     }
 }

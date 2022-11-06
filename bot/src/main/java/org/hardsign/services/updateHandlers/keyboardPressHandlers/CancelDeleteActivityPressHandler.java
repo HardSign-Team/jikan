@@ -8,6 +8,7 @@ import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.users.UserState;
+import org.hardsign.models.users.UserStatePatch;
 import org.hardsign.services.users.UserStateService;
 
 import java.util.Objects;
@@ -47,8 +48,7 @@ public class CancelDeleteActivityPressHandler implements KeyboardPressHandler {
         var state = userStateService.getState(user);
         var activityId = state.getDeleteActivityId();
 
-        userStateService.setState(user, UserState.None); // todo: (tebaikin) 06.11.2022 refactor with patch
-        userStateService.setDeleteActivity(user, 0);
+        userStateService.update(user, UserStatePatch.builder().state(UserState.None).deleteActivityId(0L).build());
         context.setState(UserState.None);
 
         if (activityId == 0) {
