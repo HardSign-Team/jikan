@@ -2,7 +2,6 @@ package org.hardsign.services.updateHandlers.keyboardPressHandlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
@@ -12,7 +11,9 @@ import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.activities.requests.GetAllActivitiesRequest;
 import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.requests.BotRequest;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class ActivitiesPressHandler implements KeyboardPressHandler {
@@ -42,12 +43,22 @@ public class ActivitiesPressHandler implements KeyboardPressHandler {
 
         var activities = getActivities(context.getMeta());
         var text = toText(activities);
-        var replyMarkup = new ReplyKeyboardMarkup(new KeyboardButton(ButtonNames.CREATE_ACTIVITY.getName()))
+        var replyMarkup = new ReplyKeyboardMarkup(getButtons(context))
                 .resizeKeyboard(true)
                 .oneTimeKeyboard(true);
         var sendMessage = new SendMessage(update.message().chat().id(), text)
                 .replyMarkup(replyMarkup);
         bot.execute(sendMessage);
+    }
+
+    @NotNull
+    private static String[] getButtons(UpdateContext context) {
+        var buttons = new ArrayList<String>();
+        buttons.add(ButtonNames.CREATE_ACTIVITY.getName());
+        if (context.getActivityId() != 0)
+            buttons.add(ButtonNames.UNSELECT_ACTIVITY.getName());
+        buttons.add(ButtonNames.BACK.getName());
+        return buttons.toArray(new String[0]);
     }
 
     private String toText(ActivityDto[] activities) {

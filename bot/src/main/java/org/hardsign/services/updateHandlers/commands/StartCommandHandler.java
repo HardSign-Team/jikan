@@ -48,10 +48,8 @@ public class StartCommandHandler implements CommandHandler {
             }
         }
 
-        var replyMarkup = KeyboardFactory.createMainMenu(context, jikanApiClient);
-        var request = new SendMessage(chatId, "Выберите действие")
-                .replyMarkup(replyMarkup);
-        bot.execute(request);
+        bot.execute(new SendMessage(chatId, "Выберите действие")
+                .replyMarkup(KeyboardFactory.createMainMenu(context, jikanApiClient)));
     }
 
     private boolean registerUser(User user, TelegramUserMeta meta) {
