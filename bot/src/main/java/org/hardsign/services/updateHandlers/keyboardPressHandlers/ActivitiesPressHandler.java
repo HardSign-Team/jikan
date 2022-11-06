@@ -68,7 +68,7 @@ public class ActivitiesPressHandler implements KeyboardPressHandler {
         var sb = new StringBuilder();
         for (var i = 0; i < activities.length; i++) {
             sb.append(i + 1)
-                    .append(". ").append(activities[i].getName()).append(". /sa_")
+                    .append(". ").append(activities[i].getName()).append(". Выбрать: /sa_")
                     .append(activities[i].getId()).append(System.lineSeparator());
         }
         return sb.toString();
