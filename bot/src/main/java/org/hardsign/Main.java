@@ -3,6 +3,7 @@ package org.hardsign;
 import com.pengrad.telegrambot.TelegramBot;
 import okhttp3.OkHttpClient;
 import org.hardsign.clients.JikanApiClientImpl;
+import org.hardsign.factories.HibernateSessionFactoryFactory;
 import org.hardsign.models.settings.BotSettings;
 import org.hardsign.repositories.UserStateRepositoryImpl;
 import org.hardsign.services.auth.AuthorizerImpl;
@@ -28,7 +29,8 @@ public class Main {
         var settings = parser.parse();
         Supplier<BotSettings> settingsProvider = () -> settings;
 
-        var userStateRepository = new UserStateRepositoryImpl();
+        var sessionFactory = HibernateSessionFactoryFactory.create(settings.getDatabase()); // todo: (tebaikin) 07.11.2022 should dispose
+        var userStateRepository = new UserStateRepositoryImpl(sessionFactory);
         var userStateService = new UserStateServiceImpl(userStateRepository);
 
         var okClient = new OkHttpClient();

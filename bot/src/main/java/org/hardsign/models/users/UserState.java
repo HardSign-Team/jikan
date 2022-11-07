@@ -15,3 +15,4 @@ public class UserState {
     private long activityId;
     private long deleteActivityId;
 }
+
