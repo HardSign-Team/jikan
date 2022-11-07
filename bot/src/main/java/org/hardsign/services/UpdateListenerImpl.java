@@ -16,7 +16,7 @@ import org.hardsign.services.updateHandlers.commands.DeleteActivityCommandHandle
 import org.hardsign.services.updateHandlers.commands.SelectActivityCommandHandler;
 import org.hardsign.services.updateHandlers.commands.StartCommandHandler;
 import org.hardsign.services.updateHandlers.inputs.CreateActivityInputHandler;
-import org.hardsign.services.updateHandlers.keyboardPressHandlers.*;
+import org.hardsign.services.updateHandlers.keyboards.*;
 import org.hardsign.services.users.UserStateService;
 
 import java.util.ArrayList;

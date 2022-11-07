@@ -1,4 +1,4 @@
-package org.hardsign.services.updateHandlers.keyboardPressHandlers;
+package org.hardsign.services.updateHandlers.keyboards;
 
 import org.hardsign.services.updateHandlers.UpdateHandler;
 
