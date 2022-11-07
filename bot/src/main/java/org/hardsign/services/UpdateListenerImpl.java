@@ -8,7 +8,6 @@ import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.TelegramUserMetaFactory;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.auth.TelegramUserMeta;
-import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.users.UserDto;
 import org.hardsign.models.users.requests.FindUserByLoginRequest;
 import org.hardsign.services.updateHandlers.UpdateHandler;
@@ -95,8 +94,8 @@ public class UpdateListenerImpl implements UpdatesListener {
     private Optional<UserDto> findUser(User user, TelegramUserMeta meta) {
         if (user.isBot())
             return Optional.empty();
-        var findUserByLoginRequest = new FindUserByLoginRequest(Long.toString(meta.getId()));
-        var apiUser = jikanApiClient.users().findByLogin(new BotRequest<>(findUserByLoginRequest, meta));
+        var request = new FindUserByLoginRequest(Long.toString(meta.getId()));
+        var apiUser = jikanApiClient.users().findByLogin(request);
         return apiUser.isSuccess() && apiUser.getCode() == 200
                 ? apiUser.getValue()
                 : Optional.empty();

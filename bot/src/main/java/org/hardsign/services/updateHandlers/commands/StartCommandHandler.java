@@ -8,7 +8,6 @@ import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.auth.TelegramUserMeta;
-import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.users.UserDto;
 import org.hardsign.models.users.UserState;
 import org.hardsign.models.users.requests.CreateUserRequest;
@@ -66,6 +65,6 @@ public class StartCommandHandler extends BaseTextUpdateHandler implements Comman
         var login = Long.toString(meta.getId());
         var password = UUID.randomUUID().toString();
         var request = new CreateUserRequest(name, login, password);
-        return jikanApiClient.users().create(new BotRequest<>(request, meta)).getValueOrThrow();
+        return jikanApiClient.users().create(request).getValueOrThrow();
     }
 }

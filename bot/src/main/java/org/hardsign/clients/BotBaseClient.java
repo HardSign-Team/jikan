@@ -12,7 +12,7 @@ import org.hardsign.services.auth.Authorizer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public abstract class BotBaseClient extends RpcBaseClient{
+public abstract class BotBaseClient extends RpcBaseClient {
     public static final String JIKAN_SERVICE_AUTHORIZATION = "Jikan-Service-Authorization";
     private final Authorizer authorizer;
 
