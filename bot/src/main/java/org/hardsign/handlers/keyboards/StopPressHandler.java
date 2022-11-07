@@ -1,4 +1,4 @@
-package org.hardsign.services.updateHandlers.keyboards;
+package org.hardsign.handlers.keyboards;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -14,7 +14,7 @@ import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.timestamps.TimestampDto;
 import org.hardsign.models.timestamps.requests.StopActivityRequest;
-import org.hardsign.services.updateHandlers.BaseTextUpdateHandler;
+import org.hardsign.handlers.BaseTextUpdateHandler;
 
 import java.time.Duration;
 

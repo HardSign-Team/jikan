@@ -1,4 +1,4 @@
-package org.hardsign.services.updateHandlers;
+package org.hardsign.handlers;
 
 import org.jetbrains.annotations.Nullable;
 

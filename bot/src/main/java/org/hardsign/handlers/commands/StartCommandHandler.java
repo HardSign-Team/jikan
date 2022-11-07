@@ -1,4 +1,4 @@
-package org.hardsign.services.updateHandlers.commands;
+package org.hardsign.handlers.commands;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -11,7 +11,7 @@ import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.users.UserDto;
 import org.hardsign.models.users.UserState;
 import org.hardsign.models.users.requests.CreateUserRequest;
-import org.hardsign.services.updateHandlers.BaseTextUpdateHandler;
+import org.hardsign.handlers.BaseTextUpdateHandler;
 import org.hardsign.services.users.UserStateService;
 
 import java.util.UUID;

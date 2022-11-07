@@ -1,4 +1,4 @@
-package org.hardsign.services.updateHandlers.commands;
+package org.hardsign.handlers.commands;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -8,7 +8,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.users.UserState;
 import org.hardsign.models.ButtonNames;
-import org.hardsign.services.updateHandlers.BaseTextUpdateHandler;
+import org.hardsign.handlers.BaseTextUpdateHandler;
 import org.hardsign.services.users.UserStateService;
 
 public class CreateActivityCommandHandler extends BaseTextUpdateHandler implements CommandHandler {

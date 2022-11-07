@@ -1,4 +1,4 @@
-package org.hardsign.services;
+package org.hardsign;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
@@ -10,14 +10,14 @@ import org.hardsign.models.UpdateContext;
 import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.users.UserDto;
 import org.hardsign.models.users.requests.FindUserByLoginRequest;
-import org.hardsign.services.updateHandlers.UpdateHandler;
-import org.hardsign.services.updateHandlers.commands.CreateActivityCommandHandler;
-import org.hardsign.services.updateHandlers.commands.DeleteActivityCommandHandler;
-import org.hardsign.services.updateHandlers.commands.SelectActivityCommandHandler;
-import org.hardsign.services.updateHandlers.commands.StartCommandHandler;
-import org.hardsign.services.updateHandlers.inputs.CreateActivityInputHandler;
-import org.hardsign.services.updateHandlers.keyboards.*;
+import org.hardsign.handlers.UpdateHandler;
+import org.hardsign.handlers.commands.CreateActivityCommandHandler;
+import org.hardsign.handlers.commands.DeleteActivityCommandHandler;
+import org.hardsign.handlers.commands.SelectActivityCommandHandler;
+import org.hardsign.handlers.commands.StartCommandHandler;
+import org.hardsign.handlers.inputs.CreateActivityInputHandler;
 import org.hardsign.services.users.UserStateService;
+import org.hardsign.handlers.keyboards.*;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.hardsign.services.updateHandlers.keyboards;
+package org.hardsign.handlers.keyboards;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -14,7 +14,7 @@ import org.hardsign.models.activities.requests.DeleteActivityRequest;
 import org.hardsign.models.activities.requests.GetActivityByIdRequest;
 import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.users.UserState;
-import org.hardsign.services.updateHandlers.keyboards.abstracts.ConfirmationDeleteActivityPressHandler;
+import org.hardsign.handlers.keyboards.abstracts.ConfirmationDeleteActivityPressHandler;
 import org.hardsign.services.users.UserStateService;
 
 public class AcceptDeleteActivityPressHandler extends ConfirmationDeleteActivityPressHandler implements KeyboardPressHandler {

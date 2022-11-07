@@ -1,4 +1,4 @@
-package org.hardsign.services.updateHandlers.inputs;
+package org.hardsign.handlers.inputs;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -10,7 +10,7 @@ import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.requests.CreateActivityRequest;
 import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.users.UserState;
-import org.hardsign.services.updateHandlers.BaseUpdateHandler;
+import org.hardsign.handlers.BaseUpdateHandler;
 import org.hardsign.services.users.UserStateService;
 
 public class CreateActivityInputHandler extends BaseUpdateHandler implements InputHandler {

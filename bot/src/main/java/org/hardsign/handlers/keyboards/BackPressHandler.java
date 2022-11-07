@@ -1,4 +1,4 @@
-package org.hardsign.services.updateHandlers.keyboards;
+package org.hardsign.handlers.keyboards;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -8,7 +8,7 @@ import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
-import org.hardsign.services.updateHandlers.BaseTextUpdateHandler;
+import org.hardsign.handlers.BaseTextUpdateHandler;
 
 public class BackPressHandler extends BaseTextUpdateHandler implements KeyboardPressHandler {
 

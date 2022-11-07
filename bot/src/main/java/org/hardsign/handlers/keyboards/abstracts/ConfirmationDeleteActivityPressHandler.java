@@ -1,4 +1,4 @@
-package org.hardsign.services.updateHandlers.keyboards.abstracts;
+package org.hardsign.handlers.keyboards.abstracts;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.User;
@@ -8,8 +8,8 @@ import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.users.UserState;
 import org.hardsign.models.users.UserStatePatch;
-import org.hardsign.services.updateHandlers.BaseTextUpdateHandler;
-import org.hardsign.services.updateHandlers.keyboards.KeyboardPressHandler;
+import org.hardsign.handlers.BaseTextUpdateHandler;
+import org.hardsign.handlers.keyboards.KeyboardPressHandler;
 import org.hardsign.services.users.UserStateService;
 
 public abstract class ConfirmationDeleteActivityPressHandler extends BaseTextUpdateHandler implements KeyboardPressHandler {

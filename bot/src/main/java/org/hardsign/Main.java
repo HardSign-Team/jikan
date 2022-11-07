@@ -7,7 +7,6 @@ import org.hardsign.models.settings.BotSettings;
 import org.hardsign.repositories.UserStateRepositoryImpl;
 import org.hardsign.services.auth.AuthorizerImpl;
 import org.hardsign.services.settings.EnvironmentSettingsParserImpl;
-import org.hardsign.services.UpdateListenerImpl;
 import org.hardsign.services.users.UserStateServiceImpl;
 import org.jetbrains.annotations.NotNull;
 
