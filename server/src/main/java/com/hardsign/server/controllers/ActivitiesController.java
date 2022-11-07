@@ -1,7 +1,7 @@
 package com.hardsign.server.controllers;
 
 
-import com.hardsign.server.exceptions.DomainException;
+import com.hardsign.server.exceptions.BadRequestException;
 import com.hardsign.server.exceptions.ForbiddenException;
 import com.hardsign.server.exceptions.NotFoundException;
 import com.hardsign.server.mappers.Mapper;
@@ -61,10 +61,11 @@ public class ActivitiesController {
     }
 
     @PostMapping(value = "create", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ActivityModel create(@Valid @RequestBody CreateActivityRequest request) throws DomainException {
+    public ActivityModel create(@Valid @RequestBody CreateActivityRequest request) {
         var user = getUserOrThrow();
 
-        var activity = activityService.save(user, request.getName());
+        var activity = activityService.save(user, request.getName())
+                .orElseThrow(BadRequestException::new);
 
         return mapper.mapToModel(activity);
     }
@@ -81,7 +82,7 @@ public class ActivitiesController {
     }
 
     @PatchMapping()
-    public ActivityModel update(@Valid @RequestBody PatchActivityRequest request) throws DomainException {
+    public ActivityModel update(@Valid @RequestBody PatchActivityRequest request) {
         var user = getUserOrThrow();
         var patch = new ActivityPatch(request.getName());
 
@@ -92,6 +93,7 @@ public class ActivitiesController {
             throw new ForbiddenException("Has not access to activity.");
 
         return activityService.update(request.getId(), patch)
+                .orElseThrow(BadRequestException::new)
                 .map(mapper::mapToModel)
                 .orElseThrow(NotFoundException::new);
     }
