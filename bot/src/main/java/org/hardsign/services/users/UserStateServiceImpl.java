@@ -47,11 +47,6 @@ public class UserStateServiceImpl implements UserStateService {
         update(user, UserStatePatch.builder().activityId(activityId).build());
     }
 
-    @Override
-    public void setDeleteActivity(User user, long activityId) {
-        update(user, UserStatePatch.builder().deleteActivityId(activityId).build());
-    }
-
     private <TProperty> void applyPatch(
             UserStatePatch patch,
             Function<UserStatePatch, TProperty> propertyProvider,

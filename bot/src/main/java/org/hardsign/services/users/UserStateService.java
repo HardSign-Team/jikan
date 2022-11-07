@@ -11,6 +11,5 @@ public interface UserStateService {
     void update(User user, UserStatePatch patch);
     void setState(User user, State state);
     void setActivity(User user, long activityId);
-    void setDeleteActivity(User user, long activityId);
 }
 
