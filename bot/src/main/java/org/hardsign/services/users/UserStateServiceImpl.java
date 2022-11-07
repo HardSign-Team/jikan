@@ -2,7 +2,7 @@ package org.hardsign.services.users;
 
 import com.pengrad.telegrambot.model.User;
 import org.hardsign.models.users.State;
-import org.hardsign.models.users.UserStateEntity;
+import org.hardsign.models.users.UserState;
 import org.hardsign.models.users.UserStatePatch;
 import org.hardsign.repositories.UserStateRepository;
 
@@ -18,14 +18,14 @@ public class UserStateServiceImpl implements UserStateService {
     }
 
     @Override
-    public UserStateEntity getState(User user) {
+    public UserState getState(User user) {
         return getState(user.id());
     }
 
     @Override
-    public UserStateEntity getState(long userId) {
+    public UserState getState(long userId) {
         return repository.findByUserId(userId)
-                .orElseGet(() -> repository.save(new UserStateEntity(userId, State.None, 0, 0)));
+                .orElseGet(() -> repository.save(new UserState(userId, State.None, 0, 0)));
     }
 
     @Override

@@ -1,11 +1,11 @@
 package org.hardsign.repositories;
 
-import org.hardsign.models.users.UserStateEntity;
+import org.hardsign.models.users.UserState;
 
 import java.util.Optional;
 
 public interface UserStateRepository {
-    Optional<UserStateEntity> findByUserId(long userId);
-    UserStateEntity save(UserStateEntity entity);
+    Optional<UserState> findByUserId(long userId);
+    UserState save(UserState entity);
 }
 

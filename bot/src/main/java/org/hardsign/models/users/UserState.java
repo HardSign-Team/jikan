@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(of = {"userId"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserStateEntity {
+public class UserState {
     private long userId;
     private State state;
     private long activityId;
