@@ -1,6 +1,6 @@
 package org.hardsign.models.users;
 
-public enum UserState {
+public enum State {
     None,
     CreateActivityName,
     DeleteActivityConfirmation;

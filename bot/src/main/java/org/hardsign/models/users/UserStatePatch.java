@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 @Builder
 public class UserStatePatch {
     @Nullable
-    private UserState state;
+    private State state;
     @Nullable
     private Long activityId;
     @Nullable

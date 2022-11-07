@@ -6,7 +6,7 @@ import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.models.UpdateContext;
-import org.hardsign.models.users.UserState;
+import org.hardsign.models.users.State;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.handlers.BaseTextUpdateHandler;
 import org.hardsign.services.users.UserStateService;
@@ -27,7 +27,7 @@ public class CreateActivityCommandHandler extends BaseTextUpdateHandler implemen
 
     @Override
     protected void handleInternal(User user, Update update, UpdateContext context) {
-        userStateService.setState(user, UserState.CreateActivityName);
+        userStateService.setState(user, State.CreateActivityName);
         var chatId = update.message().chat().id();
         bot.execute(new SendMessage(chatId, "Напишите название для активности")
                             .replyMarkup(new ReplyKeyboardRemove()));

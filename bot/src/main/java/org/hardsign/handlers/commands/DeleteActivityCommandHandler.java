@@ -14,7 +14,7 @@ import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.activities.requests.GetActivityByIdRequest;
 import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.requests.BotRequest;
-import org.hardsign.models.users.UserState;
+import org.hardsign.models.users.State;
 import org.hardsign.models.users.UserStatePatch;
 import org.hardsign.handlers.BaseUpdateHandler;
 import org.hardsign.services.users.UserStateService;
@@ -72,7 +72,7 @@ public class DeleteActivityCommandHandler extends BaseUpdateHandler implements C
 
     private void handleSuccess(User user, UpdateContext context, Long chatId, ActivityDto activity) {
         userStateService.update(user, createPatch(activity.getId()));
-        context.setState(UserState.DeleteActivityConfirmation);
+        context.setState(State.DeleteActivityConfirmation);
 
         var replyMarkup = new ReplyKeyboardMarkup(
                 ButtonNames.ACCEPT_DELETE.getName(),
@@ -97,7 +97,7 @@ public class DeleteActivityCommandHandler extends BaseUpdateHandler implements C
 
     private static UserStatePatch createPatch(long activityId) {
         return UserStatePatch.builder()
-                .state(UserState.DeleteActivityConfirmation)
+                .state(State.DeleteActivityConfirmation)
                 .deleteActivityId(activityId)
                 .build();
     }

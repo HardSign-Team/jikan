@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserStateEntity {
     private long userId;
-    private UserState state;
+    private State state;
     private long activityId;
     private long deleteActivityId;
 }

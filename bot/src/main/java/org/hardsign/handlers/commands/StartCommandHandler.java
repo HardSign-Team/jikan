@@ -9,7 +9,7 @@ import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.users.UserDto;
-import org.hardsign.models.users.UserState;
+import org.hardsign.models.users.State;
 import org.hardsign.models.users.requests.CreateUserRequest;
 import org.hardsign.handlers.BaseTextUpdateHandler;
 import org.hardsign.services.users.UserStateService;
@@ -35,8 +35,8 @@ public class StartCommandHandler extends BaseTextUpdateHandler implements Comman
     @Override
     protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         if (!context.getState().isDefault()) {
-            userStateService.setState(user, UserState.None);
-            context.setState(UserState.None);
+            userStateService.setState(user, State.None);
+            context.setState(State.None);
         }
 
         var chatId = update.message().chat().id();

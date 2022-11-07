@@ -13,7 +13,7 @@ import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.activities.requests.DeleteActivityRequest;
 import org.hardsign.models.activities.requests.GetActivityByIdRequest;
 import org.hardsign.models.requests.BotRequest;
-import org.hardsign.models.users.UserState;
+import org.hardsign.models.users.State;
 import org.hardsign.handlers.keyboards.abstracts.ConfirmationDeleteActivityPressHandler;
 import org.hardsign.services.users.UserStateService;
 
@@ -38,8 +38,8 @@ public class AcceptDeleteActivityPressHandler extends ConfirmationDeleteActivity
     }
 
     @Override
-    protected UserState requiredState() {
-        return UserState.DeleteActivityConfirmation;
+    protected State requiredState() {
+        return State.DeleteActivityConfirmation;
     }
 
     @Override

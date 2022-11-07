@@ -7,7 +7,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.UpdateContext;
-import org.hardsign.models.users.UserState;
+import org.hardsign.models.users.State;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseUpdateHandler implements UpdateHandler {
@@ -48,8 +48,8 @@ public abstract class BaseUpdateHandler implements UpdateHandler {
         return true;
     }
 
-    protected UserState requiredState() {
-        return UserState.None;
+    protected State requiredState() {
+        return State.None;
     }
 
     protected void handleNoCurrentActivity(

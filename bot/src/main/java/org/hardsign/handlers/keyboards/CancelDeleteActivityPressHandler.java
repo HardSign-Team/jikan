@@ -8,7 +8,7 @@ import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
-import org.hardsign.models.users.UserState;
+import org.hardsign.models.users.State;
 import org.hardsign.handlers.keyboards.abstracts.ConfirmationDeleteActivityPressHandler;
 import org.hardsign.services.users.UserStateService;
 
@@ -51,7 +51,7 @@ public class CancelDeleteActivityPressHandler extends ConfirmationDeleteActivity
     }
 
     @Override
-    protected UserState requiredState() {
-        return UserState.DeleteActivityConfirmation;
+    protected State requiredState() {
+        return State.DeleteActivityConfirmation;
     }
 }
