@@ -1,7 +1,6 @@
 package com.hardsign.server.services.activities;
 
 import com.hardsign.server.models.activities.Activity;
-import com.hardsign.server.models.activities.ActivityPatch;
 import com.hardsign.server.models.users.User;
 import com.hardsign.server.utils.Validation;
 
@@ -13,9 +12,9 @@ public interface ActivitiesService {
 
     Optional<Activity> findById(long id);
 
-    Validation<Activity> save(User user, String name);
+    Activity save(Activity activity);
 
     void delete(long id);
 
-    Validation<Optional<Activity>> update(long id, ActivityPatch patch);
+    Validation<Activity> validate(Activity activity);
 }

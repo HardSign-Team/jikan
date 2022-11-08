@@ -3,6 +3,8 @@ package com.hardsign.server.mappers;
 import com.hardsign.server.models.activities.Activity;
 import com.hardsign.server.models.activities.ActivityEntity;
 import com.hardsign.server.models.activities.ActivityModel;
+import com.hardsign.server.models.auth.JwtTokens;
+import com.hardsign.server.models.auth.JwtTokensModel;
 import com.hardsign.server.models.timestamps.Timestamp;
 import com.hardsign.server.models.timestamps.TimestampEntity;
 import com.hardsign.server.models.timestamps.TimestampModel;
@@ -65,5 +67,10 @@ public class MapperImpl implements Mapper {
     @Override
     public UserModel mapToModel(User user) {
         return new UserModel(user.getId(), user.getName(), user.getLogin());
+    }
+
+    @Override
+    public JwtTokensModel mapToModel(JwtTokens tokens) {
+        return new JwtTokensModel(tokens.getAccessToken(), tokens.getRefreshToken());
     }
 }

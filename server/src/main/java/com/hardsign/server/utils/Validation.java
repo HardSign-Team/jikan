@@ -16,18 +16,18 @@ public class Validation<T> {
     @Nullable
     private String reason;
 
-    public static <T> Validation<T> fail(String reason) {
+    public static <T> Validation<T> invalid(String reason) {
         return new Validation<>(null, reason);
     }
 
-    public static <T> Validation<T> success(T value) {
+    public static <T> Validation<T> valid(T value) {
         return new Validation<>(value, null);
     }
 
     public <TResult> Validation<TResult> map(Function<T, TResult> mapper) {
         return value != null
-                ? Validation.success(mapper.apply(value))
-                : Validation.fail(reason);
+                ? Validation.valid(mapper.apply(value))
+                : Validation.invalid(reason);
     }
 
     public <TException extends Exception> T orElseThrow(Function<String, ? extends TException> exceptionProvider)

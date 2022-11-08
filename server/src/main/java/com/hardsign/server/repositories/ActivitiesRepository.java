@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface ActivitiesRepository extends JpaRepository<ActivityEntity, Long> {
     List<ActivityEntity> findActivityEntitiesByUserId(long userId);
 
-    Optional<ActivityEntity> findActivityEntityByName(String name);
+    Optional<ActivityEntity> findActivityEntityByUserIdAndName(long userId, String name);
 }

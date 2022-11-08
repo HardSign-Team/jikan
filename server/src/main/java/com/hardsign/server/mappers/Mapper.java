@@ -3,6 +3,8 @@ package com.hardsign.server.mappers;
 import com.hardsign.server.models.activities.Activity;
 import com.hardsign.server.models.activities.ActivityEntity;
 import com.hardsign.server.models.activities.ActivityModel;
+import com.hardsign.server.models.auth.JwtTokens;
+import com.hardsign.server.models.auth.JwtTokensModel;
 import com.hardsign.server.models.timestamps.Timestamp;
 import com.hardsign.server.models.timestamps.TimestampEntity;
 import com.hardsign.server.models.timestamps.TimestampModel;
@@ -22,5 +24,7 @@ public interface Mapper {
     User map(UserEntity entity);
     UserEntity mapToEntity(User user);
     UserModel mapToModel(User user);
+
+    JwtTokensModel mapToModel(JwtTokens tokens);
 }
 

@@ -22,7 +22,7 @@ public class UserJwtAuthenticator implements Authenticator {
     @Override
     public JwtAuthentication authenticate(HttpServletRequest request) {
         return getTokenFromRequest(request)
-                .flatMap(this::obtainClaims)
+                .flatMap(jwtProvider::getAccessClaims)
                 .map(this::createJwtToken)
                 .orElse(null);
 
@@ -36,14 +36,6 @@ public class UserJwtAuthenticator implements Authenticator {
             return Optional.empty();
 
         return Optional.of(bearer.substring(prefix.length()));
-    }
-
-    private Optional<Claims> obtainClaims(String token) {
-        if (!jwtProvider.validateAccessToken(token)){
-            return Optional.empty();
-        }
-
-        return Optional.of(jwtProvider.getAccessClaims(token));
     }
 
     private JwtAuthentication createJwtToken(Claims claims) {

@@ -1,41 +1,82 @@
 package com.hardsign.server.controllers;
 
+import com.hardsign.server.exceptions.BadRequestException;
+import com.hardsign.server.exceptions.NotFoundException;
+import com.hardsign.server.exceptions.UnauthorizedException;
+import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.auth.JwtRequest;
-import com.hardsign.server.models.auth.JwtResponse;
+import com.hardsign.server.models.auth.JwtTokens;
+import com.hardsign.server.models.auth.JwtTokensModel;
 import com.hardsign.server.models.auth.RefreshJwtRequest;
 import com.hardsign.server.services.auth.AuthService;
-import org.springframework.http.ResponseEntity;
+import com.hardsign.server.services.user.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.security.auth.message.AuthException;
-
 @RestController
 @RequestMapping("api/auth")
 public class AuthController {
     private final AuthService authService;
+    private final UserService userService;
+    private final Mapper mapper;
 
-    public AuthController(AuthService authService){
+    public AuthController(AuthService authService, UserService userService, Mapper mapper) {
         this.authService = authService;
+        this.userService = userService;
+        this.mapper = mapper;
     }
 
     @PostMapping("login")
-    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest authRequest) throws AuthException {
-        var token = authService.login(authRequest);
-        return ResponseEntity.ok(token);
+    public JwtTokensModel login(@RequestBody JwtRequest authRequest) {
+        var login = authRequest.getLogin();
+        var user = userService.getUser(login)
+                .orElseThrow(() -> new NotFoundException("User not found."));
+
+        var password = authRequest.getPassword();
+        if (!authService.verifyPassword(user, password))
+            throw new UnauthorizedException("Wrong login or password.");
+
+        var tokens = authService.login(user);
+
+        return mapper.mapToModel(tokens);
     }
 
     @PostMapping("token")
-    public ResponseEntity<JwtResponse> getNewAccessToken(@RequestBody RefreshJwtRequest request) throws AuthException {
-        var token = authService.getAccessToken(request.getRefreshToken());
-        return ResponseEntity.ok(token);
+    public JwtTokensModel getNewAccessToken(@RequestBody RefreshJwtRequest request) {
+        var refreshToken = request.getRefreshToken();
+        var claims = authService.getRefreshClaims(refreshToken)
+                .orElseThrow(() -> new BadRequestException("Invalid token."));
+        var login = claims.getSubject();
+
+        var user = userService.getUser(login)
+                .orElseThrow(() -> new NotFoundException("User not found."));
+
+        if (!authService.verifyToken(login, refreshToken))
+            throw new BadRequestException("Invalid token.");
+
+        var accessToken = authService.generateAccessToken(user);
+        var jwtTokens = new JwtTokens(accessToken, null);
+
+        return mapper.mapToModel(jwtTokens);
     }
 
     @PostMapping("refresh")
-    public ResponseEntity<JwtResponse> getNewRefreshToken(@RequestBody RefreshJwtRequest request) throws AuthException {
-        var token = authService.refresh(request.getRefreshToken());
-        return ResponseEntity.ok(token);
+    public JwtTokensModel getNewRefreshToken(@RequestBody RefreshJwtRequest request) {
+        var refreshToken = request.getRefreshToken();
+        var claims = authService.getRefreshClaims(refreshToken)
+                .orElseThrow(() -> new BadRequestException("Invalid token."));
+
+        var login = claims.getSubject();
+        if (!authService.verifyToken(refreshToken, refreshToken))
+            throw new BadRequestException("Invalid token.");
+
+        var user = userService.getUser(login)
+                .orElseThrow(() -> new NotFoundException("User not found."));
+        var tokens = authService.refresh(user);
+
+        return mapper.mapToModel(tokens);
     }
+
 }

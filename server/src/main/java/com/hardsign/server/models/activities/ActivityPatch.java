@@ -12,8 +12,7 @@ public class ActivityPatch {
         this.name = name;
     }
 
-    public ActivityEntity apply(ActivityEntity entity) {
-        entity.setName(entity.getName());
-        return entity;
+    public Activity apply(Activity activity) {
+        return new Activity(activity.getId(), activity.getUserId(), name);
     }
 }

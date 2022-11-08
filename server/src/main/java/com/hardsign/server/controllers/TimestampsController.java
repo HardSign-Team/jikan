@@ -1,10 +1,11 @@
 package com.hardsign.server.controllers;
 
-import com.hardsign.server.exceptions.DomainException;
+import com.hardsign.server.exceptions.ConflictException;
 import com.hardsign.server.exceptions.ForbiddenException;
 import com.hardsign.server.exceptions.NotFoundException;
 import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.activities.Activity;
+import com.hardsign.server.models.timestamps.Timestamp;
 import com.hardsign.server.models.timestamps.TimestampModel;
 import com.hardsign.server.models.timestamps.requests.DeleteTimestampRequest;
 import com.hardsign.server.models.timestamps.requests.GetAllTimestampsRequest;
@@ -12,7 +13,7 @@ import com.hardsign.server.models.timestamps.requests.StartTimestampRequest;
 import com.hardsign.server.models.timestamps.requests.StopTimestampRequest;
 import com.hardsign.server.models.users.User;
 import com.hardsign.server.services.activities.ActivitiesService;
-import com.hardsign.server.services.time.TimeProviderService;
+import com.hardsign.server.services.time.TimeProvider;
 import com.hardsign.server.services.timestamps.TimestampsService;
 import com.hardsign.server.services.user.CurrentUserProvider;
 import com.hardsign.server.utils.users.UserUtils;
@@ -28,19 +29,19 @@ public class TimestampsController {
     private final CurrentUserProvider currentUserProvider;
     private final ActivitiesService activitiesService;
     private final TimestampsService timestampService;
-    private final TimeProviderService timeProviderService;
+    private final TimeProvider timeProvider;
     private final Mapper mapper;
 
     public TimestampsController(
             CurrentUserProvider currentUserProvider,
             ActivitiesService activitiesService,
             TimestampsService timestampService,
-            TimeProviderService timeProviderService,
+            TimeProvider timeProviderService,
             Mapper mapper) {
         this.currentUserProvider = currentUserProvider;
         this.activitiesService = activitiesService;
         this.timestampService = timestampService;
-        this.timeProviderService = timeProviderService;
+        this.timeProvider = timeProviderService;
         this.mapper = mapper;
     }
 
@@ -48,9 +49,9 @@ public class TimestampsController {
     public List<TimestampModel> getAllTimestamps(@Valid @RequestBody GetAllTimestampsRequest request) {
         var user = getUserOrThrow();
 
-        var activity = activitiesService.findById(request.getActivityId())
-                .filter(user::hasAccess)
-                .orElseThrow(NotFoundException::new);
+        var activity = getActivityOrThrow(request.getActivityId());
+
+        validateHasAccess(user, activity);
 
         return timestampService.findAllTimestamps(activity.getUserId())
                 .stream()
@@ -65,8 +66,7 @@ public class TimestampsController {
         var timestamp = timestampService.findById(id)
                 .orElseThrow(NotFoundException::new);
 
-        var activity = activitiesService.findById(timestamp.getActivityId())
-                .orElseThrow(NotFoundException::new);
+        var activity = getActivityOrThrow(timestamp.getActivityId());
 
         validateHasAccess(user, activity);
 
@@ -77,8 +77,7 @@ public class TimestampsController {
     public TimestampModel getLastTimestampByActivityId(@PathVariable("activityId") long activityId) {
         var user = getUserOrThrow();
 
-        var activity = activitiesService.findById(activityId)
-                .orElseThrow(NotFoundException::new);
+        var activity = getActivityOrThrow(activityId);
 
         validateHasAccess(user, activity);
 
@@ -89,28 +88,35 @@ public class TimestampsController {
     }
 
     @PostMapping(value = "start")
-    public TimestampModel start(@Valid @RequestBody StartTimestampRequest request) throws DomainException {
+    public TimestampModel start(@Valid @RequestBody StartTimestampRequest request) {
         var user = getUserOrThrow();
 
-        var activity = activitiesService.findById(request.getActivityId())
-                .orElseThrow(NotFoundException::new);
+        var activity = getActivityOrThrow(request.getActivityId());
 
         validateHasAccess(user, activity);
 
-        var timestamp = timestampService.start(activity.getId(), timeProviderService.getCurrentDate());
+        var lastTimestamp = timestampService.findActiveTimestamp(activity.getId());
+        if (lastTimestamp.isPresent())
+            throw new ConflictException("Active timestamp not completed.");
+
+        var timestamp = timestampService.save(new Timestamp(activity.getId(), timeProvider.now()));
+
         return mapper.mapToModel(timestamp);
     }
 
     @PostMapping(value = "stop")
-    public TimestampModel stop(@Valid @RequestBody StopTimestampRequest request) throws DomainException {
+    public TimestampModel stop(@Valid @RequestBody StopTimestampRequest request) {
         var user = getUserOrThrow();
 
-        var activity = activitiesService.findById(request.getActivityId())
-                .orElseThrow(NotFoundException::new);
+        var activity = getActivityOrThrow(request.getActivityId());
 
         validateHasAccess(user, activity);
 
-        var timestamp = timestampService.stop(activity.getId(), timeProviderService.getCurrentDate());
+        var lastTimestamp = timestampService.findActiveTimestamp(activity.getId())
+                .orElseThrow(() -> new NotFoundException("Active timestamp not found"));
+        lastTimestamp.setEnd(timeProvider.now());
+
+        var timestamp = timestampService.save(lastTimestamp);
         return mapper.mapToModel(timestamp);
     }
 
@@ -131,6 +137,11 @@ public class TimestampsController {
 
     private User getUserOrThrow() {
         return UserUtils.getUserOrThrow(currentUserProvider);
+    }
+
+    private Activity getActivityOrThrow(long activityId) {
+        return activitiesService.findById(activityId)
+                .orElseThrow(() -> new NotFoundException("Activity not found."));
     }
 
     private static void validateHasAccess(User user, Activity activity) {
