@@ -1,6 +1,6 @@
 package com.hardsign.server.controllers;
 
-import com.hardsign.server.exceptions.BadRequestException;
+import com.hardsign.server.exceptions.ConflictException;
 import com.hardsign.server.exceptions.NotFoundException;
 import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.users.AddUserModel;
@@ -56,7 +56,7 @@ public class UserController {
                 .build();
 
         if (userRepository.findFirstByLogin(addUserModel.getLogin()).isPresent())
-            throw new BadRequestException("User with same login exists.");
+            throw new ConflictException("User with same login exists.");
 
         var result = userRepository.save(user);
         return mapper.mapToModel(mapper.map(result));

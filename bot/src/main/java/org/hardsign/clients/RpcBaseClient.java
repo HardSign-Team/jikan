@@ -71,6 +71,9 @@ public abstract class RpcBaseClient {
             return new JikanResponse<>(response.code(), response.message());
         }
         var responseBodyBytes = responseBody.bytes();
+        if (responseBodyBytes.length == 0 && type == Object.class) {
+            return new JikanResponse<>(null, response.code());
+        }
         try {
             return new JikanResponse<>(objectMapper.readValue(responseBodyBytes, type), response.code());
         } catch (JsonMappingException e) {

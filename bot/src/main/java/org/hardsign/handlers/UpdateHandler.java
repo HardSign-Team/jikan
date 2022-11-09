@@ -1,4 +1,4 @@
-package org.hardsign.services.updateHandlers;
+package org.hardsign.handlers;
 
 import com.pengrad.telegrambot.model.Update;
 import org.hardsign.models.UpdateContext;

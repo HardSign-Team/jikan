@@ -1,7 +1,9 @@
 package org.hardsign.models;
 
 public enum HttpCodes {
-    NotFound(404);
+    Ok(200),
+    NotFound(404),
+    ;
 
     private final int code;
 

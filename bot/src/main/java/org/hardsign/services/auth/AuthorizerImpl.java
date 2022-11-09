@@ -9,6 +9,7 @@ import org.hardsign.clients.RpcClient;
 import org.hardsign.models.JikanResponse;
 import org.hardsign.models.auth.JwtTokenDto;
 import org.hardsign.models.auth.TelegramUserMeta;
+import org.hardsign.models.auth.UserAuthMeta;
 import org.hardsign.models.auth.requests.LoginRequest;
 import org.hardsign.models.settings.BotSettings;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +45,8 @@ public class AuthorizerImpl implements Authorizer {
 
     @Override
     public String authorizeUser(TelegramUserMeta meta) {
-        var result = toJsonSafety(meta);
+        var auth = new UserAuthMeta(Long.toString(meta.getId()), meta.getLogin());
+        var result = toJsonSafety(auth);
         return result == null ? "" : Base64.getEncoder().encodeToString(result.getBytes());
     }
 

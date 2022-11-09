@@ -1,12 +1,10 @@
 package com.hardsign.server.services.activities;
 
-import com.hardsign.server.exceptions.DomainException;
 import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.activities.Activity;
-import com.hardsign.server.models.activities.ActivityEntity;
-import com.hardsign.server.models.activities.ActivityPatch;
 import com.hardsign.server.models.users.User;
 import com.hardsign.server.repositories.ActivitiesRepository;
+import com.hardsign.server.utils.Validation;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,35 +33,21 @@ public class ActivitiesServiceImpl implements ActivitiesService {
         return entity.map(mapper::map);
     }
 
-    public Activity save(User user, String name) throws DomainException {
-        var entity = new ActivityEntity(user.getId(), name);
-
-        validateName(name);
-
-        var savedEntity = repository.save(entity);
-
-        return mapper.map(savedEntity);
+    public Activity save(Activity activity) {
+        var entity = mapper.mapToEntity(activity);
+        var saved = repository.save(entity);
+        return mapper.map(saved);
     }
 
     public void delete(long id) {
         repository.deleteById(id);
     }
 
-    public Optional<Activity> update(long id, ActivityPatch patch) throws DomainException {
-        if (patch.getName() != null)
-            validateName(patch.getName());
-        return repository
-                .findById(id)
-                .map(patch::apply)
-                .map(repository::save)
-                .map(mapper::map);
-    }
-
-    private void validateName(String name) throws DomainException {
-        if (name.isBlank())
-            throw new DomainException("Name is blank");
-
-        if (repository.findActivityEntityByName(name).isPresent())
-            throw new DomainException("Activity with this name exists already.");
+    public Validation<Activity> validate(Activity entity) {
+        if (entity.getName().isBlank())
+            return Validation.invalid("Name is blank.");
+        if (repository.findActivityEntityByUserIdAndName(entity.getUserId(), entity.getName()).isPresent())
+            return Validation.invalid("Activity with this name exists already.");
+        return Validation.valid(entity);
     }
 }

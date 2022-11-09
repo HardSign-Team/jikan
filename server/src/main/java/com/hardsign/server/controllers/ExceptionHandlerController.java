@@ -17,7 +17,7 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
     protected ResponseEntity<Object> handleResponseStatusException(ResponseStatusException ex, WebRequest req) {
-        return handleExceptionInternal(ex, null, new HttpHeaders(), ex.getStatus(), req);
+        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), ex.getStatus(), req);
     }
 
     @ExceptionHandler(AuthException.class)

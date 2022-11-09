@@ -1,11 +1,18 @@
 package org.hardsign.models.users;
 
-public enum UserState {
-    None,
-    CreateActivityName,
-    ;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-    public boolean isDefault() {
-        return this == None;
-    }
+@Data
+@EqualsAndHashCode(of = {"userId"})
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserState {
+    private long userId;
+    private State state;
+    private long activityId;
+    private long deleteActivityId;
 }
+

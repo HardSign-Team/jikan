@@ -1,25 +1,44 @@
 package org.hardsign.repositories;
 
 import org.hardsign.models.users.UserStateEntity;
+import org.hibernate.HibernateException;
+import org.hibernate.SessionFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-// todo: (tebaikin) 05.11.2022 should use real db
 public class UserStateRepositoryImpl implements UserStateRepository {
 
-    private final List<UserStateEntity> entities = new ArrayList<>();
+    private final SessionFactory sessionFactory;
+
+    public UserStateRepositoryImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public Optional<UserStateEntity> findByUserId(long userId) {
-        return entities.stream().filter(x -> x.getUserId() == userId).findFirst();
+        try (var session = sessionFactory.openSession()) {
+            var em = session
+                    .getEntityManagerFactory()
+                    .createEntityManager();
+            var criteriaBuilder = em.getCriteriaBuilder();
+            var query = criteriaBuilder.createQuery(UserStateEntity.class);
+            var root = query.from(UserStateEntity.class);
+
+            var userIdCriteria = query
+                    .where(criteriaBuilder.equal(root.get("userId"), userId));
+            return session.createQuery(userIdCriteria).getResultList().stream().findFirst();
+        } catch (HibernateException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public UserStateEntity save(UserStateEntity entity) {
-        entities.removeIf(x -> x.getUserId() == entity.getUserId());
-        entities.add(entity);
+        try (var session = sessionFactory.openSession()) {
+            var transaction = session.beginTransaction();
+            session.saveOrUpdate(entity);
+            transaction.commit();
+        }
         return entity;
     }
 }

@@ -21,7 +21,7 @@ public class JikanApiClientImpl implements JikanApiClient {
     public JikanApiClientImpl(OkHttpClient client, Authorizer authorizer, Supplier<BotSettings> settingsProvider) {
         activitiesClient = new ActivitiesClientImpl(client, authorizer, settingsProvider);
         timestampsClient = new TimestampsClientImpl(client, authorizer, settingsProvider);
-        usersClient = new UsersClientImpl(client, authorizer, settingsProvider);
+        usersClient = new UsersClientImpl(client, settingsProvider);
     }
 
     @Override

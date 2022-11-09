@@ -11,4 +11,5 @@ public class BotSettings {
     private String baseUrlHost;
     private String baseUrlPort;
     private String botTelegramToken;
+    private BotDatabaseSettings database;
 }

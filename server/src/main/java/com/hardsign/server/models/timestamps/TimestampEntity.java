@@ -1,11 +1,10 @@
 package com.hardsign.server.models.timestamps;
 
 import com.hardsign.server.models.activities.ActivityEntity;
-import net.bytebuddy.utility.nullability.MaybeNull;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "timestamps")
@@ -20,19 +19,15 @@ public class TimestampEntity {
     private ActivityEntity activity;
 
     @Column(name = "start_at", nullable = false)
-    private Date start;
+    private ZonedDateTime start;
 
     @Nullable
     @Column(name = "end_at")
-    private Date end;
+    private ZonedDateTime end;
 
     public TimestampEntity() { }
 
-    public TimestampEntity(long activityId, Date start) {
-        this(0, new ActivityEntity(activityId), start, null);
-    }
-
-    public TimestampEntity(long id, ActivityEntity activity, Date start, @MaybeNull Date end) {
+    public TimestampEntity(long id, ActivityEntity activity, ZonedDateTime start, @Nullable ZonedDateTime end) {
         this.id = id;
         this.activity = activity;
         this.start = start;
@@ -55,20 +50,20 @@ public class TimestampEntity {
         this.activity = activity;
     }
 
-    public Date getStart() {
+    public ZonedDateTime getStart() {
         return start;
     }
 
-    public void setStart(Date start) {
+    public void setStart(ZonedDateTime start) {
         this.start = start;
     }
 
     @Nullable
-    public Date getEnd() {
+    public ZonedDateTime getEnd() {
         return end;
     }
 
-    public void setEnd(@Nullable Date end) {
+    public void setEnd(@Nullable ZonedDateTime end) {
         this.end = end;
     }
 }

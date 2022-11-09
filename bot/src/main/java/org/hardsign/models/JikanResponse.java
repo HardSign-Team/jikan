@@ -57,4 +57,11 @@ public class JikanResponse<T> {
     }
 
     public boolean isSuccess() { return error == null; }
+
+    // todo: (tebaikin) 08.11.2022 rename to isNotFound
+    public boolean notFound() {
+        return HttpCodes.NotFound.is(code);
+    }
+
+    public boolean isOk() { return HttpCodes.Ok.is(code); }
 }

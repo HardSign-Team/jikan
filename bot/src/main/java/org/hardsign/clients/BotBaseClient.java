@@ -12,7 +12,7 @@ import org.hardsign.services.auth.Authorizer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public abstract class BotBaseClient extends RpcBaseClient{
+public abstract class BotBaseClient extends RpcBaseClient {
     public static final String JIKAN_SERVICE_AUTHORIZATION = "Jikan-Service-Authorization";
     private final Authorizer authorizer;
 
@@ -48,7 +48,7 @@ public abstract class BotBaseClient extends RpcBaseClient{
         return send(url, request.getUserMeta(), Request.Builder::get, typeHint);
     }
 
-    public  <TResponse> JikanResponse<TResponse> send(
+    public <TResponse> JikanResponse<TResponse> send(
             String url,
             TelegramUserMeta meta,
             Function<Request.Builder, Request.Builder> requestSetup,

@@ -1,9 +1,14 @@
 package org.hardsign.services.users;
 
 import com.pengrad.telegrambot.model.User;
+import org.hardsign.models.users.State;
 import org.hardsign.models.users.UserState;
 import org.hardsign.models.users.UserStateEntity;
+import org.hardsign.models.users.UserStatePatch;
 import org.hardsign.repositories.UserStateRepository;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class UserStateServiceImpl implements UserStateService {
 
@@ -14,27 +19,55 @@ public class UserStateServiceImpl implements UserStateService {
     }
 
     @Override
-    public UserStateEntity getState(User user) {
+    public UserState getState(User user) {
         return getState(user.id());
     }
 
     @Override
-    public UserStateEntity getState(long userId) {
+    public UserState getState(long userId) {
         return repository.findByUserId(userId)
-                .orElseGet(() -> repository.save(new UserStateEntity(userId, UserState.None, 0)));
+                .map(this::map)
+                .orElseGet(() -> map(createDefaultState(userId)));
     }
 
     @Override
-    public UserStateEntity setState(User user, UserState state) {
-        var entity = getState(user);
-        entity.setState(state);
-        return repository.save(entity);
+    public void update(User user, UserStatePatch patch) {
+        var entity = repository.findByUserId(user.id()).orElseGet(() -> createDefaultState(user.id()));
+        applyPatch(patch, UserStatePatch::getDeleteActivityId, entity::setDeletionActivityId);
+        applyPatch(patch, UserStatePatch::getState, entity::setState);
+        applyPatch(patch, UserStatePatch::getActivityId, entity::setActivityId);
+        repository.save(entity);
     }
 
     @Override
-    public UserStateEntity setActivity(User user, long activityId) {
-        var entity = getState(user);
-        entity.setActivityId(activityId);
-        return repository.save(entity);
+    public void setState(User user, State state) {
+        update(user, UserStatePatch.builder().state(state).build());
+    }
+
+    @Override
+    public void setActivity(User user, long activityId) {
+        update(user, UserStatePatch.builder().activityId(activityId).build());
+    }
+
+    private <TProperty> void applyPatch(
+            UserStatePatch patch,
+            Function<UserStatePatch, TProperty> propertyProvider,
+            Consumer<TProperty> consumer) {
+        var property = propertyProvider.apply(patch);
+        if (property != null) {
+            consumer.accept(property);
+        }
+    }
+
+    private UserStateEntity createDefaultState(long userId) {
+        return repository.save(new UserStateEntity(0, userId, State.None, 0, 0));
+    }
+
+    private UserState map(UserStateEntity entity) {
+        return new UserState(
+                entity.getUserId(),
+                entity.getState(),
+                entity.getActivityId(),
+                entity.getDeletionActivityId());
     }
 }

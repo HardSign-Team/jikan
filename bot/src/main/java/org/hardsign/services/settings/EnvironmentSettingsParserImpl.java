@@ -1,6 +1,7 @@
 package org.hardsign.services.settings;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import org.hardsign.models.settings.BotDatabaseSettings;
 import org.hardsign.models.settings.BotSettings;
 
 import java.io.File;
@@ -15,12 +16,21 @@ public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser 
 
     @Override
     public BotSettings parse() throws Exception {
+        var databaseSettings = BotDatabaseSettings.builder()
+                .user(getOrThrow("POSTGRESQL_USER"))
+                .password(getOrThrow("POSTGRESQL_PASSWORD"))
+                .databaseName(getOrThrow("POSTGRESQL_DBNAME"))
+                .host(getOrThrow("POSTGRESQL_HOST"))
+                .port(getOrThrow("POSTGRESQL_PORT"))
+                .build();
+
         return BotSettings.builder()
                 .botTelegramToken(getOrThrow("TELEGRAM_BOT_TOKEN"))
                 .botLogin(getOrThrow("JIKAN_BOT_LOGIN"))
                 .botPassword(getOrThrow("JIKAN_BOT_PASSWORD"))
                 .baseUrlHost(getOrThrow("JIKAN_API_HOST"))
                 .baseUrlPort(getOrThrow("JIKAN_API_PORT"))
+                .database(databaseSettings)
                 .build();
     }
 
