@@ -6,6 +6,7 @@ import org.hardsign.models.settings.BotSettings;
 
 import java.io.File;
 import java.net.URL;
+import java.time.Duration;
 
 public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser {
     private final Dotenv environment;
@@ -30,8 +31,13 @@ public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser 
                 .botPassword(getOrThrow("JIKAN_BOT_PASSWORD"))
                 .baseUrlHost(getOrThrow("JIKAN_API_HOST"))
                 .baseUrlPort(getOrThrow("JIKAN_API_PORT"))
+                .accessTokenLifeTime(getMinutes(environment.get("JIKAN_ACCESS_TOKEN_LIFETIME", "60")))
                 .database(databaseSettings)
                 .build();
+    }
+
+    private static Duration getMinutes(String jikan_access_token_lifetime) {
+        return Duration.ofMinutes(Long.parseLong(jikan_access_token_lifetime));
     }
 
     private String getOrThrow(String key) throws Exception {

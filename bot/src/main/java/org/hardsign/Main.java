@@ -45,6 +45,8 @@ public class Main {
         bot.setUpdatesListener(updateListener);
     }
 
+
+
     @NotNull
     private static URL getResourceUrl() throws Exception {
         var resource = Main.class.getClassLoader().getResource("env.properties");
