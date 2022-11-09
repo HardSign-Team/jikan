@@ -6,30 +6,30 @@ import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.users.AddUserModel;
 import com.hardsign.server.models.users.UserEntity;
 import com.hardsign.server.models.users.UserModel;
-import com.hardsign.server.repositories.UserRepository;
 import com.hardsign.server.services.auth.PasswordService;
+import com.hardsign.server.services.user.UserService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/users")
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final PasswordService passwordService;
     private final Mapper mapper;
 
     public UserController(
-            UserRepository userRepository,
+            UserService userService,
             PasswordService passwordService,
             Mapper mapper) {
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.passwordService = passwordService;
         this.mapper = mapper;
     }
 
     @GetMapping("login/{login}")
-    public UserModel getUserByLogin(@PathVariable String login){
-        var userEntity = userRepository.findFirstByLogin(login)
+    public UserModel getUserByLogin(@PathVariable String login) {
+        var userEntity = userService.getUserByLogin(login)
                 .orElseThrow(NotFoundException::new);
 
         var user = mapper.map(userEntity);
@@ -38,8 +38,8 @@ public class UserController {
     }
 
     @GetMapping("{id}")
-    public UserModel getUserById(@PathVariable long id){
-        var userEntity = userRepository.findById(id)
+    public UserModel getUserById(@PathVariable long id) {
+        var userEntity = userService.findById(id)
                 .orElseThrow(NotFoundException::new);
 
         var user = mapper.map(userEntity);
@@ -48,17 +48,17 @@ public class UserController {
     }
 
     @PostMapping
-    public UserModel addUser(@RequestBody AddUserModel addUserModel){
+    public UserModel addUser(@RequestBody AddUserModel addUserModel) {
         var user = UserEntity.builder()
                 .name(addUserModel.getName())
                 .login(addUserModel.getLogin())
                 .hashedPassword(passwordService.hash(addUserModel.getPassword()))
                 .build();
 
-        if (userRepository.findFirstByLogin(addUserModel.getLogin()).isPresent())
+        if (userService.getUserByLogin(addUserModel.getLogin()).isPresent())
             throw new ConflictException("User with same login exists.");
 
-        var result = userRepository.save(user);
-        return mapper.mapToModel(mapper.map(result));
+        var result = userService.save(user);
+        return mapper.mapToModel(result);
     }
 }
