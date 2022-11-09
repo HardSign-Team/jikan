@@ -1,7 +1,7 @@
 package com.hardsign.server.services.auth;
 
 import com.hardsign.server.models.auth.JwtTokens;
-import com.hardsign.server.models.users.UserEntity;
+import com.hardsign.server.models.users.User;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +22,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public JwtTokens login(UserEntity user) {
+    public JwtTokens login(User user) {
         return refresh(user);
     }
 
     @Override
-    public boolean verifyPassword(UserEntity user, String password) {
+    public boolean verifyPassword(User user, String password) {
         return passwordService.verifyHash(password, user.getHashedPassword());
     }
 
@@ -37,12 +37,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String generateAccessToken(UserEntity user) {
+    public String generateAccessToken(User user) {
         return jwtProvider.generateAccessToken(user);
     }
 
     @Override
-    public JwtTokens refresh(UserEntity user) {
+    public JwtTokens refresh(User user) {
         var accessToken = generateAccessToken(user);
         var newRefreshToken = jwtProvider.generateRefreshToken(user);
         refreshStorage.put(user.getLogin(), newRefreshToken);

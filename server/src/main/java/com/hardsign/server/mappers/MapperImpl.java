@@ -52,7 +52,12 @@ public class MapperImpl implements Mapper {
 
     @Override
     public User map(UserEntity entity) {
-        return new User(entity.getId(), entity.getName(), entity.getLogin());
+        return new User(
+                entity.getId(),
+                entity.getName(),
+                entity.getLogin(),
+                entity.getHashedPassword(),
+                entity.getRole());
     }
 
     @Override

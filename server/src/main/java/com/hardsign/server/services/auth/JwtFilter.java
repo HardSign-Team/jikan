@@ -1,7 +1,7 @@
 package com.hardsign.server.services.auth;
 
 import com.hardsign.server.models.auth.JwtAuthentication;
-import com.hardsign.server.models.users.UserEntity;
+import com.hardsign.server.models.users.User;
 import com.hardsign.server.services.auth.authentication.ServiceJwtAuthenticator;
 import com.hardsign.server.services.auth.authentication.UserJwtAuthenticator;
 import com.hardsign.server.services.user.UserService;
@@ -53,7 +53,7 @@ public class JwtFilter extends GenericFilterBean {
 
     private boolean isService(String login) {
         return userService.getUserByLogin(login)
-                .map(UserEntity::isService)
+                .map(User::isService)
                 .orElse(false);
     }
 }

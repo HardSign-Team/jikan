@@ -1,6 +1,6 @@
 package com.hardsign.server.services.auth;
 
-import com.hardsign.server.models.users.UserEntity;
+import com.hardsign.server.models.users.User;
 import com.hardsign.server.services.time.TimeProvider;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -31,7 +31,7 @@ public class JwtProvider {
         this.timeProvider = timeProvider;
     }
 
-    public String generateAccessToken(UserEntity user) {
+    public String generateAccessToken(User user) {
         var now = timeProvider.now();
         var accessExpirationInstant = now.plusMinutes(accessTokenLifeTimeMinutes).toInstant();
         var accessExpiration = Date.from(accessExpirationInstant);
@@ -43,7 +43,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String generateRefreshToken(UserEntity user) {
+    public String generateRefreshToken(User user) {
         var refreshExpirationInstant = timeProvider.now()
                 .plusMinutes(refreshTokenLifeTimeMinutes)
                 .toInstant();

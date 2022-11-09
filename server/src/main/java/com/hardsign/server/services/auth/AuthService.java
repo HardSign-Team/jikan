@@ -1,21 +1,21 @@
 package com.hardsign.server.services.auth;
 
 import com.hardsign.server.models.auth.JwtTokens;
-import com.hardsign.server.models.users.UserEntity;
+import com.hardsign.server.models.users.User;
 import io.jsonwebtoken.Claims;
 
 import java.util.Optional;
 
 public interface AuthService {
-    JwtTokens login(UserEntity user);
+    JwtTokens login(User user);
 
-    boolean verifyPassword(UserEntity user, String password);
+    boolean verifyPassword(User user, String password);
 
     Optional<Claims> getRefreshClaims(String refreshToken);
 
-    String generateAccessToken(UserEntity user);
+    String generateAccessToken(User user);
 
-    JwtTokens refresh(UserEntity user);
+    JwtTokens refresh(User user);
 
     boolean verifyToken(String login, String refreshToken);
 }

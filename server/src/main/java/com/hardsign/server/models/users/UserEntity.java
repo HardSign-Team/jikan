@@ -71,10 +71,6 @@ public class UserEntity {
         this.hashedPassword = hashedPassword;
     }
 
-    public boolean isService() {
-        return getRole() == UserRole.SERVICE;
-    }
-
     public UserRole getRole() {
         return role;
     }
