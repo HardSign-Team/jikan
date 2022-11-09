@@ -46,7 +46,7 @@ public class StartCommandHandler extends BaseTextUpdateHandler implements Comman
             context.setUser(apiUser);
         }
 
-        var keyboard = KeyboardFactory.createMainMenu(context, jikanApiClient);
+        var keyboard = KeyboardFactory.createMainMenu(context);
         bot.execute(new SendMessage(chatId, "Выберите действие").replyMarkup(keyboard));
     }
 

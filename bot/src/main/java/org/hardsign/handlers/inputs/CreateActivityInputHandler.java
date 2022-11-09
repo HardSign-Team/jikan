@@ -34,7 +34,7 @@ public class CreateActivityInputHandler extends BaseUpdateHandler implements Inp
         context.setState(State.None);
 
         var chatId = update.message().chat().id();
-        var replyMarkup = KeyboardFactory.createMainMenu(context, jikanApiClient);
+        var replyMarkup = KeyboardFactory.createMainMenu(context);
         var text = "Вы создали активность: " + activity.getName();
         bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup));
     }

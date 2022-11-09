@@ -10,6 +10,7 @@ import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.requests.BotRequest;
+import org.hardsign.models.timestamps.TimestampDto;
 import org.hardsign.models.timestamps.requests.StartActivityRequest;
 import org.hardsign.handlers.BaseTextUpdateHandler;
 
@@ -26,17 +27,29 @@ public class StartPressHandler extends BaseTextUpdateHandler implements Keyboard
     @Override
     protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var chatId = update.message().chat().id();
-        var activityId = context.getActivityId();
-        if (activityId == 0) {
-            handleNoCurrentActivity(bot, jikanApiClient, context, chatId);
+        var activity = context.getActivity();
+
+        if (activity == null) {
+            handleNoCurrentActivity(bot, context, chatId);
             return;
         }
 
-        startTrackActivity(activityId, context.getMeta());
+        if (context.getActiveTimestamp() != null) {
+            handleAlreadyStartTracking(bot, context, chatId);
+            return;
+        }
 
-        var text = "Трекинг текущей активности начат!";
-        var keyboard = KeyboardFactory.createMainMenu(context, jikanApiClient);
+        var timestamp = startTrackActivity(activity.getId(), context.getMeta());
+        context.setActiveTimestamp(timestamp);
+
+        var text = "Трекинг активности " + activity.getName() + " начат!";
+        var keyboard = KeyboardFactory.createMainMenu(context);
         bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
+    }
+
+    private void handleAlreadyStartTracking(TelegramBot bot, UpdateContext context, Long chatId) {
+        var text = "Вы уже трекаете текущую активность.";
+        sendDefaultMenuMessage(bot, context, chatId, text);
     }
 
     @Override
@@ -44,8 +57,8 @@ public class StartPressHandler extends BaseTextUpdateHandler implements Keyboard
         return ButtonNames.START_TIMESTAMP.getName();
     }
 
-    private void startTrackActivity(long activityId, TelegramUserMeta meta) throws Exception {
+    private TimestampDto startTrackActivity(long activityId, TelegramUserMeta meta) throws Exception {
         var request = new BotRequest<>(new StartActivityRequest(activityId), meta);
-        jikanApiClient.timestamps().start(request).ensureSuccess();
+        return jikanApiClient.timestamps().start(request).getValueOrThrow();
     }
 }

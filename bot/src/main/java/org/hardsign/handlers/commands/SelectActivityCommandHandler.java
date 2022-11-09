@@ -59,9 +59,9 @@ public class SelectActivityCommandHandler extends BaseUpdateHandler implements C
         handleSuccess(user, context, chatId, activity);
     }
 
-    private void handleSuccess(User user, UpdateContext context, Long chatId, ActivityDto activity) throws Exception {
+    private void handleSuccess(User user, UpdateContext context, Long chatId, ActivityDto activity) {
         userStateService.setActivity(user, activity.getId());
-        context.setActivityId(activity.getId());
+        context.setActivity(activity);
         sendMessage(chatId, "Вы выбрали активность: " + activity.getName(), context);
     }
 
@@ -72,8 +72,8 @@ public class SelectActivityCommandHandler extends BaseUpdateHandler implements C
         return result.notFound() ? null : result.getValueOrThrow();
     }
 
-    private void sendMessage(Long chatId, String text, UpdateContext context) throws Exception {
-        var keyboard = KeyboardFactory.createMainMenu(context, jikanApiClient);
+    private void sendMessage(Long chatId, String text, UpdateContext context) {
+        var keyboard = KeyboardFactory.createMainMenu(context);
         bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
     }
 }

@@ -4,7 +4,6 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
-import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
@@ -15,15 +14,10 @@ import org.hardsign.services.users.UserStateService;
 public class CancelDeleteActivityPressHandler extends ConfirmationDeleteActivityPressHandler implements KeyboardPressHandler {
 
     private final TelegramBot bot;
-    private final JikanApiClient jikanApiClient;
     private final UserStateService userStateService;
 
-    public CancelDeleteActivityPressHandler(
-            TelegramBot bot,
-            JikanApiClient jikanApiClient,
-            UserStateService userStateService) {
+    public CancelDeleteActivityPressHandler(TelegramBot bot, UserStateService userStateService) {
         this.bot = bot;
-        this.jikanApiClient = jikanApiClient;
         this.userStateService = userStateService;
     }
 
@@ -36,12 +30,12 @@ public class CancelDeleteActivityPressHandler extends ConfirmationDeleteActivity
         clearState(user, userStateService, context);
 
         if (activityId == 0) {
-            handleNotFoundActivity(bot, jikanApiClient, chatId, context);
+            handleNotFoundActivity(bot, chatId, context);
             return;
         }
 
         var text = "Ура! Активность не была удалена! Можете продолжать трекать время :)";
-        var keyboard = KeyboardFactory.createMainMenu(context, jikanApiClient);
+        var keyboard = KeyboardFactory.createMainMenu(context);
         bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
     }
 

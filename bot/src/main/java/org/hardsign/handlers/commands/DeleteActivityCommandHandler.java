@@ -51,7 +51,8 @@ public class DeleteActivityCommandHandler extends BaseUpdateHandler implements C
 
         var activityId = Long.parseLong(matcher.group(1));
         var chatId = update.message().chat().id();
-        if (context.getActivityId() == activityId) {
+        var currentActivity = context.getActivity();
+        if (currentActivity != null && currentActivity.getId() == activityId) {
             handleCurrentActivityError(chatId, context);
             return;
         }
@@ -83,15 +84,14 @@ public class DeleteActivityCommandHandler extends BaseUpdateHandler implements C
         bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup));
     }
 
-    private void handleNotOwnActivityError(Long chatId, UpdateContext context) throws Exception {
+    private void handleNotOwnActivityError(Long chatId, UpdateContext context) {
         var notOwnText = "Ой! А это не ваша активность, вы ее удалить не можете " + Emoji.FaceWithTongue.value();
-        bot.execute(new SendMessage(chatId, notOwnText)
-                            .replyMarkup(KeyboardFactory.createMainMenu(context, jikanApiClient)));
+        bot.execute(new SendMessage(chatId, notOwnText).replyMarkup(KeyboardFactory.createMainMenu(context)));
     }
 
-    private void handleCurrentActivityError(Long chatId, UpdateContext context) throws Exception {
+    private void handleCurrentActivityError(Long chatId, UpdateContext context) {
         var text = "Ай-яй-яй! Нельзя удалить текущую активность.";
-        var keyboard = KeyboardFactory.createMainMenu(context, jikanApiClient);
+        var keyboard = KeyboardFactory.createMainMenu(context);
         bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
     }
 

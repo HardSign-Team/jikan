@@ -3,7 +3,6 @@ package org.hardsign.handlers.keyboards.abstracts;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
-import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.users.State;
@@ -26,11 +25,10 @@ public abstract class ConfirmationDeleteActivityPressHandler extends BaseTextUpd
 
     protected void handleNotFoundActivity(
             TelegramBot bot,
-            JikanApiClient jikanApiClient,
             Long chatId,
-            UpdateContext context) throws Exception {
+            UpdateContext context) {
         var noActivityMessage = "Произошла ошибка! Не нашли выбранную активность. Попробуйте заново (по-братски)";
-        var keyboard = KeyboardFactory.createMainMenu(context, jikanApiClient);
+        var keyboard = KeyboardFactory.createMainMenu(context);
         bot.execute(new SendMessage(chatId, noActivityMessage).replyMarkup(keyboard));
     }
 }

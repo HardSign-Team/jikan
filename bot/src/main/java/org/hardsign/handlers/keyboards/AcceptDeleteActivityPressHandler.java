@@ -51,19 +51,19 @@ public class AcceptDeleteActivityPressHandler extends ConfirmationDeleteActivity
 
         var chatId = update.message().chat().id();
         if (activityId == 0) {
-            handleNotFoundActivity(bot, jikanApiClient, chatId, context);
+            handleNotFoundActivity(bot, chatId, context);
             return;
         }
 
         var activity = getActivity(context, activityId);
         if (activity == null) {
-            handleNotFoundActivity(bot, jikanApiClient, chatId, context);
+            handleNotFoundActivity(bot, chatId, context);
             return;
         }
 
         deleteActivity(activity, context);
 
-        var keyboard = KeyboardFactory.createMainMenu(context, jikanApiClient);
+        var keyboard = KeyboardFactory.createMainMenu(context);
         var text = "Вы удалили активность " + activity.getName() + " " + Emoji.Pensive.value();
         bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
     }
