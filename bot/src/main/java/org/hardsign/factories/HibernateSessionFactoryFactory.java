@@ -2,13 +2,14 @@ package org.hardsign.factories;
 
 import org.hardsign.models.settings.BotDatabaseSettings;
 import org.hardsign.models.users.UserStateEntity;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.jetbrains.annotations.NotNull;
 
 public class HibernateSessionFactoryFactory {
-    public static SessionFactory create(BotDatabaseSettings settings) {
+    public static SessionFactory create(BotDatabaseSettings settings) throws HibernateException {
         var configuration = new Configuration()
                 .setProperty("hibernate.connection.driver_class", org.postgresql.Driver.class.getName())
                 .setProperty("hibernate.connection.username", settings.getUser())

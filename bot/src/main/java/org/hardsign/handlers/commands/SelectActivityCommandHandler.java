@@ -45,12 +45,13 @@ public class SelectActivityCommandHandler extends BaseUpdateHandler implements C
         var chatId = update.message().chat().id();
         var activityId = Long.parseLong(matcher.group(1));
         var activity = getActivity(activityId, context.getMeta());
+
         if (activity == null) {
             sendMessage(chatId, "Активность не найдена :(", context);
             return;
         }
 
-        if (ValidationHelper.isOwnActivity(context.getUser(), activity)) {
+        if (!ValidationHelper.isOwnActivity(context.getUser(), activity)) {
             sendMessage(chatId, "Активность не найдена :(", context);
             return;
         }

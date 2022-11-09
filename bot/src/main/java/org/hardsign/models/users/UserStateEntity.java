@@ -1,7 +1,7 @@
 package org.hardsign.models.users;
 
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users_states")
@@ -16,7 +16,7 @@ public class UserStateEntity {
     @Column(name = "state")
     private State state;
 
-    @Column(name = "current_actvity_id")
+    @Column(name = "current_activity_id")
     private long activityId;
 
     @Column(name = "deletion_activity_id")

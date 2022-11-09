@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
+import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.TelegramUserMetaFactory;
 import org.hardsign.models.UpdateContext;
@@ -28,6 +29,7 @@ import java.util.logging.Logger;
 public class UpdateListenerImpl implements UpdatesListener {
     private static final Logger LOGGER = Logger.getLogger(UpdateListenerImpl.class.getName());
     private final JikanApiClient jikanApiClient;
+    private final TelegramBot bot;
     private final UserStateService userStateService;
     private final List<UpdateHandler> updateHandlers = new ArrayList<>();
 
@@ -36,6 +38,7 @@ public class UpdateListenerImpl implements UpdatesListener {
             TelegramBot bot,
             UserStateService userStateService) {
         this.jikanApiClient = jikanApiClient;
+        this.bot = bot;
         this.userStateService = userStateService;
 
         updateHandlers.add(new StartCommandHandler(bot, jikanApiClient, userStateService));
@@ -80,15 +83,25 @@ public class UpdateListenerImpl implements UpdatesListener {
                 .activityId(state.getActivityId())
                 .build();
 
+        var exceptionThrown = false;
         for (var handler : updateHandlers) {
             try {
                 handler.handle(update, context);
             } catch (Exception e) {
+                exceptionThrown = true;
                 LOGGER.severe(e.getMessage());
             }
         }
 
+        if (exceptionThrown) {
+            sendErrorMessage(update.message().chat().id());
+        }
+
         return update;
+    }
+
+    private void sendErrorMessage(Long chatId) {
+        bot.execute(new SendMessage(chatId, "Произошла ошибка :( Попробуй ещё раз!"));
     }
 
     private Optional<UserDto> findUser(User user, TelegramUserMeta meta) {
@@ -96,7 +109,7 @@ public class UpdateListenerImpl implements UpdatesListener {
             return Optional.empty();
         var request = new FindUserByLoginRequest(Long.toString(meta.getId()));
         var apiUser = jikanApiClient.users().findByLogin(request);
-        return apiUser.isSuccess() && apiUser.getCode() == 200
+        return apiUser.isSuccess() && apiUser.isOk()
                 ? apiUser.getValue()
                 : Optional.empty();
     }

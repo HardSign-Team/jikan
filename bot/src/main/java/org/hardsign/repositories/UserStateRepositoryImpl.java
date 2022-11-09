@@ -1,6 +1,7 @@
 package org.hardsign.repositories;
 
 import org.hardsign.models.users.UserStateEntity;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 
 import java.util.Optional;
@@ -16,7 +17,18 @@ public class UserStateRepositoryImpl implements UserStateRepository {
     @Override
     public Optional<UserStateEntity> findByUserId(long userId) {
         try (var session = sessionFactory.openSession()) {
-            return session.byId(UserStateEntity.class).loadOptional(userId);
+            var em = session
+                    .getEntityManagerFactory()
+                    .createEntityManager();
+            var criteriaBuilder = em.getCriteriaBuilder();
+            var query = criteriaBuilder.createQuery(UserStateEntity.class);
+            var root = query.from(UserStateEntity.class);
+
+            var userIdCriteria = query
+                    .where(criteriaBuilder.equal(root.get("userId"), userId));
+            return session.createQuery(userIdCriteria).getResultList().stream().findFirst();
+        } catch (HibernateException e) {
+            throw new RuntimeException(e);
         }
     }
 
