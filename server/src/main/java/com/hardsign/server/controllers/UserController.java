@@ -22,7 +22,7 @@ public class UserController {
 
     @GetMapping("login/{login}")
     public UserModel getUserByLogin(@PathVariable String login) {
-        return userService.getUserByLogin(login)
+        return userService.findUserByLogin(login)
                 .map(mapper::mapToModel)
                 .orElseThrow(NotFoundException::new);
     }
@@ -36,7 +36,7 @@ public class UserController {
 
     @PostMapping
     public UserModel addUser(@RequestBody AddUserModel addUserModel) {
-        if (userService.getUserByLogin(addUserModel.getLogin()).isPresent())
+        if (userService.findUserByLogin(addUserModel.getLogin()).isPresent())
             throw new ConflictException("User with same login exists.");
 
         var result = userService.create(addUserModel.getName(), addUserModel.getLogin(), addUserModel.getPassword());

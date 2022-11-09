@@ -52,7 +52,7 @@ public class JwtFilter extends GenericFilterBean {
     }
 
     private boolean isService(String login) {
-        return userService.getUserByLogin(login)
+        return userService.findUserByLogin(login)
                 .map(User::isService)
                 .orElse(false);
     }

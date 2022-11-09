@@ -18,6 +18,6 @@ public class CurrentUserProviderImpl implements CurrentUserProvider {
 
     public Optional<User> getCurrentUser() {
         var login = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userService.getUserByLogin(login);
+        return userService.findUserByLogin(login);
     }
 }

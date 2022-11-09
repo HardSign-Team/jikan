@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUserByLogin(String login) {
+    public Optional<User> findUserByLogin(String login) {
         return userRepository.findFirstByLogin(login).map(mapper::map);
     }
 

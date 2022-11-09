@@ -31,7 +31,7 @@ public class AuthController {
     @PostMapping("login")
     public JwtTokensModel login(@RequestBody JwtRequest authRequest) {
         var login = authRequest.getLogin();
-        var user = userService.getUserByLogin(login)
+        var user = userService.findUserByLogin(login)
                 .orElseThrow(() -> new NotFoundException("User not found."));
 
         var password = authRequest.getPassword();
@@ -50,7 +50,7 @@ public class AuthController {
                 .orElseThrow(() -> new BadRequestException("Invalid token."));
         var login = claims.getSubject();
 
-        var user = userService.getUserByLogin(login)
+        var user = userService.findUserByLogin(login)
                 .orElseThrow(() -> new NotFoundException("User not found."));
 
         if (!authService.verifyToken(login, refreshToken))
@@ -72,7 +72,7 @@ public class AuthController {
         if (!authService.verifyToken(refreshToken, refreshToken))
             throw new BadRequestException("Invalid token.");
 
-        var user = userService.getUserByLogin(login)
+        var user = userService.findUserByLogin(login)
                 .orElseThrow(() -> new NotFoundException("User not found."));
         var tokens = authService.refresh(user);
 
