@@ -4,6 +4,8 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.SendResponse;
+import org.hardsign.exceptions.BotException;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.users.State;
@@ -53,7 +55,7 @@ public abstract class BaseUpdateHandler implements UpdateHandler {
 
     protected void handleNoCurrentActivity(
             TelegramBot bot,
-            UpdateContext context, Long chatId) {
+            UpdateContext context, Long chatId) throws BotException {
         var text = "Вы не выбрали активность. Можете сделать это через главное меню.";
         sendDefaultMenuMessage(bot, context, chatId, text);
     }
@@ -61,8 +63,15 @@ public abstract class BaseUpdateHandler implements UpdateHandler {
     protected void sendDefaultMenuMessage(TelegramBot bot,
                                           UpdateContext context,
                                           Long chatId,
-                                          String text) {
+                                          String text) throws BotException {
         var keyboard = KeyboardFactory.createMainMenu(context);
-        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
+        var response = bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
+        handleError(response);
+    }
+
+    protected void handleError(SendResponse response) throws BotException {
+        if (response.isOk()) {
+            throw new BotException(response.toString());
+        }
     }
 }

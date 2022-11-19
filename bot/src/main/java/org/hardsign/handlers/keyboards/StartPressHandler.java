@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
+import org.hardsign.exceptions.BotException;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
@@ -47,7 +48,7 @@ public class StartPressHandler extends BaseTextUpdateHandler implements Keyboard
         bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
     }
 
-    private void handleAlreadyStartTracking(TelegramBot bot, UpdateContext context, Long chatId) {
+    private void handleAlreadyStartTracking(TelegramBot bot, UpdateContext context, Long chatId) throws BotException {
         var text = "Вы уже трекаете текущую активность.";
         sendDefaultMenuMessage(bot, context, chatId, text);
     }
