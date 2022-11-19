@@ -2,8 +2,22 @@ package org.hardsign.models;
 
 public enum Emoji {
     FaceWithTongue("\uD83D\uDE1B"),
-    Pensive("😔")
+    Pensive("😔"),
+    Ok("✅"),
+    WhiteQuestion("❔"),
+    RedQuestion("❓"),
+    Play("▶️"),
+    Stop("⏹"),
+    Back("↩️"),
+    RedCross("❌"),
+    YellowCircle("\uD83D\uDFE1"),
+    GreenCircle("\uD83D\uDFE2"),
+    TrashCan("\uD83D\uDDD1"),
+    ArrowsCircle("\uD83D\uDD04"),
+    Clipboard("\uD83D\uDCCB"),
+    Memo("\uD83D\uDCDD")
     ;
+
     private final String value;
 
     Emoji(String value) {
@@ -11,6 +25,11 @@ public enum Emoji {
     }
 
     public String value() {
-        return this.value;
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return value;
     }
 }

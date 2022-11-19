@@ -9,6 +9,7 @@ import org.hardsign.clients.JikanApiClient;
 import org.hardsign.handlers.commands.DeleteActivityCommandHandler;
 import org.hardsign.handlers.commands.UnselectActivityCommandHandler;
 import org.hardsign.models.ButtonNames;
+import org.hardsign.models.Emoji;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.activities.requests.GetAllActivitiesRequest;
@@ -67,14 +68,16 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
             var activity = activities[i];
             sb.append(i + 1).append(". ");
             if (currentActivityId == activity.getId()) {
-                appendName(sb, activity).append(' ');
-                appendActivitySelected(sb).append(newLine);
+                sb.append(Emoji.GreenCircle).append(' ');
+                appendName(sb, activity).append(newLine);
                 appendUnselectCommand(sb, activity).append(newLine);
             } else {
+                sb.append(Emoji.YellowCircle).append(' ');
                 appendName(sb, activity).append(newLine);
                 appendSelectCommand(sb, activity).append(newLine);
                 appendDeleteCommand(sb, activity).append(newLine);
             }
+            sb.append(newLine);
         }
         return sb.toString();
     }
@@ -86,21 +89,17 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
 
     private StringBuilder appendSelectCommand(StringBuilder sb, ActivityDto activity) {
         var command = SelectActivityCommandHandler.create(activity.getId());
-        return sb.append("Выбрать: ").append(command);
+        return sb.append(Emoji.WhiteQuestion).append(' ').append("Выбрать: ").append(command);
     }
 
     private StringBuilder appendUnselectCommand(StringBuilder sb, ActivityDto activity) {
         var command = UnselectActivityCommandHandler.create(activity.getId());
-        return sb.append("Отменить: ").append(command);
+        return sb.append(Emoji.ArrowsCircle).append(' ').append("Отменить: ").append(command);
     }
 
     private StringBuilder appendDeleteCommand(StringBuilder sb, ActivityDto activityDto) {
         var command = DeleteActivityCommandHandler.create(activityDto.getId());
-        return sb.append("Удалить: ").append(command);
-    }
-
-    private StringBuilder appendActivitySelected(StringBuilder sb) {
-        return sb.append(TelegramUtils.bold("[Выбрана]"));
+        return sb.append(Emoji.TrashCan).append(' ').append("Удалить: ").append(command);
     }
 
     private ActivityDto[] getActivities(TelegramUserMeta meta) throws Exception {

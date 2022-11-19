@@ -1,13 +1,13 @@
 package org.hardsign.models;
 
 public enum ButtonNames {
-    ACTIVITIES("Активности"),
-    CREATE_ACTIVITY("Создать"),
-    ACCEPT_DELETE("Да"),
-    CANCEL_DELETE("Нет"),
-    START_TIMESTAMP("Старт"),
-    STOP_TIMESTAMP("Стоп"),
-    BACK("Вернуться"),
+    ACTIVITIES(Emoji.Clipboard + " Активности"),
+    CREATE_ACTIVITY(Emoji.Memo + " Создать"),
+    ACCEPT_DELETE(Emoji.Ok + " Да"),
+    CANCEL_DELETE(Emoji.RedCross + " Нет"),
+    START_TIMESTAMP(Emoji.Play + " Старт"),
+    STOP_TIMESTAMP(Emoji.Stop + " Стоп"),
+    BACK(Emoji.Back + " Вернуться"),
     ;
 
     private final String name;
