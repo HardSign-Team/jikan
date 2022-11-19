@@ -17,6 +17,7 @@ import org.hardsign.handlers.commands.SelectActivityCommandHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class ActivitiesPressHandler extends BaseTextUpdateHandler implements KeyboardPressHandler {
     private final TelegramBot bot;
@@ -30,7 +31,7 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
     @Override
     protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var activities = getActivities(context.getMeta());
-        var text = toText(activities);
+        var text = toText(activities, context);
         var replyMarkup = new ReplyKeyboardMarkup(getButtons(context))
                 .resizeKeyboard(true)
                 .oneTimeKeyboard(true);
@@ -53,18 +54,42 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
         return buttons.toArray(new String[0]);
     }
 
-    private String toText(ActivityDto[] activities) {
+    private String toText(ActivityDto[] activities, UpdateContext context) {
         if (activities.length == 0)
             return "У тебя еще нет активностей. Можешь добавить их :)";
 
-        var command = SelectActivityCommandHandler.commandPrefix;
+        long currentActivityId = Optional.ofNullable(context.getActivity())
+                .map(ActivityDto::getId)
+                .orElse(0L);
+
+        var newLine = System.lineSeparator();
         var sb = new StringBuilder();
         for (var i = 0; i < activities.length; i++) {
-            sb.append(i + 1)
-                    .append(". ").append(activities[i].getName()).append(". Выбрать: ").append(command)
-                    .append(activities[i].getId()).append(System.lineSeparator());
+            var activity = activities[i];
+            sb.append(i + 1).append(". ");
+            if (currentActivityId == activity.getId()) {
+                appendName(sb, activity).append(' ');
+                appendActivitySelected(sb).append(newLine);
+            } else {
+                appendName(sb, activity).append(newLine);
+                appendSelectCommand(sb, activity).append(newLine);
+            }
         }
         return sb.toString();
+    }
+
+
+    private StringBuilder appendName(StringBuilder sb, ActivityDto activity) {
+        return sb.append(activity.getName()).append('.');
+    }
+
+    private StringBuilder appendSelectCommand(StringBuilder sb, ActivityDto activity) {
+        var command = SelectActivityCommandHandler.create(activity.getId());
+        return sb.append("Выбрать: ").append(command);
+    }
+
+    private StringBuilder appendActivitySelected(StringBuilder sb) {
+        return sb.append("[Выбрана]");
     }
 
     private ActivityDto[] getActivities(TelegramUserMeta meta) throws Exception {
