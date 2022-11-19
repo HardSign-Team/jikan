@@ -9,6 +9,8 @@ import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.activities.requests.GetActivityByIdRequest;
 import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.requests.BotRequest;
+import org.hardsign.models.timestamps.TimestampDto;
+import org.hardsign.models.timestamps.requests.GetLastTimestampByActivityIdRequest;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Pattern;
@@ -26,6 +28,8 @@ public abstract class BaseActivityCommandsHandler extends BaseUpdateHandler {
     protected abstract void handleInternal(User user, @Nullable ActivityDto activity, Update update, UpdateContext context)
             throws Exception;
 
+    protected abstract String getPrefix();
+
     @Override
     protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var text = update.message().text();
@@ -41,7 +45,15 @@ public abstract class BaseActivityCommandsHandler extends BaseUpdateHandler {
         handleInternal(user, getActivity(activityId, context.getMeta()), update, context);
     }
 
-    protected abstract String getPrefix();
+    @Nullable
+    protected TimestampDto getActiveTimestamp(long activityId, TelegramUserMeta meta) throws Exception {
+        var request = new BotRequest<>(new GetLastTimestampByActivityIdRequest(activityId), meta);
+        var response = jikanApiClient.timestamps().getLast(request);
+        if (response.notFound())
+            return null;
+        response.ensureSuccess();
+        return response.getValue().orElse(null);
+    }
 
     @Nullable
     private ActivityDto getActivity(long activityId, TelegramUserMeta meta) throws Exception {

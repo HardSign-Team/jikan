@@ -56,9 +56,11 @@ public class SelectActivityCommandHandler extends BaseActivityCommandsHandler im
         return commandPrefix;
     }
 
-    private void handleSuccess(User user, UpdateContext context, Long chatId, ActivityDto activity) {
+    private void handleSuccess(User user, UpdateContext context, Long chatId, ActivityDto activity) throws Exception {
         userStateService.setActivity(user, activity.getId());
         context.setActivity(activity);
+        context.setActiveTimestamp(getActiveTimestamp(activity.getId(), context.getMeta()));
+
         var text = "Вы выбрали активность: " + TelegramUtils.bold(activity.getName());
         sendMessage(chatId, text, context);
     }
