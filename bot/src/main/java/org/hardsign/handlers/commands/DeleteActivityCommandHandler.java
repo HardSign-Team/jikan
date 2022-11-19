@@ -79,8 +79,7 @@ public class DeleteActivityCommandHandler extends BaseUpdateHandler implements C
         var replyMarkup = new ReplyKeyboardMarkup(
                 ButtonNames.ACCEPT_DELETE.getName(),
                 ButtonNames.CANCEL_DELETE.getName())
-                .resizeKeyboard(true)
-                .oneTimeKeyboard(true);
+                .resizeKeyboard(true);
         var text = "Вы уверены, что хотите удалить активность " + TelegramUtils.bold(activity.getName()) + "?";
         bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup).parseMode(TelegramUtils.PARSE_MODE));
     }
