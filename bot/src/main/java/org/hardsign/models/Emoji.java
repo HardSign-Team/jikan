@@ -15,7 +15,8 @@ public enum Emoji {
     TrashCan("\uD83D\uDDD1"),
     ArrowsCircle("\uD83D\uDD04"),
     Clipboard("\uD83D\uDCCB"),
-    Memo("\uD83D\uDCDD")
+    Memo("\uD83D\uDCDD"),
+    Clock1("\uD83D\uDD50")
     ;
 
     private final String value;
