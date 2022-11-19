@@ -27,7 +27,6 @@ public interface Mapper {
     TimestampEntity mapToEntity(Timestamp timestamp);
 
     User map(UserEntity entity);
-    UserEntity mapToEntity(User user);
     UserModel mapToModel(User user);
 
     JwtTokensModel mapToModel(JwtTokens tokens);

@@ -74,15 +74,6 @@ public class MapperImpl implements Mapper {
     }
 
     @Override
-    public UserEntity mapToEntity(User user) {
-        var entity = new UserEntity();
-        entity.setId(user.getId());
-        entity.setName(user.getName());
-        entity.setLogin(user.getLogin());
-        return entity;
-    }
-
-    @Override
     public UserModel mapToModel(User user) {
         return new UserModel(user.getId(), user.getName(), user.getLogin());
     }
