@@ -1,6 +1,7 @@
 package com.hardsign.server.services.timestamps;
 
 import com.hardsign.server.models.timestamps.Timestamp;
+import com.hardsign.server.models.users.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,9 +13,12 @@ public interface TimestampsService {
 
     Optional<Timestamp> findActiveTimestamp(long activityId);
 
+    List<Timestamp> findAllActiveTimestamps(User user);
+
     Timestamp save(Timestamp timestamp);
 
     void delete(long id);
 
     Optional<Timestamp> getLast(long activityId);
+
 }

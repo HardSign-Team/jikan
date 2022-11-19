@@ -2,6 +2,7 @@ package com.hardsign.server.services.timestamps;
 
 import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.timestamps.Timestamp;
+import com.hardsign.server.models.users.User;
 import com.hardsign.server.repositories.TimestampsRepository;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,14 @@ public class TimestampsServiceImpl implements TimestampsService {
     public Optional<Timestamp> findActiveTimestamp(long activityId) {
         return repository.findFirstByActivityIdAndEndIsNull(activityId)
                 .map(mapper::map);
+    }
+
+    @Override
+    public List<Timestamp> findAllActiveTimestamps(User user) {
+        return repository.findTimestampEntitiesByActivity_User_IdAndEndIsNull(user.getId())
+                .stream()
+                .map(mapper::map)
+                .collect(Collectors.toList());
     }
 
     @Override

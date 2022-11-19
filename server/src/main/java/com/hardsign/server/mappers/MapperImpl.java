@@ -3,6 +3,7 @@ package com.hardsign.server.mappers;
 import com.hardsign.server.models.activities.Activity;
 import com.hardsign.server.models.activities.ActivityEntity;
 import com.hardsign.server.models.activities.ActivityModel;
+import com.hardsign.server.models.activities.ActivityOverviewModel;
 import com.hardsign.server.models.auth.JwtTokens;
 import com.hardsign.server.models.auth.JwtTokensModel;
 import com.hardsign.server.models.timestamps.Timestamp;
@@ -12,6 +13,9 @@ import com.hardsign.server.models.users.User;
 import com.hardsign.server.models.users.UserEntity;
 import com.hardsign.server.models.users.UserModel;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
+import java.util.function.Function;
 
 @Component
 public class MapperImpl implements Mapper {
@@ -24,6 +28,15 @@ public class MapperImpl implements Mapper {
     @Override
     public ActivityModel mapToModel(Activity activity) {
         return new ActivityModel(activity.getId(), activity.getUserId(), activity.getName());
+    }
+
+    @Override
+    public ActivityOverviewModel mapToOverviewModel(Activity x, Function<Long, Optional<Timestamp>> activeTimestampsProvider) {
+        var activeTimestamp = activeTimestampsProvider
+                .apply(x.getId())
+                .map(this::mapToModel)
+                .orElse(null);
+        return new ActivityOverviewModel(x.getId(), x.getUserId(), x.getName(), activeTimestamp);
     }
 
     @Override

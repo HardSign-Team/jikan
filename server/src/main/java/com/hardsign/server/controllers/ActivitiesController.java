@@ -8,11 +8,14 @@ import com.hardsign.server.exceptions.NotFoundException;
 import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.activities.Activity;
 import com.hardsign.server.models.activities.ActivityModel;
+import com.hardsign.server.models.activities.ActivityOverviewModel;
 import com.hardsign.server.models.activities.ActivityPatch;
 import com.hardsign.server.models.activities.requests.CreateActivityRequest;
 import com.hardsign.server.models.activities.requests.PatchActivityRequest;
+import com.hardsign.server.models.timestamps.Timestamp;
 import com.hardsign.server.models.users.User;
 import com.hardsign.server.services.activities.ActivitiesService;
+import com.hardsign.server.services.timestamps.TimestampsService;
 import com.hardsign.server.services.user.CurrentUserProvider;
 import com.hardsign.server.utils.users.UserUtils;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -28,14 +32,17 @@ import java.util.stream.Collectors;
 @Validated
 public class ActivitiesController {
     private final ActivitiesService activityService;
+    private final TimestampsService timestampsService;
     private final Mapper mapper;
     private final CurrentUserProvider currentUserProvider;
 
     public ActivitiesController(
             ActivitiesService activityService,
+            TimestampsService timestampsService,
             Mapper mapper,
             CurrentUserProvider currentUserProvider) {
         this.activityService = activityService;
+        this.timestampsService = timestampsService;
         this.mapper = mapper;
         this.currentUserProvider = currentUserProvider;
     }
@@ -59,6 +66,23 @@ public class ActivitiesController {
                 .filter(user::hasAccess)
                 .map(mapper::mapToModel)
                 .orElseThrow(NotFoundException::new);
+    }
+
+    @GetMapping("overview/all")
+    public List<ActivityOverviewModel> getAllActivityOverviews() {
+        var user = getUserOrThrow();
+
+        var activeTimestamps = timestampsService
+                .findAllActiveTimestamps(user)
+                .stream()
+                .collect(Collectors.toMap(Timestamp::getActivityId, x -> x));
+
+        var activities = activityService.findAllActivitiesByUser(user);
+
+        return activities
+                .stream()
+                .map(x -> mapper.mapToOverviewModel(x, id -> Optional.ofNullable(activeTimestamps.get(id))))
+                .collect(Collectors.toList());
     }
 
     @PostMapping(value = "create")

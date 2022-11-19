@@ -9,9 +9,11 @@ import java.util.Optional;
 
 @Repository
 public interface TimestampsRepository extends JpaRepository<TimestampEntity, Long> {
-    Optional<TimestampEntity> findFirstByActivityIdAndEndIsNull(long id);
+    Optional<TimestampEntity> findFirstByActivityIdAndEndIsNull(long activityId);
 
-    Optional<TimestampEntity> findTopByActivityIdOrderByStartDesc(long id);
+    Optional<TimestampEntity> findTopByActivityIdOrderByStartDesc(long activityId);
 
-    List<TimestampEntity> findTimestampEntitiesByActivityIdOrderByStartAsc(long id);
+    List<TimestampEntity> findTimestampEntitiesByActivityIdOrderByStartAsc(long activityId);
+
+    List<TimestampEntity> findTimestampEntitiesByActivity_User_IdAndEndIsNull(long userId);
 }
