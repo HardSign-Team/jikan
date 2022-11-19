@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 public class SelectActivityCommandHandler extends BaseUpdateHandler implements CommandHandler {
 
-    public static final String commandPrefix = "/sa_";
+    private static final String commandPrefix = "/sa_";
     private final TelegramBot bot;
     private final JikanApiClient jikanApiClient;
     private final UserStateService userStateService;
@@ -30,6 +30,10 @@ public class SelectActivityCommandHandler extends BaseUpdateHandler implements C
         this.bot = bot;
         this.jikanApiClient = jikanApiClient;
         this.userStateService = userStateService;
+    }
+
+    public static String create(long activityId) {
+        return commandPrefix + activityId;
     }
 
     @Override
