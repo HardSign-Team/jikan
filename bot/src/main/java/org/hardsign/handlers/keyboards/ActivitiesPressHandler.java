@@ -12,7 +12,8 @@ import org.hardsign.models.ButtonNames;
 import org.hardsign.models.Emoji;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
-import org.hardsign.models.activities.requests.GetAllActivitiesRequest;
+import org.hardsign.models.activities.ActivityOverviewDto;
+import org.hardsign.models.activities.requests.GetOverviewAllActivitiesRequest;
 import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.requests.BotRequest;
 import org.hardsign.handlers.BaseTextUpdateHandler;
@@ -54,7 +55,7 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
         return buttons.toArray(new String[0]);
     }
 
-    private String toText(ActivityDto[] activities, UpdateContext context) {
+    private String toText(ActivityOverviewDto[] activities, UpdateContext context) {
         if (activities.length == 0)
             return "У тебя еще нет активностей. Можешь добавить их :)";
 
@@ -69,11 +70,13 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
             sb.append(i + 1).append(". ");
             if (currentActivityId == activity.getId()) {
                 sb.append(Emoji.GreenCircle).append(' ');
-                appendName(sb, activity).append(newLine);
+                appendName(sb, activity);
+                appendStatus(sb, activity).append(newLine);
                 appendUnselectCommand(sb, activity).append(newLine);
             } else {
                 sb.append(Emoji.YellowCircle).append(' ');
-                appendName(sb, activity).append(newLine);
+                appendName(sb, activity);
+                appendStatus(sb, activity).append(newLine);
                 appendSelectCommand(sb, activity).append(newLine);
                 appendDeleteCommand(sb, activity).append(newLine);
             }
@@ -83,27 +86,34 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
     }
 
 
-    private StringBuilder appendName(StringBuilder sb, ActivityDto activity) {
-        return sb.append(activity.getName()).append('.');
+    private void appendName(StringBuilder sb, ActivityOverviewDto activity) {
+        sb.append(activity.getName()).append('.');
     }
 
-    private StringBuilder appendSelectCommand(StringBuilder sb, ActivityDto activity) {
+    private StringBuilder appendStatus(StringBuilder sb, ActivityOverviewDto activity) {
+        if (activity.getActiveTimestamp() != null) {
+            return sb.append(' ').append(Emoji.Clock1);
+        }
+        return sb;
+    }
+
+    private StringBuilder appendSelectCommand(StringBuilder sb, ActivityOverviewDto activity) {
         var command = SelectActivityCommandHandler.create(activity.getId());
         return sb.append(Emoji.WhiteQuestion).append(' ').append("Выбрать: ").append(command);
     }
 
-    private StringBuilder appendUnselectCommand(StringBuilder sb, ActivityDto activity) {
+    private StringBuilder appendUnselectCommand(StringBuilder sb, ActivityOverviewDto activity) {
         var command = UnselectActivityCommandHandler.create(activity.getId());
         return sb.append(Emoji.ArrowsCircle).append(' ').append("Отменить: ").append(command);
     }
 
-    private StringBuilder appendDeleteCommand(StringBuilder sb, ActivityDto activityDto) {
+    private StringBuilder appendDeleteCommand(StringBuilder sb, ActivityOverviewDto activityDto) {
         var command = DeleteActivityCommandHandler.create(activityDto.getId());
         return sb.append(Emoji.TrashCan).append(' ').append("Удалить: ").append(command);
     }
 
-    private ActivityDto[] getActivities(TelegramUserMeta meta) throws Exception {
-        var request = new BotRequest<>(new GetAllActivitiesRequest(), meta);
-        return jikanApiClient.activities().getAll(request).getValueOrThrow();
+    private ActivityOverviewDto[] getActivities(TelegramUserMeta meta) throws Exception {
+        var request = new BotRequest<>(new GetOverviewAllActivitiesRequest(), meta);
+        return jikanApiClient.activities().getOverviewAll(request).getValueOrThrow();
     }
 }

@@ -7,36 +7,30 @@ import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
+import org.hardsign.handlers.commands.abstracts.BaseActivityCommandsHandler;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.Emoji;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
-import org.hardsign.models.activities.requests.GetActivityByIdRequest;
-import org.hardsign.models.auth.TelegramUserMeta;
-import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.users.State;
 import org.hardsign.models.users.UserStatePatch;
-import org.hardsign.handlers.BaseUpdateHandler;
 import org.hardsign.services.users.UserStateService;
 import org.hardsign.utils.TelegramUtils;
 import org.hardsign.utils.ValidationHelper;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.regex.Pattern;
-
-public class DeleteActivityCommandHandler extends BaseUpdateHandler implements CommandHandler {
+public class DeleteActivityCommandHandler extends BaseActivityCommandsHandler implements CommandHandler {
 
     private static final String commandPrefix = "/dela_";
-    private static final Pattern commandPattern = Pattern.compile(commandPrefix + "(\\d+)");
     private final TelegramBot bot;
-    private final JikanApiClient jikanApiClient;
     private final UserStateService userStateService;
 
     public DeleteActivityCommandHandler(
             TelegramBot bot,
             JikanApiClient jikanApiClient,
             UserStateService userStateService) {
+        super(jikanApiClient);
         this.bot = bot;
-        this.jikanApiClient = jikanApiClient;
         this.userStateService = userStateService;
     }
 
@@ -45,25 +39,24 @@ public class DeleteActivityCommandHandler extends BaseUpdateHandler implements C
     }
 
     @Override
-    protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
-        var text = update.message().text();
-        if (text == null)
-            return;
+    protected void handleInternal(
+            User user,
+            @Nullable ActivityDto activity,
+            Update update,
+            UpdateContext context) throws Exception {
+        var chatId = update.message().chat().id();
 
-        var matcher = commandPattern.matcher(text);
-        if (!matcher.matches()) {
+        if (activity == null) {
+            handleActivityNotFoundError(chatId, context);
             return;
         }
 
-        var activityId = Long.parseLong(matcher.group(1));
-        var chatId = update.message().chat().id();
         var currentActivity = context.getActivity();
-        if (currentActivity != null && currentActivity.getId() == activityId) {
+        if (currentActivity != null && currentActivity.getId() == activity.getId()) {
             handleCurrentActivityError(chatId, context);
             return;
         }
 
-        var activity = getActivity(activityId, context.getMeta());
         if (!ValidationHelper.isOwnActivity(context.getUser(), activity)) {
             handleNotOwnActivityError(chatId, context);
             return;
@@ -72,9 +65,9 @@ public class DeleteActivityCommandHandler extends BaseUpdateHandler implements C
         handleSuccess(user, context, chatId, activity);
     }
 
-    private ActivityDto getActivity(long activityId, TelegramUserMeta meta) throws Exception {
-        var request = new BotRequest<>(new GetActivityByIdRequest(activityId), meta);
-        return jikanApiClient.activities().getById(request).getValueOrThrow();
+    @Override
+    protected String getPrefix() {
+        return commandPrefix;
     }
 
     private void handleSuccess(User user, UpdateContext context, Long chatId, ActivityDto activity) {
@@ -87,6 +80,12 @@ public class DeleteActivityCommandHandler extends BaseUpdateHandler implements C
                 .resizeKeyboard(true);
         var text = "Вы уверены, что хотите удалить активность " + TelegramUtils.bold(activity.getName()) + "?";
         bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup).parseMode(TelegramUtils.PARSE_MODE));
+    }
+
+    private void handleActivityNotFoundError(Long chatId, UpdateContext context) {
+        var keyboard = KeyboardFactory.createMainMenu(context);
+        var text = "Активность не найдена :(";
+        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard).parseMode(TelegramUtils.PARSE_MODE));
     }
 
     private void handleNotOwnActivityError(Long chatId, UpdateContext context) {

@@ -39,6 +39,7 @@ public class UnselectActivityCommandHandler extends BaseActivityCommandsHandler 
 
         userStateService.setActivity(user, 0);
         context.setActivity(null);
+        context.setActiveTimestamp(null);
 
         var text = "Вы убрали текущую активность. Лентяйкин! :)";
         var keyboard = KeyboardFactory.createMainMenu(context);

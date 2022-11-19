@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient;
 import org.hardsign.clients.BotBaseClient;
 import org.hardsign.models.JikanResponse;
 import org.hardsign.models.activities.ActivityDto;
+import org.hardsign.models.activities.ActivityOverviewDto;
 import org.hardsign.models.activities.requests.*;
 import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.settings.BotSettings;
@@ -19,6 +20,11 @@ public class ActivitiesClientImpl extends BotBaseClient implements ActivitiesCli
     @Override
     public JikanResponse<ActivityDto[]> getAll(BotRequest<GetAllActivitiesRequest> request) {
         return get("", request, ActivityDto[].class);
+    }
+
+    @Override
+    public JikanResponse<ActivityOverviewDto[]> getOverviewAll(BotRequest<GetOverviewAllActivitiesRequest> request) {
+        return get("overview/all", request, ActivityOverviewDto[].class);
     }
 
     @Override

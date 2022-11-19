@@ -1,21 +1,21 @@
-package org.hardsign.handlers.commands;
+package org.hardsign.handlers.keyboards;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
-import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
+import org.hardsign.handlers.BaseTextUpdateHandler;
+import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.users.State;
-import org.hardsign.models.ButtonNames;
-import org.hardsign.handlers.BaseTextUpdateHandler;
 import org.hardsign.services.users.UserStateService;
 
-public class CreateActivityCommandHandler extends BaseTextUpdateHandler implements CommandHandler {
+public class CreateActivityPressHandler extends BaseTextUpdateHandler implements KeyboardPressHandler {
     private final TelegramBot bot;
     private final UserStateService userStateService;
 
-    public CreateActivityCommandHandler(TelegramBot bot, UserStateService userStateService) {
+    public CreateActivityPressHandler(TelegramBot bot, UserStateService userStateService) {
         this.bot = bot;
         this.userStateService = userStateService;
     }
@@ -30,6 +30,7 @@ public class CreateActivityCommandHandler extends BaseTextUpdateHandler implemen
         userStateService.setState(user, State.CreateActivityName);
         var chatId = update.message().chat().id();
         var text = "Напишите название для активности";
-        bot.execute(new SendMessage(chatId, text).replyMarkup(new ReplyKeyboardRemove()));
+        var replyMarkup = new ReplyKeyboardMarkup(ButtonNames.BACK.getName()).resizeKeyboard(true);
+        bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup));
     }
 }
