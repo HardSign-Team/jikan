@@ -1,12 +1,12 @@
 package org.hardsign;
 
-import com.pengrad.telegrambot.TelegramBot;
 import okhttp3.OkHttpClient;
 import org.hardsign.clients.JikanApiClientImpl;
 import org.hardsign.factories.HibernateSessionFactoryFactory;
 import org.hardsign.models.settings.BotSettings;
 import org.hardsign.repositories.UserStateRepositoryImpl;
 import org.hardsign.services.BotExceptionHandler;
+import org.hardsign.services.LoggingTelegramBotDecorator;
 import org.hardsign.services.auth.AuthorizerImpl;
 import org.hardsign.services.settings.EnvironmentSettingsParserImpl;
 import org.hardsign.services.users.UserStateServiceImpl;
@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 public class Main {
     public static void main(String[] args) {
@@ -41,7 +42,7 @@ public class Main {
         var jikanApiClient = new JikanApiClientImpl(okClient, authorizer, settingsProvider);
 
         var token = settings.getBotTelegramToken();
-        var bot = new TelegramBot(token);
+        var bot = new LoggingTelegramBotDecorator(token, Logger.getLogger(Main.class.getName()));
         var updateListener = new UpdateListenerImpl(jikanApiClient, bot, userStateService);
         var exceptionHandler = new BotExceptionHandler();
         bot.setUpdatesListener(updateListener, exceptionHandler);
