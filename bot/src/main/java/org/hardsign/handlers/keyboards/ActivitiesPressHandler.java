@@ -6,6 +6,7 @@ import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
+import org.hardsign.handlers.commands.DeleteActivityCommandHandler;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
@@ -73,6 +74,7 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
             } else {
                 appendName(sb, activity).append(newLine);
                 appendSelectCommand(sb, activity).append(newLine);
+                appendDeleteCommand(sb, activity).append(newLine);
             }
         }
         return sb.toString();
@@ -86,6 +88,11 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
     private StringBuilder appendSelectCommand(StringBuilder sb, ActivityDto activity) {
         var command = SelectActivityCommandHandler.create(activity.getId());
         return sb.append("Выбрать: ").append(command);
+    }
+
+    private StringBuilder appendDeleteCommand(StringBuilder sb, ActivityDto activityDto) {
+        var command = DeleteActivityCommandHandler.create(activityDto.getId());
+        return sb.append("Удалить: ").append(command);
     }
 
     private StringBuilder appendActivitySelected(StringBuilder sb) {

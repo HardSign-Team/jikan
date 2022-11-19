@@ -25,10 +25,11 @@ import java.util.regex.Pattern;
 
 public class DeleteActivityCommandHandler extends BaseUpdateHandler implements CommandHandler {
 
+    private static final String commandPrefix = "/dela_";
+    private static final Pattern commandPattern = Pattern.compile(commandPrefix + "(\\d+)");
     private final TelegramBot bot;
     private final JikanApiClient jikanApiClient;
     private final UserStateService userStateService;
-    private final Pattern commandPattern = Pattern.compile("/dela_(\\d+)");
 
     public DeleteActivityCommandHandler(
             TelegramBot bot,
@@ -37,6 +38,10 @@ public class DeleteActivityCommandHandler extends BaseUpdateHandler implements C
         this.bot = bot;
         this.jikanApiClient = jikanApiClient;
         this.userStateService = userStateService;
+    }
+
+    public static String create(long activityId) {
+        return commandPrefix + activityId;
     }
 
     @Override

@@ -46,7 +46,6 @@ public class UpdateListenerImpl implements UpdatesListener {
         updateHandlers.add(new BackPressHandler(bot));
         updateHandlers.add(new AcceptDeleteActivityPressHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new CancelDeleteActivityPressHandler(bot, userStateService));
-        updateHandlers.add(new DeleteActivityPressHandler(bot, jikanApiClient));
         updateHandlers.add(new StartPressHandler(bot, jikanApiClient));
         updateHandlers.add(new StopPressHandler(bot, jikanApiClient));
     }
