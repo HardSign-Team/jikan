@@ -7,10 +7,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.UpdateContextFactory;
 import org.hardsign.handlers.UpdateHandler;
-import org.hardsign.handlers.commands.CreateActivityCommandHandler;
-import org.hardsign.handlers.commands.DeleteActivityCommandHandler;
-import org.hardsign.handlers.commands.SelectActivityCommandHandler;
-import org.hardsign.handlers.commands.StartCommandHandler;
+import org.hardsign.handlers.commands.*;
 import org.hardsign.handlers.inputs.CreateActivityInputHandler;
 import org.hardsign.services.users.UserStateService;
 import org.hardsign.handlers.keyboards.*;
@@ -37,12 +34,12 @@ public class UpdateListenerImpl implements UpdatesListener {
         updateHandlers.add(new StartCommandHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new CreateActivityCommandHandler(bot, userStateService));
         updateHandlers.add(new SelectActivityCommandHandler(bot, jikanApiClient, userStateService));
+        updateHandlers.add(new UnselectActivityCommandHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new DeleteActivityCommandHandler(bot, jikanApiClient, userStateService));
 
         updateHandlers.add(new CreateActivityInputHandler(bot, jikanApiClient, userStateService));
 
         updateHandlers.add(new ActivitiesPressHandler(bot, jikanApiClient));
-        updateHandlers.add(new UnselectActivityPressHandler(bot, userStateService));
         updateHandlers.add(new BackPressHandler(bot));
         updateHandlers.add(new AcceptDeleteActivityPressHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new CancelDeleteActivityPressHandler(bot, userStateService));

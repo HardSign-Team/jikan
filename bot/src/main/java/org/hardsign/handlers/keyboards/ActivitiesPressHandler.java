@@ -7,6 +7,7 @@ import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
 import org.hardsign.handlers.commands.DeleteActivityCommandHandler;
+import org.hardsign.handlers.commands.UnselectActivityCommandHandler;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
@@ -34,7 +35,7 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
     protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var activities = getActivities(context.getMeta());
         var text = toText(activities, context);
-        var replyMarkup = new ReplyKeyboardMarkup(getButtons(context)).resizeKeyboard(true);
+        var replyMarkup = new ReplyKeyboardMarkup(getButtons()).resizeKeyboard(true);
         var chatId = update.message().chat().id();
         bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup).parseMode(TelegramUtils.PARSE_MODE));
     }
@@ -45,12 +46,10 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
     }
 
     @NotNull
-    private static String[] getButtons(UpdateContext context) {
+    private static String[] getButtons() {
         var buttons = new ArrayList<String>();
         buttons.add(ButtonNames.CREATE_ACTIVITY.getName());
         buttons.add(ButtonNames.DELETE_ACTIVITY.getName());
-        if (context.getActivity() != null)
-            buttons.add(ButtonNames.UNSELECT_ACTIVITY.getName());
         buttons.add(ButtonNames.BACK.getName());
         return buttons.toArray(new String[0]);
     }
@@ -71,6 +70,7 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
             if (currentActivityId == activity.getId()) {
                 appendName(sb, activity).append(' ');
                 appendActivitySelected(sb).append(newLine);
+                appendUnselectCommand(sb, activity).append(newLine);
             } else {
                 appendName(sb, activity).append(newLine);
                 appendSelectCommand(sb, activity).append(newLine);
@@ -88,6 +88,11 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
     private StringBuilder appendSelectCommand(StringBuilder sb, ActivityDto activity) {
         var command = SelectActivityCommandHandler.create(activity.getId());
         return sb.append("Выбрать: ").append(command);
+    }
+
+    private StringBuilder appendUnselectCommand(StringBuilder sb, ActivityDto activity) {
+        var command = UnselectActivityCommandHandler.create(activity.getId());
+        return sb.append("Отменить: ").append(command);
     }
 
     private StringBuilder appendDeleteCommand(StringBuilder sb, ActivityDto activityDto) {
