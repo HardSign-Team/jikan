@@ -17,17 +17,14 @@ public class KeyboardFactory {
         var activity = context.getActivity();
         if (activity == null)
             return new ReplyKeyboardMarkup(ButtonNames.ACTIVITIES.getName())
-                    .resizeKeyboard(true)
-                    .oneTimeKeyboard(true);
+                    .resizeKeyboard(true);
 
         var activeTimestamp = context.getActiveTimestamp();
         if (activeTimestamp == null || activeTimestamp.getEnd() != null)
             return new ReplyKeyboardMarkup(ButtonNames.START_TIMESTAMP.getName(), ButtonNames.ACTIVITIES.getName())
-                    .oneTimeKeyboard(true)
                     .resizeKeyboard(true);
 
         return new ReplyKeyboardMarkup(ButtonNames.STOP_TIMESTAMP.getName(), ButtonNames.ACTIVITIES.getName())
-                .oneTimeKeyboard(true)
                 .resizeKeyboard(true);
     }
 }
