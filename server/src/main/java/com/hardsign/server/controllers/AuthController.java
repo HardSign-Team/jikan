@@ -10,12 +10,10 @@ import com.hardsign.server.models.auth.JwtTokensModel;
 import com.hardsign.server.models.auth.RefreshJwtRequest;
 import com.hardsign.server.services.auth.AuthService;
 import com.hardsign.server.services.user.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.POST, RequestMethod.GET}, allowCredentials = "true")
 @RequestMapping("api/auth")
 public class AuthController {
     private final AuthService authService;
