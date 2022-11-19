@@ -3,6 +3,7 @@ package org.hardsign.handlers.keyboards;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
+import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
@@ -35,7 +36,7 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
         var replyMarkup = new ReplyKeyboardMarkup(getButtons(context))
                 .resizeKeyboard(true)
                 .oneTimeKeyboard(true);
-        bot.execute(new SendMessage(update.message().chat().id(), text).replyMarkup(replyMarkup));
+        bot.execute(new SendMessage(update.message().chat().id(), text).replyMarkup(replyMarkup).parseMode(ParseMode.HTML));
     }
 
     @Override
@@ -89,7 +90,7 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
     }
 
     private StringBuilder appendActivitySelected(StringBuilder sb) {
-        return sb.append("[Выбрана]");
+        return sb.append("<b>[Выбрана]</b>");
     }
 
     private ActivityDto[] getActivities(TelegramUserMeta meta) throws Exception {
