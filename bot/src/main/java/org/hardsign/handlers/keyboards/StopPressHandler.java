@@ -13,6 +13,7 @@ import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.timestamps.TimestampDto;
 import org.hardsign.models.timestamps.requests.StopActivityRequest;
 import org.hardsign.handlers.BaseTextUpdateHandler;
+import org.hardsign.utils.TelegramUtils;
 
 import java.time.Duration;
 
@@ -47,9 +48,10 @@ public class StopPressHandler extends BaseTextUpdateHandler implements KeyboardP
         var duration = Duration.ofMillis(timestamp.getEnd().getTime() - timestamp.getStart().getTime());
         var durationText = getDurationText(duration);
 
-        var text = "Вы остановили трекинг. Времени потрачено на " + activity.getName() + ": " + durationText;
+        var activityName = TelegramUtils.bold(activity.getName());
+        var text = "Вы остановили трекинг. Времени потрачено на " + activityName + ": " + durationText;
         var keyboard = KeyboardFactory.createMainMenu(context);
-        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
+        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard).parseMode(TelegramUtils.PARSE_MODE));
     }
 
     private void handleNotStartedActivity(TelegramBot bot, UpdateContext context, Long chatId) {

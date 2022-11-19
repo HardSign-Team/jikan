@@ -16,6 +16,7 @@ import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.users.State;
 import org.hardsign.handlers.keyboards.abstracts.ConfirmationDeleteActivityPressHandler;
 import org.hardsign.services.users.UserStateService;
+import org.hardsign.utils.TelegramUtils;
 
 public class AcceptDeleteActivityPressHandler extends ConfirmationDeleteActivityPressHandler implements KeyboardPressHandler {
 
@@ -64,8 +65,8 @@ public class AcceptDeleteActivityPressHandler extends ConfirmationDeleteActivity
         deleteActivity(activity, context);
 
         var keyboard = KeyboardFactory.createMainMenu(context);
-        var text = "Вы удалили активность " + activity.getName() + " " + Emoji.Pensive.value();
-        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
+        var text = "Вы удалили активность " + TelegramUtils.bold(activity.getName()) + " " + Emoji.Pensive.value();
+        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard).parseMode(TelegramUtils.PARSE_MODE));
     }
 
     private void deleteActivity(ActivityDto activity, UpdateContext context) throws Exception {

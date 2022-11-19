@@ -13,6 +13,7 @@ import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.timestamps.TimestampDto;
 import org.hardsign.models.timestamps.requests.StartActivityRequest;
 import org.hardsign.handlers.BaseTextUpdateHandler;
+import org.hardsign.utils.TelegramUtils;
 
 public class StartPressHandler extends BaseTextUpdateHandler implements KeyboardPressHandler {
 
@@ -42,9 +43,9 @@ public class StartPressHandler extends BaseTextUpdateHandler implements Keyboard
         var timestamp = startTrackActivity(activity.getId(), context.getMeta());
         context.setActiveTimestamp(timestamp);
 
-        var text = "Трекинг активности " + activity.getName() + " начат!";
+        var text = "Трекинг активности " + TelegramUtils.bold(activity.getName()) + " начат!";
         var keyboard = KeyboardFactory.createMainMenu(context);
-        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
+        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard).parseMode(TelegramUtils.PARSE_MODE));
     }
 
     private void handleAlreadyStartTracking(TelegramBot bot, UpdateContext context, Long chatId) {

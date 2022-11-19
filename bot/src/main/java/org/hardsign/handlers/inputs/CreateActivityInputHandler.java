@@ -12,6 +12,7 @@ import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.users.State;
 import org.hardsign.handlers.BaseUpdateHandler;
 import org.hardsign.services.users.UserStateService;
+import org.hardsign.utils.TelegramUtils;
 
 public class CreateActivityInputHandler extends BaseUpdateHandler implements InputHandler {
     private final TelegramBot bot;
@@ -35,8 +36,8 @@ public class CreateActivityInputHandler extends BaseUpdateHandler implements Inp
 
         var chatId = update.message().chat().id();
         var replyMarkup = KeyboardFactory.createMainMenu(context);
-        var text = "Вы создали активность: " + activity.getName();
-        bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup));
+        var text = "Вы создали активность: " + TelegramUtils.bold(activity.getName());
+        bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup).parseMode(TelegramUtils.PARSE_MODE));
     }
 
     @Override

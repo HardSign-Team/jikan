@@ -3,7 +3,6 @@ package org.hardsign.handlers.keyboards;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
-import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
@@ -15,6 +14,7 @@ import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.requests.BotRequest;
 import org.hardsign.handlers.BaseTextUpdateHandler;
 import org.hardsign.handlers.commands.SelectActivityCommandHandler;
+import org.hardsign.utils.TelegramUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -33,10 +33,9 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
     protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var activities = getActivities(context.getMeta());
         var text = toText(activities, context);
-        var replyMarkup = new ReplyKeyboardMarkup(getButtons(context))
-                .resizeKeyboard(true)
-                .oneTimeKeyboard(true);
-        bot.execute(new SendMessage(update.message().chat().id(), text).replyMarkup(replyMarkup).parseMode(ParseMode.HTML));
+        var replyMarkup = new ReplyKeyboardMarkup(getButtons(context)).resizeKeyboard(true);
+        var chatId = update.message().chat().id();
+        bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup).parseMode(TelegramUtils.PARSE_MODE));
     }
 
     @Override
@@ -90,7 +89,7 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
     }
 
     private StringBuilder appendActivitySelected(StringBuilder sb) {
-        return sb.append("<b>[Выбрана]</b>");
+        return sb.append(TelegramUtils.bold("[Выбрана]"));
     }
 
     private ActivityDto[] getActivities(TelegramUserMeta meta) throws Exception {

@@ -30,9 +30,7 @@ public class DeleteActivityPressHandler extends BaseTextUpdateHandler implements
     protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var activities = getActivities(context.getMeta());
         var chatId = update.message().chat().id();
-        var replyMarkup = new ReplyKeyboardMarkup(ButtonNames.BACK.getName())
-                .resizeKeyboard(true)
-                .oneTimeKeyboard(true);
+        var replyMarkup = new ReplyKeyboardMarkup(ButtonNames.BACK.getName()).resizeKeyboard(true);
         bot.execute(new SendMessage(chatId, toText(activities)).replyMarkup(replyMarkup));
     }
 

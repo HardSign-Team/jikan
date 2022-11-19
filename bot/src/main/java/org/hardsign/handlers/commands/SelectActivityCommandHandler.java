@@ -13,6 +13,7 @@ import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.requests.BotRequest;
 import org.hardsign.handlers.BaseUpdateHandler;
 import org.hardsign.services.users.UserStateService;
+import org.hardsign.utils.TelegramUtils;
 import org.hardsign.utils.ValidationHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,10 +22,10 @@ import java.util.regex.Pattern;
 public class SelectActivityCommandHandler extends BaseUpdateHandler implements CommandHandler {
 
     private static final String commandPrefix = "/sa_";
+    private static final Pattern commandPattern = Pattern.compile(commandPrefix + "(\\d+)");
     private final TelegramBot bot;
     private final JikanApiClient jikanApiClient;
     private final UserStateService userStateService;
-    private final Pattern commandPattern = Pattern.compile(commandPrefix + "(\\d+)");
 
     public SelectActivityCommandHandler(TelegramBot bot, JikanApiClient jikanApiClient, UserStateService userStateService) {
         this.bot = bot;
@@ -66,7 +67,8 @@ public class SelectActivityCommandHandler extends BaseUpdateHandler implements C
     private void handleSuccess(User user, UpdateContext context, Long chatId, ActivityDto activity) {
         userStateService.setActivity(user, activity.getId());
         context.setActivity(activity);
-        sendMessage(chatId, "Вы выбрали активность: " + activity.getName(), context);
+        var text = "Вы выбрали активность: " + TelegramUtils.bold(activity.getName());
+        sendMessage(chatId, text, context);
     }
 
     @Nullable
@@ -78,7 +80,7 @@ public class SelectActivityCommandHandler extends BaseUpdateHandler implements C
 
     private void sendMessage(Long chatId, String text, UpdateContext context) {
         var keyboard = KeyboardFactory.createMainMenu(context);
-        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
+        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard).parseMode(TelegramUtils.PARSE_MODE));
     }
 }
 

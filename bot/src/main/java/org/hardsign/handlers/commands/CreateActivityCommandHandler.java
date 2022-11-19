@@ -29,7 +29,7 @@ public class CreateActivityCommandHandler extends BaseTextUpdateHandler implemen
     protected void handleInternal(User user, Update update, UpdateContext context) {
         userStateService.setState(user, State.CreateActivityName);
         var chatId = update.message().chat().id();
-        bot.execute(new SendMessage(chatId, "Напишите название для активности")
-                            .replyMarkup(new ReplyKeyboardRemove()));
+        var text = "Напишите название для активности";
+        bot.execute(new SendMessage(chatId, text).replyMarkup(new ReplyKeyboardRemove()));
     }
 }

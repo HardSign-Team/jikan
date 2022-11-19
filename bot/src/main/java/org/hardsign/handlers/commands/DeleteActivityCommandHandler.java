@@ -18,6 +18,7 @@ import org.hardsign.models.users.State;
 import org.hardsign.models.users.UserStatePatch;
 import org.hardsign.handlers.BaseUpdateHandler;
 import org.hardsign.services.users.UserStateService;
+import org.hardsign.utils.TelegramUtils;
 import org.hardsign.utils.ValidationHelper;
 
 import java.util.regex.Pattern;
@@ -80,8 +81,8 @@ public class DeleteActivityCommandHandler extends BaseUpdateHandler implements C
                 ButtonNames.CANCEL_DELETE.getName())
                 .resizeKeyboard(true)
                 .oneTimeKeyboard(true);
-        var text = "Вы уверены, что хотите удалить активность " + activity.getName() + "?";
-        bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup));
+        var text = "Вы уверены, что хотите удалить активность " + TelegramUtils.bold(activity.getName()) + "?";
+        bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup).parseMode(TelegramUtils.PARSE_MODE));
     }
 
     private void handleNotOwnActivityError(Long chatId, UpdateContext context) {
