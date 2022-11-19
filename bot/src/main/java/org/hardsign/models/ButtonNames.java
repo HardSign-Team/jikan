@@ -3,7 +3,6 @@ package org.hardsign.models;
 public enum ButtonNames {
     ACTIVITIES("Активности"),
     CREATE_ACTIVITY("Создать"),
-    DELETE_ACTIVITY("Удалить"),
     ACCEPT_DELETE("Да"),
     CANCEL_DELETE("Нет"),
     START_TIMESTAMP("Старт"),

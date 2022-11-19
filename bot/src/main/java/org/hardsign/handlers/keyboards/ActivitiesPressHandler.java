@@ -49,7 +49,6 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
     private static String[] getButtons() {
         var buttons = new ArrayList<String>();
         buttons.add(ButtonNames.CREATE_ACTIVITY.getName());
-        buttons.add(ButtonNames.DELETE_ACTIVITY.getName());
         buttons.add(ButtonNames.BACK.getName());
         return buttons.toArray(new String[0]);
     }
