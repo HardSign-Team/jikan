@@ -75,13 +75,13 @@ public class ActivitiesController {
         var activeTimestamps = timestampsService
                 .findAllActiveTimestamps(user)
                 .stream()
-                .collect(Collectors.toMap(Timestamp::getActivityId, x -> x));
+                .collect(Collectors.toMap(Timestamp::getActivityId, Optional::of));
 
         var activities = activityService.findAllActivitiesByUser(user);
 
         return activities
                 .stream()
-                .map(x -> mapper.mapToOverviewModel(x, id -> Optional.ofNullable(activeTimestamps.get(id))))
+                .map(x -> mapper.mapToOverviewModel(x, id -> activeTimestamps.getOrDefault(id, Optional.empty())))
                 .collect(Collectors.toList());
     }
 
