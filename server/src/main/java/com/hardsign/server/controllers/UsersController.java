@@ -9,6 +9,7 @@ import com.hardsign.server.services.user.UserService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.POST, RequestMethod.GET}, allowCredentials = "true")
 @RequestMapping("api/users")
 public class UsersController {
 
