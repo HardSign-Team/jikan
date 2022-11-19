@@ -6,6 +6,7 @@ import org.hardsign.clients.JikanApiClientImpl;
 import org.hardsign.factories.HibernateSessionFactoryFactory;
 import org.hardsign.models.settings.BotSettings;
 import org.hardsign.repositories.UserStateRepositoryImpl;
+import org.hardsign.services.BotExceptionHandler;
 import org.hardsign.services.auth.AuthorizerImpl;
 import org.hardsign.services.settings.EnvironmentSettingsParserImpl;
 import org.hardsign.services.users.UserStateServiceImpl;
@@ -42,7 +43,8 @@ public class Main {
         var token = settings.getBotTelegramToken();
         var bot = new TelegramBot(token);
         var updateListener = new UpdateListenerImpl(jikanApiClient, bot, userStateService);
-        bot.setUpdatesListener(updateListener);
+        var exceptionHandler = new BotExceptionHandler();
+        bot.setUpdatesListener(updateListener, exceptionHandler);
     }
 
 
