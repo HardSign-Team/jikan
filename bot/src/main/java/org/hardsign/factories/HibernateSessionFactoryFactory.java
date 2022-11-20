@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class HibernateSessionFactoryFactory {
     public static SessionFactory create(BotDatabaseSettings settings) throws HibernateException {
+        System.out.println("Start debugging with prints...");
         var configuration = new Configuration()
                 .setProperty("hibernate.connection.driver_class", org.postgresql.Driver.class.getName())
                 .setProperty("hibernate.connection.url", createConnectionString(settings))
@@ -21,8 +22,12 @@ public class HibernateSessionFactoryFactory {
                     .setProperty("hibernate.connection.username", settings.getUser())
                     .setProperty("hibernate.connection.password", settings.getPassword());
 
+        System.out.println("configuration builded");
+
         var builder = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties());
+
+        System.out.println("builder created");
 
         return configuration.buildSessionFactory(builder.build());
     }
