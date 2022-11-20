@@ -29,7 +29,7 @@ public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser 
                 .botTelegramToken(getOrThrow("TELEGRAM_BOT_TOKEN"))
                 .botLogin(getOrThrow("JIKAN_BOT_LOGIN"))
                 .botPassword(getOrThrow("JIKAN_BOT_PASSWORD"))
-                .baseUrlHost(getOrThrow("JIKAN_API_HOST"))
+                .baseUrlHost(getOrThrow("JIKAN_API_HOST")) // todo: delete
                 .baseUrlPort(getOrThrow("JIKAN_API_PORT"))
                 .accessTokenLifeTime(getMinutes(environment.get("JIKAN_ACCESS_TOKEN_LIFETIME", "60")))
                 .database(databaseSettings)
