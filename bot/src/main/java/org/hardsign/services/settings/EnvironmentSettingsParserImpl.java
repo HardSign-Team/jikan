@@ -56,7 +56,12 @@ public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser 
 
     private void initEnvironment(URL resourceUrl) {
         if (resourceUrl == null)
-            return;
+        {
+            Dotenv
+                    .configure()
+                    .systemProperties()
+                    .load();
+        }
 
         var dotenv = loadFromFile(resourceUrl);
         dotenv.entries().forEach(e -> System.setProperty(e.getKey(), e.getValue()));
