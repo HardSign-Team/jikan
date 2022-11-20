@@ -88,8 +88,9 @@ public abstract class RpcBaseClient {
 
     private String getBaseUrl() {
         var apiUrl = settingsProvider.get().getApiUrl().replaceAll("/$", "");
-
-        return apiUrl + "/" + baseUrl;
+        var url = apiUrl + "/" + baseUrl;
+        System.out.println(url);
+        return url;
     }
 }
 
