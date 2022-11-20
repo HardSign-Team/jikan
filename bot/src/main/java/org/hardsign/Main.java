@@ -49,8 +49,6 @@ public class Main {
         bot.setUpdatesListener(updateListener, exceptionHandler);
     }
 
-
-
     @Nullable
     private static URL getResourceUrl() {
         return Main.class.getClassLoader().getResource("env.properties");

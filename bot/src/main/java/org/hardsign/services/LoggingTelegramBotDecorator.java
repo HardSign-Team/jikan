@@ -41,7 +41,7 @@ public class LoggingTelegramBotDecorator extends TelegramBot {
     }
 
     private void logError(IOException e) {
-        logger.severe(e.getMessage());
+        logger.severe(e.toString());
     }
 
     private void logResponse(BaseResponse response) {

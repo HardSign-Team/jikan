@@ -56,11 +56,15 @@ public class UpdateListenerImpl implements UpdatesListener {
     }
 
     private Update process(Update update) {
-        var content = update.message().text();
+        var message = update.message();
+        if (message == null)
+            return update;
+
+        var content = message.text();
         if (Objects.equals(content, ""))
             return update;
 
-        var user = update.message().from();
+        var user = message.from();
         var context = updateContextFactory.create(user);
 
         var exceptionThrown = false;
@@ -74,7 +78,7 @@ public class UpdateListenerImpl implements UpdatesListener {
         }
 
         if (exceptionThrown) {
-            sendErrorMessage(update.message().chat().id());
+            sendErrorMessage(message.chat().id());
         }
 
         return update;
