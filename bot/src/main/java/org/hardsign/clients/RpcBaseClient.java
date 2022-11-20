@@ -47,6 +47,8 @@ public abstract class RpcBaseClient {
             Function<Request.Builder, Request.Builder> requestSetup,
             Class<TResponse> typeHint) {
         var endpoint = getEndpoint(url);
+        System.out.println(endpoint);
+
         var request = requestSetup.apply(new Request.Builder().url(endpoint)).build();
         try {
             try (var response = client.newCall(request).execute()) {
@@ -88,9 +90,7 @@ public abstract class RpcBaseClient {
 
     private String getBaseUrl() {
         var apiUrl = settingsProvider.get().getApiUrl().replaceAll("/$", "");
-        var url = apiUrl + "/" + baseUrl;
-        System.out.println(url);
-        return url;
+        return apiUrl + "/" + baseUrl;
     }
 }
 
