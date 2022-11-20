@@ -21,7 +21,7 @@ public class Main {
         try {
             Run();
         } catch (Exception e) {
-            System.out.println("Fatal error. Error: " + e.getMessage());
+            System.out.println("Fatal error. Error: " + e);
         }
     }
 
