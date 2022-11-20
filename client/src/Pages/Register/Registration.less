@@ -1,0 +1,78 @@
+@import "local_modules/ui/variables.less";
+
+.register-form {
+  overflow: hidden;
+  height: 500px;
+  width: 450px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.5);
+  border: 4px solid #CDF8FE;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+
+  .content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    margin: @base-size * 8 auto;
+  }
+
+  .login {
+    padding-top: 20%;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+
+    .error {
+      margin-left: @base-size * 4;
+      transform: transformY(100px);
+      color: red;
+      font: inherit;
+    }
+  }
+
+  .submit-button {
+    background: #EAFC79;
+    border-radius: 20px;
+    width: 280px;
+    height: 60px;
+    font-size: 28px;
+    line-height: 33px;
+    border: 4px solid #EAFC79;
+    cursor: pointer;
+  }
+
+  .register-types {
+    border-radius: 20px 20px 0 0;
+    display: flex;
+    justify-content: space-evenly;
+
+    .type {
+      cursor: pointer;
+      border-bottom: 2px solid #CDF3B6;
+      width: 50%;
+      flex-grow: 1;
+      text-align: center;
+      font-weight: 400;
+      font-size: 24px;
+      line-height: 28px;
+      padding: @base-size * 3 @base-size * 14 @base-size * 3 @base-size * 10;
+    }
+
+    .type:first-child {
+      border-radius: 15px 0 0 0;
+    }
+
+    .type:last-child {
+      border-radius: 0 15px 0 0;
+    }
+
+
+    .active-type {
+      background: #CDF3B6;
+    }
+  }
+}

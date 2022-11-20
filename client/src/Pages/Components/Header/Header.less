@@ -1,0 +1,51 @@
+@import "local_modules/ui/variables.less";
+
+.header {
+  margin: @base-size * 8 @base-size * 14;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .avatar {
+    cursor: pointer;
+  }
+
+  .caption {
+    cursor: pointer;
+  }
+
+  .popup-menu {
+    position: absolute;
+    width: 200px;
+    background-color: white;
+    border-radius: 10px;
+    font-size: 20px;
+    transform: translateX(-150px);
+    display: flex;
+    flex-direction: column;
+
+    .menu-item:first-child {
+      border-radius: 10px 10px 0 0;
+    }
+
+    .menu-item:last-child {
+      border-radius: 0 0 10px 10px;
+    }
+
+    .menu-item {
+      padding: @base-size * 5;
+    }
+
+    .menu-item:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  .caption {
+    font-family: Roboto, sans-serif;
+    font-size: 48px;
+    font-weight: bold;
+    line-height: 56px;
+    text-align: left;
+  }
+}
