@@ -61,6 +61,7 @@ public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser 
                     .configure()
                     .systemProperties()
                     .load();
+            return;
         }
 
         var dotenv = loadFromFile(resourceUrl);
