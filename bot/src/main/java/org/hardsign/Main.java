@@ -33,7 +33,6 @@ public class Main {
         System.out.println("Settings loaded. Try init hibernate");
 
         var sessionFactory = HibernateSessionFactoryFactory.create(settings.getDatabase()); // todo: (tebaikin) 07.11.2022 should dispose
-        System.out.println("hibernate loaded");
 
         var userStateRepository = new UserStateRepositoryImpl(sessionFactory);
         var userStateService = new UserStateServiceImpl(userStateRepository);
