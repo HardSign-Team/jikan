@@ -12,11 +12,14 @@ public class HibernateSessionFactoryFactory {
     public static SessionFactory create(BotDatabaseSettings settings) throws HibernateException {
         var configuration = new Configuration()
                 .setProperty("hibernate.connection.driver_class", org.postgresql.Driver.class.getName())
-                .setProperty("hibernate.connection.username", settings.getUser())
-                .setProperty("hibernate.connection.password", settings.getPassword())
                 .setProperty("hibernate.connection.url", createConnectionString(settings))
                 .setProperty("hibernate.hbm2ddl.auto", "update")
                 .addAnnotatedClass(UserStateEntity.class);
+
+        if (settings.getDatabaseUrl() != null)
+            configuration
+                    .setProperty("hibernate.connection.username", settings.getUser())
+                    .setProperty("hibernate.connection.password", settings.getPassword());
 
         var builder = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties());
