@@ -57,7 +57,11 @@ public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser 
     }
 
     private Dotenv getEnvironment(URL resourceUrl) {
-
+        if (resourceUrl == null)
+            return Dotenv
+                    .configure()
+                    .ignoreIfMissing()
+                    .load();
         return loadFromFile(resourceUrl);
     }
 
