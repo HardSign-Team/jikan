@@ -18,19 +18,19 @@ public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser 
     @Override
     public BotSettings parse() throws Exception {
         var databaseSettings = BotDatabaseSettings.builder()
-                .user(getOrThrow("POSTGRESQL_USER"))
-                .password(getOrThrow("POSTGRESQL_PASSWORD"))
-                .databaseName(getOrThrow("POSTGRESQL_DBNAME"))
-                .host(getOrThrow("POSTGRESQL_HOST"))
-                .port(getOrThrow("POSTGRESQL_PORT"))
+                .user(getOrNull("POSTGRESQL_USER"))
+                .password(getOrNull("POSTGRESQL_PASSWORD"))
+                .databaseName(getOrNull("POSTGRESQL_DBNAME"))
+                .host(getOrNull("POSTGRESQL_HOST"))
+                .port(getOrNull("POSTGRESQL_PORT"))
+                .databaseUrl(getOrNull("DATABASE_URL"))
                 .build();
 
         return BotSettings.builder()
                 .botTelegramToken(getOrThrow("TELEGRAM_BOT_TOKEN"))
                 .botLogin(getOrThrow("JIKAN_BOT_LOGIN"))
                 .botPassword(getOrThrow("JIKAN_BOT_PASSWORD"))
-                .baseUrlHost(getOrThrow("JIKAN_API_HOST")) // todo: delete
-                .baseUrlPort(getOrThrow("JIKAN_API_PORT"))
+                .apiUrl(getOrThrow("JIKAN_API_URL"))
                 .accessTokenLifeTime(getMinutes(environment.get("JIKAN_ACCESS_TOKEN_LIFETIME", "60")))
                 .database(databaseSettings)
                 .build();
@@ -45,6 +45,10 @@ public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser 
         if (result == null)
             throw new Exception(key + " not found in environment.");
         return result;
+    }
+
+    private String getOrNull(String key) {
+        return environment.get(key);
     }
 
     private Dotenv getEnvironment(URL resourceUrl) {

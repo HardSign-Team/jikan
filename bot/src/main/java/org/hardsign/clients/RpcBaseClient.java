@@ -28,7 +28,7 @@ public abstract class RpcBaseClient {
             String baseUrl,
             Supplier<BotSettings> settingsProvider) {
         this.client = client;
-        this.baseUrl = baseUrl;
+        this.baseUrl = baseUrl.replaceAll("^/", "");
         this.settingsProvider = settingsProvider;
     }
 
@@ -87,10 +87,9 @@ public abstract class RpcBaseClient {
     }
 
     private String getBaseUrl() {
-        var host = settingsProvider.get().getBaseUrlHost();
-        var port = settingsProvider.get().getBaseUrlPort();
-        return "http://" + host + ":" + port + "/" + baseUrl;
-    }
+        var apiUrl = settingsProvider.get().getApiUrl().replaceAll("/$", "");
 
+        return apiUrl + "/" + baseUrl;
+    }
 }
 

@@ -26,6 +26,11 @@ public class HibernateSessionFactoryFactory {
 
     @NotNull
     private static String createConnectionString(BotDatabaseSettings settings) {
+        var databaseUrl = settings.getDatabaseUrl();
+        // note (lunev.d): this means that we are launching on heroku
+        if (databaseUrl != null)
+            return databaseUrl;
+
         var host = settings.getHost();
         var port = settings.getPort();
         var databaseName = settings.getDatabaseName();

@@ -11,4 +11,5 @@ public class BotDatabaseSettings {
     private String databaseName;
     private String host;
     private String port;
+    private String databaseUrl;
 }
