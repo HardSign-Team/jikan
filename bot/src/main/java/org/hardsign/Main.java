@@ -10,7 +10,7 @@ import org.hardsign.services.LoggingTelegramBotDecorator;
 import org.hardsign.services.auth.AuthorizerImpl;
 import org.hardsign.services.settings.EnvironmentSettingsParserImpl;
 import org.hardsign.services.users.UserStateServiceImpl;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.URL;
 import java.util.function.Supplier;
@@ -50,11 +50,8 @@ public class Main {
 
 
 
-    @NotNull
-    private static URL getResourceUrl() throws Exception {
-        var resource = Main.class.getClassLoader().getResource("env.properties");
-        if (resource == null)
-            throw new Exception("Resources not found. Please, create 'env.properties' file in resources.");
-        return resource;
+    @Nullable
+    private static URL getResourceUrl() {
+        return Main.class.getClassLoader().getResource("env.properties");
     }
 }
