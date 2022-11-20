@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 public class HibernateSessionFactoryFactory {
     public static SessionFactory create(BotDatabaseSettings settings) throws HibernateException {
         System.out.println("Start debugging with prints...");
-        System.out.println("Driver class name: " + org.postgresql.Driver.class.getName());
 
         var configuration = new Configuration()
                 .setProperty("hibernate.connection.driver_class", org.postgresql.Driver.class.getName())
@@ -19,7 +18,7 @@ public class HibernateSessionFactoryFactory {
                 .setProperty("hibernate.hbm2ddl.auto", "update")
                 .addAnnotatedClass(UserStateEntity.class);
 
-        if (settings.getDatabaseUrl() != null)
+        if (settings.getDatabaseUrl() == null)
             configuration
                     .setProperty("hibernate.connection.username", settings.getUser())
                     .setProperty("hibernate.connection.password", settings.getPassword());
