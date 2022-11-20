@@ -10,8 +10,10 @@ import java.time.Duration;
 
 public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser {
 
+    private final Dotenv environment;
+
     public EnvironmentSettingsParserImpl(URL resourceUrl) {
-        initEnvironment(resourceUrl);
+        this.environment = getEnvironment(resourceUrl);
     }
 
     @Override
@@ -40,38 +42,30 @@ public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser 
     }
 
     private String getOrThrow(String key) throws Exception {
-        var result = System.getProperty(key);
+        var result = environment.get(key);
         if (result == null)
             throw new Exception(key + " not found in environment.");
         return result;
     }
 
     private String getOrNull(String key) {
-        return System.getProperty(key);
+        return environment.get(key);
     }
 
     private String getOrDefault(String key, String def){
-        return System.getProperty(key, def);
+        return environment.get(key, def);
     }
 
-    private void initEnvironment(URL resourceUrl) {
-        if (resourceUrl == null)
-        {
-            Dotenv
-                    .configure()
-                    .systemProperties()
-                    .load();
-            return;
-        }
+    private Dotenv getEnvironment(URL resourceUrl) {
 
-        var dotenv = loadFromFile(resourceUrl);
-        dotenv.entries().forEach(e -> System.setProperty(e.getKey(), e.getValue()));
+        return loadFromFile(resourceUrl);
     }
 
     private Dotenv loadFromFile(URL resourceUrl){
         var envProperties = new File(resourceUrl.getPath());
         return Dotenv
                 .configure()
+                .ignoreIfMissing()
                 .directory(envProperties.getParent())
                 .filename(envProperties.getName())
                 .load();
