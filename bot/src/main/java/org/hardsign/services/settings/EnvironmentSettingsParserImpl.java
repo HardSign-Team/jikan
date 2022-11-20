@@ -9,10 +9,9 @@ import java.net.URL;
 import java.time.Duration;
 
 public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser {
-    private final Dotenv environment;
 
     public EnvironmentSettingsParserImpl(URL resourceUrl) {
-        this.environment = getEnvironment(resourceUrl);
+        initEnvironment(resourceUrl);
     }
 
     @Override
@@ -31,7 +30,7 @@ public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser 
                 .botLogin(getOrThrow("JIKAN_BOT_LOGIN"))
                 .botPassword(getOrThrow("JIKAN_BOT_PASSWORD"))
                 .apiUrl(getOrThrow("JIKAN_API_URL"))
-                .accessTokenLifeTime(getMinutes(environment.get("JIKAN_ACCESS_TOKEN_LIFETIME", "60")))
+                .accessTokenLifeTime(getMinutes(getOrDefault("JIKAN_ACCESS_TOKEN_LIFETIME", "60")))
                 .database(databaseSettings)
                 .build();
     }
@@ -51,11 +50,16 @@ public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser 
         return System.getProperty(key);
     }
 
-    private Dotenv getEnvironment(URL resourceUrl) {
-        var dotenv = resourceUrl == null ? Dotenv.load() : loadFromFile(resourceUrl);
-        dotenv.entries().forEach(e -> System.setProperty(e.getKey(), e.getValue()));
+    private String getOrDefault(String key, String def){
+        return System.getProperty(key, def);
+    }
 
-        return dotenv;
+    private void initEnvironment(URL resourceUrl) {
+        if (resourceUrl == null)
+            return;
+
+        var dotenv = loadFromFile(resourceUrl);
+        dotenv.entries().forEach(e -> System.setProperty(e.getKey(), e.getValue()));
     }
 
     private Dotenv loadFromFile(URL resourceUrl){
