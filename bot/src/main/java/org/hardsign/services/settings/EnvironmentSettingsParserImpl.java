@@ -69,7 +69,6 @@ public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser 
         var envProperties = new File(resourceUrl.getPath());
         return Dotenv
                 .configure()
-                .ignoreIfMissing()
                 .directory(envProperties.getParent())
                 .filename(envProperties.getName())
                 .load();

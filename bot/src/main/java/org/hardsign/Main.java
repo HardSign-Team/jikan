@@ -30,7 +30,6 @@ public class Main {
         var parser = new EnvironmentSettingsParserImpl(resourceUrl);
         var settings = parser.parse();
         Supplier<BotSettings> settingsProvider = () -> settings;
-        System.out.println("Settings loaded. Try init hibernate");
 
         var sessionFactory = HibernateSessionFactoryFactory.create(settings.getDatabase()); // todo: (tebaikin) 07.11.2022 should dispose
 
