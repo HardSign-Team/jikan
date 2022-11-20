@@ -41,20 +41,24 @@ public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser 
     }
 
     private String getOrThrow(String key) throws Exception {
-        var result = environment.get(key);
+        var result = System.getProperty(key);
         if (result == null)
             throw new Exception(key + " not found in environment.");
         return result;
     }
 
     private String getOrNull(String key) {
-        return environment.get(key);
+        return System.getProperty(key);
     }
 
     private Dotenv getEnvironment(URL resourceUrl) {
-        if (resourceUrl == null)
-            return Dotenv.load();
+        var dotenv = resourceUrl == null ? Dotenv.load() : loadFromFile(resourceUrl);
+        dotenv.entries().forEach(e -> System.setProperty(e.getKey(), e.getValue()));
 
+        return dotenv;
+    }
+
+    private Dotenv loadFromFile(URL resourceUrl){
         var envProperties = new File(resourceUrl.getPath());
         return Dotenv
                 .configure()
