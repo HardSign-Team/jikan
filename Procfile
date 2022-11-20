@@ -1,1 +1,1 @@
-worker: java -jar $PATH_TO_JAR
+web: java -jar $PATH_TO_JAR
