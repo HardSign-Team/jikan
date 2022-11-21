@@ -33,12 +33,17 @@ public class EnvironmentSettingsParserImpl implements EnvironmentSettingsParser 
                 .botPassword(getOrThrow("JIKAN_BOT_PASSWORD"))
                 .apiUrl(getOrThrow("JIKAN_API_URL"))
                 .accessTokenLifeTime(getMinutes(getOrDefault("JIKAN_ACCESS_TOKEN_LIFETIME", "60")))
+                .apiTimeout(getSeconds(getOrDefault("JIKAN_API_TIMEOUT", "30")))
                 .database(databaseSettings)
                 .build();
     }
 
-    private static Duration getMinutes(String jikan_access_token_lifetime) {
-        return Duration.ofMinutes(Long.parseLong(jikan_access_token_lifetime));
+    private static Duration getMinutes(String minutes) {
+        return Duration.ofMinutes(Long.parseLong(minutes));
+    }
+
+    private static Duration getSeconds(String seconds) {
+        return Duration.ofSeconds(Long.parseLong(seconds));
     }
 
     private String getOrThrow(String key) throws Exception {

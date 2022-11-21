@@ -36,7 +36,9 @@ public class Main {
         var userStateRepository = new UserStateRepositoryImpl(sessionFactory);
         var userStateService = new UserStateServiceImpl(userStateRepository);
 
-        var okClient = new OkHttpClient();
+        var okClient = new OkHttpClient.Builder()
+                .callTimeout(settings.getApiTimeout())
+                .build();
         var authorizer = new AuthorizerImpl(okClient, settingsProvider);
         authorizer.init();
 

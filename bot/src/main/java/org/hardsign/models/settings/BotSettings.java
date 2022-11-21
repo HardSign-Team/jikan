@@ -11,6 +11,8 @@ public class BotSettings {
     private String botLogin;
     private String botPassword;
     private Duration accessTokenLifeTime;
+    private Duration emergencyAuthorizationPeriod;
+    private Duration apiTimeout;
     private String apiUrl;
     private String botTelegramToken;
     private BotDatabaseSettings database;
