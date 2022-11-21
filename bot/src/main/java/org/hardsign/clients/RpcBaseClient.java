@@ -55,7 +55,7 @@ public abstract class RpcBaseClient {
                 return toJikanResponse(response, typeHint);
             }
         } catch (Exception e) {
-            return new JikanResponse<>(418, e.getMessage());
+            return new JikanResponse<>(418, e.toString());
         }
     }
 
@@ -63,7 +63,7 @@ public abstract class RpcBaseClient {
         try {
             return new JikanResponse<>(objectMapper.writeValueAsString(obj), 200);
         } catch (JsonProcessingException e) {
-            return new JikanResponse<>(400, e.getMessage());
+            return new JikanResponse<>(400, e.toString());
         }
     }
 
