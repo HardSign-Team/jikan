@@ -7,31 +7,31 @@ import {useSearchParams} from "react-router-dom";
 
 const Registration = () => {
     const [queryParams, setSearchParams] = useSearchParams();
-    const [isRegister, setIsRegister] = React.useState(queryParams.get("type") !== "login");
+    const [isRegistration, setIsRegistration] = React.useState(queryParams.get("type") !== "login");
 
 
     useEffect(() => {
-        if (isRegister) {
+        if (isRegistration) {
             setSearchParams({type: ""});
         } else {
             setSearchParams({type: "login"});
         }
-    }, [isRegister]);
+    }, [isRegistration]);
 
     useEffect(() => {
-        setIsRegister(queryParams.get("type") !== "login");
+        setIsRegistration(queryParams.get("type") !== "login");
     }, [queryParams]);
 
     return (
         <div className="register-form">
             <header className="register-types">
-                <div onClick={() => setIsRegister(true)}
-                     className={cn("type", {"active-type": isRegister})}>Регистрация
+                <div onClick={() => setIsRegistration(true)}
+                     className={cn("type", {"active-type": isRegistration})}>Регистрация
                 </div>
-                <div onClick={() => setIsRegister(false)} className={cn("type", {"active-type": !isRegister})}>Вход
+                <div onClick={() => setIsRegistration(false)} className={cn("type", {"active-type": !isRegistration})}>Вход
                 </div>
             </header>
-            {isRegister ? <RegistrationForm onRegistration={() => setIsRegister(false)}/> : <LoginForm/>}
+            {isRegistration ? <RegistrationForm onRegistration={() => setIsRegistration(false)}/> : <LoginForm/>}
         </div>
     );
 };

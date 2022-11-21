@@ -13,7 +13,7 @@ const $authHost = axios.create({
 
 const authInterceptor = (config: AxiosRequestConfig) => {
     if (config.headers) {
-        config.headers.authorization = `Bearer ${localStorage.getItem("accessToken")}`
+        config.headers.authorization = `Bearer ${localStorage.getItem("refreshToken")}`
     }
     return config;
 }

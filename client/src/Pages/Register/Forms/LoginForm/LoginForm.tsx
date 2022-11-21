@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import cn from "classnames";
 import "../RegistrationForm/RegistrationForm.less"
 import {useForm} from "react-hook-form";
@@ -11,6 +11,7 @@ const LoginForm = () => {
     const user = useUserContext();
     const {handleSubmit, watch, register} = useForm({mode: "onSubmit"});
     const navigate = useNavigate();
+    const [error, setError] = useState(false);
 
     const onSubmit = async () => {
         const {email, password} = watch();
@@ -19,7 +20,7 @@ const LoginForm = () => {
             user?.setIsAuth(true);
             navigate(MAIN_ROUTE);
         } catch (e) {
-            console.error(e);
+            setError(true);
         }
     }
     return (
@@ -33,6 +34,7 @@ const LoginForm = () => {
                         <input required {...register("password")} type="password" placeholder="Пароль"
                                className={cn("input")}/>
                     </div>
+                    {error && <div className={cn("error")}>Неверное имя или пароль</div>}
                     <button type="submit" className={cn("submit-button")}>Войти</button>
                 </form>
             </main>

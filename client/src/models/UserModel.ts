@@ -1,5 +1,5 @@
 export interface UserModel {
-    userId: number;
+    userId: Nullable<number>;
     name: string;
     login: string;
 }

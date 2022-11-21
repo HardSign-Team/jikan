@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Activities = () => {
+const ActivityCard = () => {
     return (
         <div>
 
@@ -8,4 +8,4 @@ const Activities = () => {
     );
 };
 
-export default Activities;
+export default ActivityCard;

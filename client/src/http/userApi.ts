@@ -3,10 +3,9 @@ import jwt_decode from "jwt-decode";
 import {JwtTokens} from "../models/JwtTokens";
 import {UserModel} from "../models/UserModel";
 
-export const check = async () => {
-    console.log(localStorage.getItem("accessToken"));
-    const {data: {accessToken, refreshToken}}: { data: JwtTokens } = await $authHost.post("api/auth/token", {
-        refreshToken: localStorage.getItem("accessToken"),
+export const getNewAccessToken = async (): Promise<{ sub: string, name: string }> => {
+    const {data: {accessToken, refreshToken}}: { data: JwtTokens } = await $host.post("api/auth/token", {
+        refreshToken: localStorage.getItem("refreshToken"),
     });
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
