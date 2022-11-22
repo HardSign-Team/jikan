@@ -13,11 +13,11 @@ public class ActivityEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_user"))
     private UserEntity user;
 
-    @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "activity", cascade = CascadeType.REMOVE)
     private List<TimestampEntity> timestamps;
 
     @Column(name = "name", length = 64, nullable = false)
