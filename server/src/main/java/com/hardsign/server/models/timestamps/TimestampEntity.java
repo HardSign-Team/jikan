@@ -14,8 +14,8 @@ public class TimestampEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
 
-    @ManyToOne(targetEntity = ActivityEntity.class, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
-    @JoinColumn(name="activity_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @JoinColumn(name="activity_id", nullable = false, foreignKey = @ForeignKey(name = "fk_activity"))
     private ActivityEntity activity;
 
     @Column(name = "start_at", nullable = false)

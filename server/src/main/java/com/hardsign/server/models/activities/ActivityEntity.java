@@ -1,8 +1,10 @@
 package com.hardsign.server.models.activities;
 
+import com.hardsign.server.models.timestamps.TimestampEntity;
 import com.hardsign.server.models.users.UserEntity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "activities")
@@ -11,22 +13,17 @@ public class ActivityEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_user"))
     private UserEntity user;
+
+    @OneToMany(mappedBy = "activity", cascade = CascadeType.REMOVE)
+    private List<TimestampEntity> timestamps;
 
     @Column(name = "name", length = 64, nullable = false)
     private String name;
 
     public ActivityEntity() { }
-
-    public ActivityEntity(long id) {
-        this(id, null, null);
-    }
-
-    public ActivityEntity(long userId, String name) {
-        this(0, new UserEntity(userId), name);
-    }
 
     public ActivityEntity(long id, UserEntity user, String name) {
         this.id = id;
