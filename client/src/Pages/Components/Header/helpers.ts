@@ -16,11 +16,15 @@ const items = [
     {
         caption: "Выйти",
     },
+    {
+        caption: "Личный кабинет",
+        url: "/cabinet"
+    },
 ]
 
 export const getAvatarPopMenuItems = (path: string, user: UserInfoContext | null) => {
     if (user?.isAuth) {
-        return items.slice(1, 4);
+        return [items[4], ...items.slice(1, 4)];
     }
     return items.slice(0, 3);
 }

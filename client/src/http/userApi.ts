@@ -5,7 +5,7 @@ import {UserModel} from "../models/UserModel";
 
 export const getNewAccessToken = async (): Promise<{ sub: string, name: string }> => {
     const {data: {accessToken, refreshToken}}: { data: JwtTokens } = await $host.post("api/auth/token", {
-        refreshToken: localStorage.getItem("refreshToken"),
+        refreshToken: `${localStorage.getItem("refreshToken")}`,
     });
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);

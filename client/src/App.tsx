@@ -9,6 +9,7 @@ import useUserContext from "./hooks/useUserContext";
 import Activities from "./Pages/Activities/Activities";
 import About from "./Pages/About/About";
 import Help from "./Pages/Help/Help";
+import Cabinet from './Pages/Cabinet/Cabinet';
 
 const App = () => {
     const user = useUserContext();
@@ -21,6 +22,7 @@ const App = () => {
                     <Route path="activities" element={<Activities/>}/>
                     <Route path="register" element={user?.isAuth ? <Navigate to="/activities"/> : <Registration/>}/>
                     <Route path="about" element={<About/>}/>
+                    <Route path="cabinet" element={<Cabinet />}/>
                     <Route path="help" element={<Help/>}/>
                 </Route>
             </Routes>

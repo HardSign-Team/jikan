@@ -6,7 +6,7 @@ import {getNewAccessToken} from "../http/userApi";
 export interface UserInfoContext {
     isAuth: boolean;
     userInfo: Nullable<UserModel>;
-    saveUserInfo: (user: UserModel | null) => void;
+    saveUserInfo: (user: Nullable<UserModel>) => void;
     setIsAuth: (isAuth: boolean) => void;
 }
 
@@ -17,7 +17,7 @@ interface UserProviderProps {
 }
 
 export const UserProvider = ({children}: UserProviderProps) => {
-    const [currentUser, setCurrentUser] = React.useState<UserModel | null>(null);
+    const [currentUser, setCurrentUser] = React.useState<Nullable<UserModel>>(null);
 
     const [isAuthUser, setIsAuthUser] = React.useState(false);
 
@@ -42,6 +42,7 @@ export const UserProvider = ({children}: UserProviderProps) => {
             } catch {
                 setIsAuth(false);
                 setCurrentUser(null);
+                return;
             }
         }
         setIsAuth(true);
@@ -52,7 +53,7 @@ export const UserProvider = ({children}: UserProviderProps) => {
         });
     }
 
-    const saveUserInfo = (user: UserModel | null) => {
+    const saveUserInfo = (user: Nullable<UserModel>) => {
         setCurrentUser(user);
     };
 

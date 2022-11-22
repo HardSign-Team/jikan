@@ -4,21 +4,29 @@ import "./CreateCard.less";
 import {createActivity} from "../../../http/activitiesApi";
 import 'react-responsive-modal/styles.css';
 import Modal from "react-responsive-modal";
+import useUserContext from "../../../hooks/useUserContext";
 
-const CreateCard = () => {
+interface CreateCardProps {
+    onSave: () => void;
+}
+
+const CreateCard = ({onSave}: CreateCardProps) => {
+        const userInfo = useUserContext();
         const [showModal, setShowModal] = React.useState(false);
         const [activityName, setActivityName] = React.useState("");
         const onOpenModal = () => {
             setShowModal(true);
         }
 
-        const onCloseModal = () => {
-            setShowModal(false);
-        }
-
         const onSaveModal = async () => {
-            const a = createActivity(activityName);
+            const data = await createActivity(activityName);
+            userInfo?.saveUserInfo({
+                name: userInfo?.userInfo?.name,
+                login: userInfo?.userInfo?.login,
+                userId: +(data?.userId ?? 0)
+            });
             setShowModal(false);
+            onSave();
         }
         return (
             <>
