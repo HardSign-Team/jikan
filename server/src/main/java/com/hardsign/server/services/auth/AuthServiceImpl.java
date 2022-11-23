@@ -1,24 +1,26 @@
 package com.hardsign.server.services.auth;
 
 import com.hardsign.server.models.auth.JwtTokens;
+import com.hardsign.server.models.auth.RefreshTokenEntity;
 import com.hardsign.server.models.users.User;
+import com.hardsign.server.repositories.RefreshTokensRepository;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AuthServiceImpl implements AuthService {
-    private final Map<String, String> refreshStorage = new HashMap<>(); // todo: (tebaikin) 08.11.2022 to repository
     private final JwtProvider jwtProvider;
     private final PasswordService passwordService;
+    private final RefreshTokensRepository refreshTokensRepository;
 
-    public AuthServiceImpl(JwtProvider jwtProvider, PasswordService passwordService) {
+    public AuthServiceImpl(JwtProvider jwtProvider,
+                           PasswordService passwordService,
+                           RefreshTokensRepository refreshTokensRepository) {
         this.jwtProvider = jwtProvider;
         this.passwordService = passwordService;
+        this.refreshTokensRepository = refreshTokensRepository;
     }
 
     @Override
@@ -45,12 +47,40 @@ public class AuthServiceImpl implements AuthService {
     public JwtTokens refresh(User user) {
         var accessToken = generateAccessToken(user);
         var newRefreshToken = jwtProvider.generateRefreshToken(user);
-        refreshStorage.put(user.getLogin(), newRefreshToken);
+
+        var newToken = new RefreshTokenEntity();
+        newToken.setUserLogin(user.getLogin());
+        newToken.setActive(true);
+        newToken.setRefreshToken(newRefreshToken);
+
+        var activeToken = refreshTokensRepository.findRefreshTokenEntityByUserLoginAndActive(user.getLogin(), true);
+
+        if (activeToken.isPresent()){
+            activeToken.get().setActive(false);
+            refreshTokensRepository.saveAll(List.of(activeToken.get(), newToken));
+        }
+        else {
+            refreshTokensRepository.save(newToken);
+        }
+
         return new JwtTokens(accessToken, newRefreshToken);
     }
 
     @Override
     public boolean verifyToken(String login, String refreshToken) {
-        return Objects.equals(refreshStorage.get(login), refreshToken);
+        var token = refreshTokensRepository.findRefreshTokenEntityByUserLoginAndActive(login, true);
+
+        if (token.isPresent() && Objects.equals(token.get().refreshToken, refreshToken))
+            return true;
+
+        var expiredToken = refreshTokensRepository.findRefreshTokenEntityByUserLoginAndActiveAndRefreshToken(login, false, refreshToken);
+
+        // this means that we got request with old refreshToken and possible that token was cracked
+        if (expiredToken.isPresent() && token.isPresent()){
+            token.get().setActive(false);
+            refreshTokensRepository.save(token.get());
+        }
+
+        return false;
     }
 }
