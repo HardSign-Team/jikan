@@ -16,7 +16,7 @@ public class RefreshTokenEntity {
     @Column(name="login", length = 32, nullable = false)
     public String userLogin;
 
-    @Column(name="token", length = 32, nullable = false)
+    @Column(name="token", length = 1024, nullable = false)
     public String refreshToken;
 
     @Column(name="active", nullable = false)
