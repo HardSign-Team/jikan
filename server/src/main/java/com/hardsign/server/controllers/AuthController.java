@@ -66,7 +66,7 @@ public class AuthController {
                 .orElseThrow(() -> new BadRequestException("Invalid token."));
 
         var login = claims.getSubject();
-        if (!authService.verifyToken(refreshToken, refreshToken))
+        if (!authService.verifyToken(login, refreshToken))
             throw new BadRequestException("Invalid token.");
 
         var user = userService.findUserByLogin(login)
