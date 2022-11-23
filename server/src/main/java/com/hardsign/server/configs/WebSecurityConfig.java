@@ -58,8 +58,7 @@ public class WebSecurityConfig {
                 "/v2/api-docs",
         };
         return http
-                .cors().configurationSource(request -> new CorsConfiguration().setAllowedOriginPatterns(
-                        List.of("http://localhost:3000", "https://637d52fe01809f5057c581ec--jikan-team.netlify.app")))
+                .cors().configurationSource(request -> createCorsConfiguration())
                 .and()
                 .httpBasic().disable()
                 .csrf().disable()
@@ -72,6 +71,18 @@ public class WebSecurityConfig {
                                 .and()
                                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 ).build();
+    }
+
+    private CorsConfiguration createCorsConfiguration()
+    {
+        var corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+        corsConfiguration.setAllowedOrigins(List.of("*"));
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PUT","OPTIONS","PATCH", "DELETE"));
+        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.setExposedHeaders(List.of("Authorization"));
+
+        return corsConfiguration;
     }
 
     private ApiKey apiKey() {
