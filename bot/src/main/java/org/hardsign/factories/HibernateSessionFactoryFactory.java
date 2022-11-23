@@ -41,6 +41,7 @@ public class HibernateSessionFactoryFactory {
         return "jdbc:postgresql://" + host + ":" + port + "/" + databaseName;
     }
 
+    @NotNull
     private static String getConnectionStringFromHerokuUri(BotDatabaseSettings settings) {
         try {
             var dbUri = new URI(settings.getDatabaseUrl());

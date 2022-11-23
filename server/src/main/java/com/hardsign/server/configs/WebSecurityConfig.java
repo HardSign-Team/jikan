@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiKey;
@@ -57,6 +58,9 @@ public class WebSecurityConfig {
                 "/v2/api-docs",
         };
         return http
+                .cors().configurationSource(request -> new CorsConfiguration().setAllowedOriginPatterns(
+                        List.of("http://localhost:3000", "https://637d52fe01809f5057c581ec--jikan-team.netlify.app")))
+                .and()
                 .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
