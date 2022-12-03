@@ -77,7 +77,7 @@ public class WebSecurityConfig {
     {
         var corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
-        corsConfiguration.setAllowedOriginPatterns(List.of("**localhost**", "**637d52fe01809f5057c581ec--jikan-team.netlify.app**"));
+        corsConfiguration.setAllowedOriginPatterns(List.of("**localhost**", "**jikan-team.netlify.app**"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PUT","OPTIONS","PATCH", "DELETE"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setExposedHeaders(List.of("Authorization"));
