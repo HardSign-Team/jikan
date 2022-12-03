@@ -28,7 +28,7 @@ const LoginForm = () => {
             <main className={cn("content", "login")}>
                 <form onSubmit={handleSubmit(onSubmit)} className={cn("form")}>
                     <div className="field">
-                        <input {...register("login")} type="login" placeholder="Почта" className={cn("input")}/>
+                        <input {...register("login")} type="login" placeholder="Логин" className={cn("input")}/>
                     </div>
                     <div className="field">
                         <input required {...register("password")} type="password" placeholder="Пароль"

@@ -27,8 +27,9 @@ const ActivityCard = ({info}: ActivityCardProps) => {
         setLoading(true);
         try {
             if (isStarted) {
-                const [timestamp,] = await Promise.all([stopActivity(id), loadActivityInfo()]);
+                const timestamp = await stopActivity(id);
                 setLastTimestamp(timestamp);
+                await loadActivityInfo();
             } else {
                 await startActivity(id);
             }
@@ -66,7 +67,7 @@ const ActivityCard = ({info}: ActivityCardProps) => {
         <div key={id} className={cn("activity-card")}>
             <div className={cn("activity-header")} title={name}>{name}</div>
             <div>Время активности</div>
-            <div>{overallActivity && getDate(overallActivity)}</div>
+            <div>{overallActivity ? getDate(overallActivity) : "0s"}</div>
             <div>Последний сеанс</div>
             <div>{getLastSeance()}</div>
             <button onClick={onClick}

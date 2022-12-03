@@ -41,7 +41,6 @@ const RegistrationForm = ({onRegistration}: RegistrationFormProps) => {
         try {
             const data = await register(login, password, name);
             user?.saveUserInfo(data);
-            user?.setIsAuth(true);
             onRegistration();
         } catch (err) {
             console.error(err);
