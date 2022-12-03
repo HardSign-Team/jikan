@@ -5,7 +5,7 @@ export const getAllTimestamps = async (activityId: number) => {
     try {
         const {
             data
-        }: { data: TimestampModel[] } = await $authHost.post(`/api/timestamps/getAll`, {activityId});
+        }: { data: TimestampModel[] } = await $authHost.get("/api/timestamps/getAll/" + activityId);
         return data;
     } catch (e: any) {
         console.error(e.message);

@@ -15,6 +15,11 @@ type ValidationErrorMessage = {
     }
 }
 const validationErrorMessages: ValidationErrorMessage = {
+    login: {
+        required: "Требуется ввести логин",
+        minLength: "Имя должно быть длиннее 5 символов",
+        maxLength: "Имя должно быть короче 30 символов",
+    },
     type: {
         required: "Требуется ввести имя",
         minLength: "Имя должно быть длиннее 2 символов",
@@ -22,8 +27,8 @@ const validationErrorMessages: ValidationErrorMessage = {
     },
     password: {
         required: "Требуется ввести пароль",
-        minLength: "Пароль должно быть короче 80 символов",
-        maxLength: "Пароль должен быть длиннее 8 символов",
+        maxLength: "Пароль должен быть короче 80 символов",
+        minLength: "Пароль должен быть длиннее 8 символов",
     }
 }
 
@@ -32,9 +37,9 @@ const RegistrationForm = ({onRegistration}: RegistrationFormProps) => {
     const {register: registerForm, handleSubmit, watch, formState: {errors}} = useForm({mode: "onSubmit"});
 
     const onSubmit = async () => {
-        const {email, password, name} = watch();
+        const {login, password, name} = watch();
         try {
-            const data = await register(email, password, name);
+            const data = await register(login, password, name);
             user?.saveUserInfo(data);
             user?.setIsAuth(true);
             onRegistration();
@@ -52,11 +57,16 @@ const RegistrationForm = ({onRegistration}: RegistrationFormProps) => {
             <main className={cn("content")}>
                 <form onSubmit={handleSubmit(onSubmit)} className={cn("form")}>
                     <div className="field">
-                        <input placeholder="Почта" type="email" className={cn("input")} {...registerForm("email", {
+                        <input placeholder="Логин" type="login" className={cn("input")} {...registerForm("login", {
                             required: true,
-                            pattern: /^\S+@\S+$/i,
-                            maxLength: 80
+                            minLength: 5,
+                            maxLength: 30
                         })} />
+                        {errors.login?.type &&
+                        <span className={cn("error")}>
+                            {validationErrorMessages.login[errors.login.type.toString()]}
+                        </span>
+                        }
                     </div>
                     <div className="field">
                         <input placeholder="Имя" type="text" className={cn("input")} {...registerForm("name", {
@@ -79,7 +89,7 @@ const RegistrationForm = ({onRegistration}: RegistrationFormProps) => {
                         })}/>
                         {errors.password?.type &&
                         <span className={cn("error")}>
-                            {validationErrorMessages.type[errors.password.type.toString()]}
+                            {validationErrorMessages.password[errors.password.type.toString()]}
                         </span>
                         }
                     </div>

@@ -47,7 +47,7 @@ export const UserProvider = ({children}: UserProviderProps) => {
         }
         setIsAuth(true);
         setCurrentUser({
-            userId: null,
+            id: null,
             name: username,
             login,
         });

@@ -74,6 +74,17 @@ public class TimestampsController {
         return mapper.mapToModel(timestamp);
     }
 
+    @GetMapping("getAll/{activityId}")
+    public List<TimestampModel> getAllTimestampsByActivityId(@PathVariable("activityId") long activityId) {
+        var user = getUserOrThrow();
+
+        var activity = getActivityOrThrow(activityId);
+
+        validateHasAccess(user, activity);
+
+        return timestampService.findAllTimestamps(activityId).stream().map(mapper::mapToModel).collect(Collectors.toList());
+    }
+
     @GetMapping("newest/{activityId}")
     public TimestampModel getLastTimestampByActivityId(@PathVariable("activityId") long activityId) {
         var user = getUserOrThrow();

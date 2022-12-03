@@ -12,9 +12,9 @@ export const getNewAccessToken = async (): Promise<{ sub: string, name: string }
     return jwt_decode(accessToken);
 }
 
-export const login = async (email: string, password: string) => {
+export const login = async (login: string, password: string) => {
     const {data: {accessToken, refreshToken}}: { data: JwtTokens } = await $host.post("api/auth/login", {
-        login: email,
+        login,
         password
     });
     localStorage.setItem("accessToken", accessToken);
@@ -22,7 +22,12 @@ export const login = async (email: string, password: string) => {
     return jwt_decode(accessToken);
 }
 
-export const register = async (email: string, password: string, name: string): Promise<UserModel> => {
-    const {data: user} = await $host.post("api/users/", {login: email, password, name});
+export const register = async (login: string, password: string, name: string): Promise<UserModel> => {
+    const {data: user} = await $host.post("api/users/", {login, password, name});
+    return user;
+}
+
+export const getUser = async (login: string): Promise<UserModel> => {
+    const {data: user} = await $authHost.get("api/users/login/" + login.replace("@", "%40"));
     return user;
 }
