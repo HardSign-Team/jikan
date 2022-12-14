@@ -113,7 +113,7 @@ const ActivityCard = ({info}: ActivityCardProps) => {
     function calculateOverallActivity(allTimestamps: TimestampModel[]): number {
         let result = 0;
         allTimestamps.forEach(({start, end}) => {
-            const endDate = new Date(end);
+            const endDate = end ? new Date(end) : new Date();
             const startDate = new Date(start);
             const d = endDate.getTime() - startDate.getTime();
             result += d < 0 ? 0 : d;
