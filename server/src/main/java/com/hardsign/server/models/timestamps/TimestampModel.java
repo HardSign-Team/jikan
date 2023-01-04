@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 @Data
 @AllArgsConstructor
@@ -13,7 +13,7 @@ import java.time.ZonedDateTime;
 public class TimestampModel {
     private long id;
     private long activityId;
-    private ZonedDateTime start;
+    private Instant start;
     @Nullable
-    private ZonedDateTime end;
+    private Instant end;
 }

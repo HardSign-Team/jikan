@@ -48,7 +48,8 @@ public class MapperImpl implements Mapper {
 
     @Override
     public Timestamp map(TimestampEntity entity) {
-        return new Timestamp(entity.getId(), entity.getActivity().getId(), entity.getStart(), entity.getEnd());
+        var end = entity.getEnd() != null ? entity.getEnd().toInstant() : null;
+        return new Timestamp(entity.getId(), entity.getActivity().getId(), entity.getStart().toInstant(), end);
     }
 
     @Override
@@ -60,7 +61,9 @@ public class MapperImpl implements Mapper {
     public TimestampEntity mapToEntity(Timestamp timestamp) {
         var activityEntity = new ActivityEntity();
         activityEntity.setId(timestamp.getActivityId());
-        return new TimestampEntity(timestamp.getId(), activityEntity, timestamp.getStart(), timestamp.getEnd());
+        var end = timestamp.getEnd() != null ? java.sql.Timestamp.from(timestamp.getEnd()) : null;
+        var start = java.sql.Timestamp.from(timestamp.getStart());
+        return new TimestampEntity(timestamp.getId(), activityEntity, start, end);
     }
 
     @Override

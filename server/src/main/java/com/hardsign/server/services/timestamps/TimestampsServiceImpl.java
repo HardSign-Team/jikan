@@ -6,6 +6,8 @@ import com.hardsign.server.models.users.User;
 import com.hardsign.server.repositories.TimestampsRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -61,5 +63,10 @@ public class TimestampsServiceImpl implements TimestampsService {
     @Override
     public Optional<Timestamp> getLast(long activityId) {
         return repository.findTopByActivityIdOrderByStartDesc(activityId).map(mapper::map);
+    }
+
+    @Override
+    public Duration getTotalTime(long id, Instant from, Instant to) {
+        return Duration.ofSeconds(repository.getTotalTimeByActivityId(id, from, to));
     }
 }
