@@ -14,6 +14,7 @@ import org.hardsign.models.timestamps.TimestampDto;
 import org.hardsign.models.timestamps.requests.StopActivityRequest;
 import org.hardsign.handlers.BaseTextUpdateHandler;
 import org.hardsign.utils.TelegramUtils;
+import org.hardsign.utils.TimeFormatter;
 
 import java.time.Duration;
 
@@ -21,10 +22,12 @@ public class StopPressHandler extends BaseTextUpdateHandler implements KeyboardP
 
     private final TelegramBot bot;
     private final JikanApiClient jikanApiClient;
+    private final TimeFormatter timeFormatter;
 
-    public StopPressHandler(TelegramBot bot, JikanApiClient jikanApiClient) {
+    public StopPressHandler(TelegramBot bot, JikanApiClient jikanApiClient, TimeFormatter timeFormatter) {
         this.bot = bot;
         this.jikanApiClient = jikanApiClient;
+        this.timeFormatter = timeFormatter;
     }
 
     @Override
@@ -46,7 +49,7 @@ public class StopPressHandler extends BaseTextUpdateHandler implements KeyboardP
 
         assert timestamp.getEnd() != null;
         var duration = Duration.ofMillis(timestamp.getEnd().getTime() - timestamp.getStart().getTime());
-        var durationText = getDurationText(duration);
+        var durationText = timeFormatter.format(duration);
 
         var activityName = TelegramUtils.bold(activity.getName());
         var text = "Вы остановили трекинг. Времени потрачено на " + activityName + ": " + durationText;
@@ -69,20 +72,4 @@ public class StopPressHandler extends BaseTextUpdateHandler implements KeyboardP
         return ButtonNames.STOP_TIMESTAMP.getName();
     }
 
-    private String getDurationText(Duration duration) {
-        var hours = duration.toHoursPart();
-        var minutes = duration.toMinutesPart();
-        var sb = new StringBuilder();
-
-        if (hours > 0)
-            sb.append(hours).append("ч. ");
-        if (minutes > 0)
-            sb.append(minutes).append("мин.");
-
-        var result =  sb.toString().trim();
-
-        if (result.isBlank())
-            return "совсем немножко";
-        return result;
-    }
 }

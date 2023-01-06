@@ -5,6 +5,7 @@ import org.hardsign.clients.BotBaseClient;
 import org.hardsign.models.JikanResponse;
 import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.activities.ActivityOverviewDto;
+import org.hardsign.models.activities.ActivityTotalTimeDto;
 import org.hardsign.models.activities.requests.*;
 import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.settings.BotSettings;
@@ -46,5 +47,13 @@ public class ActivitiesClientImpl extends BotBaseClient implements ActivitiesCli
     public JikanResponse<?> delete(BotRequest<DeleteActivityRequest> request) {
         return delete(Long.toString(request.getRequest().getActivityId()), request, Object.class);
     }
-}
 
+    @Override
+    public JikanResponse<ActivityTotalTimeDto> getTotalTime(BotRequest<GetActivityTotalTimeRequest> request) {
+        var req = request.getRequest();
+        var id = req.getActivityId();
+        var from = req.getFrom().toString();
+        var to = req.getTo().toString();
+        return get(id + "/total/" + from + "/" + to, request, ActivityTotalTimeDto.class);
+    }
+}

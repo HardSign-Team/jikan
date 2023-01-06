@@ -8,7 +8,9 @@ public enum ButtonNames {
     START_TIMESTAMP(Emoji.Play + " Старт"),
     STOP_TIMESTAMP(Emoji.Stop + " Стоп"),
     BACK(Emoji.Back + " Вернуться"),
-    ;
+    STATISTICS(Emoji.UpwardChart + " Статистика"),
+    CURRENT_MONTH_STATISTICS(Emoji.Calendar + " Текущий месяц"),
+    CUSTOM_DATE_STATISTICS(Emoji.Calendar + " Указать период");
 
     private final String name;
 

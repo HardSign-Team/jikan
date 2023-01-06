@@ -3,6 +3,7 @@ package org.hardsign.clients;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -18,7 +19,7 @@ import java.util.function.Supplier;
 
 public abstract class RpcBaseClient {
     public static final MediaType JSON = MediaType.get("application/json");
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = createMapper();
     private final OkHttpClient client;
     private final String baseUrl;
     private final Supplier<BotSettings> settingsProvider;
@@ -30,6 +31,10 @@ public abstract class RpcBaseClient {
         this.client = client;
         this.baseUrl = baseUrl.replaceAll("^/", "");
         this.settingsProvider = settingsProvider;
+    }
+
+    private static ObjectMapper createMapper() {
+        return new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
     protected <TResponse> JikanResponse<TResponse> sendBody(
@@ -79,7 +84,7 @@ public abstract class RpcBaseClient {
         try {
             return new JikanResponse<>(objectMapper.readValue(responseBodyBytes, type), response.code());
         } catch (JsonMappingException e) {
-            return new JikanResponse<>(response.code(), response.message());
+            return new JikanResponse<>(response.code(), e.getMessage());
         }
     }
 
