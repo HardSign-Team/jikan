@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ActivityDto {
-    private long id;
-    private long userId;
-    private String name;
+public class ActivityTotalTimeDto {
+    private Instant from;
+    private Instant to;
+    private long durationSec;
 }
-

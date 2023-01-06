@@ -9,8 +9,11 @@ import org.hardsign.factories.UpdateContextFactory;
 import org.hardsign.handlers.UpdateHandler;
 import org.hardsign.handlers.commands.*;
 import org.hardsign.handlers.inputs.CreateActivityInputHandler;
+import org.hardsign.handlers.inputs.CustomDateInputHandler;
 import org.hardsign.services.users.UserStateService;
 import org.hardsign.handlers.keyboards.*;
+import org.hardsign.utils.TimeFormatter;
+import org.hardsign.utils.TimezoneHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +31,13 @@ public class UpdateListenerImpl implements UpdatesListener {
             TelegramBot bot,
             UserStateService userStateService) {
         this.bot = bot;
+        var timeFormatter = new TimeFormatter();
+        var timezoneHelper = new TimezoneHelper();
 
         updateContextFactory = new UpdateContextFactory(jikanApiClient, userStateService);
+
+        updateHandlers.add(new CreateActivityInputHandler(bot, jikanApiClient, userStateService));
+        updateHandlers.add(new CustomDateInputHandler(bot, jikanApiClient, userStateService, timeFormatter, timezoneHelper));
 
         updateHandlers.add(new StartCommandHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new SelectActivityCommandHandler(bot, jikanApiClient, userStateService));
@@ -41,10 +49,11 @@ public class UpdateListenerImpl implements UpdatesListener {
         updateHandlers.add(new CreateActivityPressHandler(bot, userStateService));
         updateHandlers.add(new CancelDeleteActivityPressHandler(bot, userStateService));
         updateHandlers.add(new StartPressHandler(bot, jikanApiClient));
-        updateHandlers.add(new StopPressHandler(bot, jikanApiClient));
+        updateHandlers.add(new StopPressHandler(bot, jikanApiClient, timeFormatter));
         updateHandlers.add(new BackPressHandler(bot, userStateService));
-
-        updateHandlers.add(new CreateActivityInputHandler(bot, jikanApiClient, userStateService));
+        updateHandlers.add(new StatisticsPressHandler(bot));
+        updateHandlers.add(new CurrentMonthActivityPressHandler(bot, jikanApiClient, timeFormatter, timezoneHelper));
+        updateHandlers.add(new CustomDateActivityPressHandler(bot, userStateService));
     }
 
     @Override

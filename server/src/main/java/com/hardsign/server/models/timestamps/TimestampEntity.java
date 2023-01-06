@@ -4,7 +4,7 @@ import com.hardsign.server.models.activities.ActivityEntity;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "timestamps")
@@ -18,16 +18,16 @@ public class TimestampEntity {
     @JoinColumn(name="activity_id", nullable = false, foreignKey = @ForeignKey(name = "fk_activity"))
     private ActivityEntity activity;
 
-    @Column(name = "start_at", nullable = false)
-    private ZonedDateTime start;
+    @Column(name = "start_at", nullable = false, columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+    private Timestamp start;
 
     @Nullable
-    @Column(name = "end_at")
-    private ZonedDateTime end;
+    @Column(name = "end_at", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+    private Timestamp end;
 
     public TimestampEntity() { }
 
-    public TimestampEntity(long id, ActivityEntity activity, ZonedDateTime start, @Nullable ZonedDateTime end) {
+    public TimestampEntity(long id, ActivityEntity activity, Timestamp start, @Nullable Timestamp end) {
         this.id = id;
         this.activity = activity;
         this.start = start;
@@ -50,20 +50,20 @@ public class TimestampEntity {
         this.activity = activity;
     }
 
-    public ZonedDateTime getStart() {
+    public Timestamp getStart() {
         return start;
     }
 
-    public void setStart(ZonedDateTime start) {
+    public void setStart(Timestamp start) {
         this.start = start;
     }
 
     @Nullable
-    public ZonedDateTime getEnd() {
+    public Timestamp getEnd() {
         return end;
     }
 
-    public void setEnd(@Nullable ZonedDateTime end) {
+    public void setEnd(@Nullable Timestamp end) {
         this.end = end;
     }
 }

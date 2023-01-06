@@ -4,18 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 @Data
 @AllArgsConstructor
 public class Timestamp {
     private long id;
     private long activityId;
-    private ZonedDateTime start;
+    private Instant start;
     @Nullable
-    private ZonedDateTime end;
+    private Instant end;
 
-    public Timestamp(long activityId, ZonedDateTime start) {
+    public Timestamp(long activityId, Instant start) {
         this(0, activityId, start, null);
     }
 }

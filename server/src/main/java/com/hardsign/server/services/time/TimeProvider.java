@@ -1,8 +1,8 @@
 package com.hardsign.server.services.time;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 public interface TimeProvider {
-    ZonedDateTime now();
+    Instant now();
 }
 

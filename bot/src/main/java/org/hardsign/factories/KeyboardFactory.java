@@ -21,10 +21,21 @@ public class KeyboardFactory {
 
         var activeTimestamp = context.getActiveTimestamp();
         if (activeTimestamp == null || activeTimestamp.getEnd() != null)
-            return new ReplyKeyboardMarkup(ButtonNames.START_TIMESTAMP.getName(), ButtonNames.ACTIVITIES.getName())
+            return new ReplyKeyboardMarkup(
+                    ButtonNames.START_TIMESTAMP.getName(),
+                    ButtonNames.ACTIVITIES.getName(),
+                    ButtonNames.STATISTICS.getName())
                     .resizeKeyboard(true);
 
-        return new ReplyKeyboardMarkup(ButtonNames.STOP_TIMESTAMP.getName(), ButtonNames.ACTIVITIES.getName())
+        return new ReplyKeyboardMarkup(
+                ButtonNames.STOP_TIMESTAMP.getName(),
+                ButtonNames.ACTIVITIES.getName(),
+                ButtonNames.STATISTICS.getName())
+                .resizeKeyboard(true);
+    }
+
+    public static ReplyKeyboardMarkup createBackButtonMenu() {
+        return new ReplyKeyboardMarkup(ButtonNames.BACK.getName())
                 .resizeKeyboard(true);
     }
 }

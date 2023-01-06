@@ -6,10 +6,7 @@ import com.hardsign.server.exceptions.ConflictException;
 import com.hardsign.server.exceptions.ForbiddenException;
 import com.hardsign.server.exceptions.NotFoundException;
 import com.hardsign.server.mappers.Mapper;
-import com.hardsign.server.models.activities.Activity;
-import com.hardsign.server.models.activities.ActivityModel;
-import com.hardsign.server.models.activities.ActivityOverviewModel;
-import com.hardsign.server.models.activities.ActivityPatch;
+import com.hardsign.server.models.activities.*;
 import com.hardsign.server.models.activities.requests.CreateActivityRequest;
 import com.hardsign.server.models.activities.requests.PatchActivityRequest;
 import com.hardsign.server.models.timestamps.Timestamp;
@@ -18,11 +15,13 @@ import com.hardsign.server.services.activities.ActivitiesService;
 import com.hardsign.server.services.timestamps.TimestampsService;
 import com.hardsign.server.services.user.CurrentUserProvider;
 import com.hardsign.server.utils.users.UserUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.time.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -84,6 +83,24 @@ public class ActivitiesController {
                 .stream()
                 .map(x -> mapper.mapToOverviewModel(x, id -> activeTimestamps.getOrDefault(id, Optional.empty())))
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("{id}/total/{from}/{to}")
+    public TotalActivityTimeModel getTotalTime(
+            @PathVariable @Valid @Min(1) long id,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
+        var user = getUserOrThrow();
+
+        var activity = activityService.findById(id)
+                .filter(user::hasAccess)
+                .orElseThrow(NotFoundException::new);
+
+        var instantFrom = from.toInstant(ZoneOffset.UTC);
+        var instantTo = to.toInstant(ZoneOffset.UTC);
+        var total = timestampsService.getTotalTime(activity.getId(), instantFrom, instantTo);
+
+        return new TotalActivityTimeModel(instantFrom, instantTo, total.toSeconds());
     }
 
     @PostMapping(value = "create")

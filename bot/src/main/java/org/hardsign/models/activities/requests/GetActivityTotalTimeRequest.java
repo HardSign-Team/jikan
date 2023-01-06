@@ -4,10 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeleteActivityRequest {
+public class GetActivityTotalTimeRequest {
     private long activityId;
+    private Instant from;
+    private Instant to;
 }
-

@@ -10,20 +10,21 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Optional;
 
 @Service
 public class JwtProvider {
     private final SecretKey secretKey;
-    private final int accessTokenLifeTimeMinutes;
-    private final int refreshTokenLifeTimeMinutes;
+    private final long accessTokenLifeTimeMinutes;
+    private final long refreshTokenLifeTimeMinutes;
     private final TimeProvider timeProvider;
 
     public JwtProvider(
             @Value("${jwt.secret}") String secretKey,
-            @Value("${jwt.access.lifetime}") Integer accessTokenLifeTimeMinutes,
-            @Value("${jwt.refresh.lifetime}") Integer refreshTokenLifeTimeMinutes,
+            @Value("${jwt.access.lifetime}") Long accessTokenLifeTimeMinutes,
+            @Value("${jwt.refresh.lifetime}") Long refreshTokenLifeTimeMinutes,
             TimeProvider timeProvider){
         this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
         this.accessTokenLifeTimeMinutes = accessTokenLifeTimeMinutes;
@@ -33,7 +34,7 @@ public class JwtProvider {
 
     public String generateAccessToken(User user) {
         var now = timeProvider.now();
-        var accessExpirationInstant = now.plusMinutes(accessTokenLifeTimeMinutes).toInstant();
+        var accessExpirationInstant = now.plus(accessTokenLifeTimeMinutes, ChronoUnit.MINUTES);
         var accessExpiration = Date.from(accessExpirationInstant);
         return Jwts.builder()
                 .setSubject(user.getLogin())
@@ -44,9 +45,7 @@ public class JwtProvider {
     }
 
     public String generateRefreshToken(User user) {
-        var refreshExpirationInstant = timeProvider.now()
-                .plusMinutes(refreshTokenLifeTimeMinutes)
-                .toInstant();
+        var refreshExpirationInstant = timeProvider.now().plus(refreshTokenLifeTimeMinutes, ChronoUnit.MINUTES);
         var refreshExpiration = Date.from(refreshExpirationInstant);
         return Jwts.builder()
                 .setSubject(user.getLogin())
