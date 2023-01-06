@@ -22,6 +22,18 @@ const ActivityCard = ({info}: ActivityCardProps) => {
         loadActivityInfo();
     }, []);
 
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setOverallActivity(prev => {
+                if (isStarted) {
+                    return (prev ?? 0) + 1000;
+                }
+                return prev;
+            });
+        }, 1000);
+        return () => clearTimeout(timer);
+    }, [isStarted]);
+
 
     const onClick = useThrottle(async () => {
         setLoading(true);
@@ -79,7 +91,7 @@ const ActivityCard = ({info}: ActivityCardProps) => {
                         width="20"
                         ariaLabel="blocks-loading"
                         wrapperStyle={{}}
-                        wrapperClass="blocks-wrapper"
+                        wrapperClass={cn("activity-card-loader")}
                         colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
                     /> :
                     isStarted ? "Остановить" : "Начать"}
@@ -90,6 +102,9 @@ const ActivityCard = ({info}: ActivityCardProps) => {
     async function loadActivityInfo() {
         const [lastTimestamp, allTimestamps] = await Promise.all([getLastTimestampByActivityId(id), getAllTimestamps(id)]);
         setLastTimestamp(lastTimestamp);
+        if (lastTimestamp?.start && !lastTimestamp?.end) {
+            setIsStarted(true);
+        }
         if (allTimestamps?.length) {
             setOverallActivity(calculateOverallActivity(allTimestamps));
         }
@@ -98,7 +113,7 @@ const ActivityCard = ({info}: ActivityCardProps) => {
     function calculateOverallActivity(allTimestamps: TimestampModel[]): number {
         let result = 0;
         allTimestamps.forEach(({start, end}) => {
-            const endDate = new Date(end);
+            const endDate = end ? new Date(end) : new Date();
             const startDate = new Date(start);
             const d = endDate.getTime() - startDate.getTime();
             result += d < 0 ? 0 : d;

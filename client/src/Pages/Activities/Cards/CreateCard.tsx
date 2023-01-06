@@ -21,6 +21,10 @@ const CreateCard = ({onSave}: CreateCardProps) => {
     }
 
     const onSaveModal = async () => {
+        const str = activityName.trim();
+        if (str === "") {
+            return;
+        }
         setLoading(true);
         try {
             const data = await createActivity(activityName);
@@ -52,7 +56,7 @@ const CreateCard = ({onSave}: CreateCardProps) => {
                     width="80"
                     ariaLabel="blocks-loading"
                     wrapperStyle={{}}
-                    wrapperClass="blocks-wrapper"
+                    wrapperClass={cn("create-card-loader")}
                     colors={['#b8c480', '#B2A3B5', '#F4442E', '#51E5FF', '#429EA6']}
                 />
                 {
