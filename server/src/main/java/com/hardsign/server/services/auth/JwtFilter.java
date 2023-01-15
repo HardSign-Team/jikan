@@ -16,6 +16,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Objects;
 
 @Component
 public class JwtFilter extends GenericFilterBean {
@@ -45,9 +46,11 @@ public class JwtFilter extends GenericFilterBean {
     @Nullable
     private JwtAuthentication authenticate(HttpServletRequest servletRequest) {
         var userAuthentication = userAuthenticator.authenticate(servletRequest);
-        return userAuthentication != null && isService((String) userAuthentication.getPrincipal())
-                ? serviceJwtAuthenticator.authenticate(servletRequest)
-                : userAuthentication;
+        if (userAuthentication == null || !isService((String) userAuthentication.getPrincipal())) {
+            return userAuthentication;
+        }
+        var serviceAuthentication = serviceJwtAuthenticator.authenticate(servletRequest);
+        return Objects.requireNonNullElse(serviceAuthentication, userAuthentication);
 
     }
 
