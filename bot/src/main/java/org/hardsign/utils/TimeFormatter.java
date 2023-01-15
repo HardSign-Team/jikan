@@ -4,15 +4,12 @@ import java.time.Duration;
 
 public class TimeFormatter {
     public String format(Duration duration) {
-        var years = duration.toDaysPart();
-        var days = duration.toDays();
+        var days = duration.toDaysPart();
         var hours = duration.toHoursPart();
         var minutes = duration.toMinutesPart();
 
         var sb = new StringBuilder();
 
-        if (years > 0)
-            sb.append(years).append("лет ");
         if (days > 0)
             sb.append(days).append("д. ");
         if (hours > 0)
