@@ -8,6 +8,7 @@ import org.hardsign.models.auth.TelegramUserMeta;
 import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.settings.BotSettings;
 import org.hardsign.services.auth.Authorizer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -53,14 +54,17 @@ public abstract class BotBaseClient extends RpcBaseClient {
             TelegramUserMeta meta,
             Function<Request.Builder, Request.Builder> requestSetup,
             Class<TResponse> typeHint) {
-        return super.send(
-                url,
-                r -> {
-                    var builder = r
-                            .header("Authorization", authorizer.authorizeBot())
-                            .header(JIKAN_SERVICE_AUTHORIZATION, authorizer.authorizeUser(meta));
-                    return requestSetup.apply(builder);
-                },
-                typeHint);
+        var botAuthorization = authorizer.authorizeBot();
+        var userAuthorization = authorizer.authorizeUser(meta);
+        return super.send(url, addAuthorization(botAuthorization, userAuthorization).andThen(requestSetup), typeHint);
+    }
+
+    @NotNull
+    private Function<Request.Builder, Request.Builder> addAuthorization(
+            String botAuthorization,
+            String userAuthorization) {
+        return (Request.Builder r) -> r
+                .header(AUTHORIZATION_HEADER, botAuthorization)
+                .header(JIKAN_SERVICE_AUTHORIZATION, userAuthorization);
     }
 }
