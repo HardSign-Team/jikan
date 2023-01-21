@@ -67,6 +67,7 @@ public class TimestampsServiceImpl implements TimestampsService {
 
     @Override
     public Duration getTotalTime(long id, Instant from, Instant to) {
-        return Duration.ofSeconds(repository.getTotalTimeByActivityId(id, from, to));
+        var seconds = repository.getTotalTimeByActivityId(id, from, to);
+        return Duration.ofSeconds(seconds);
     }
 }
