@@ -51,17 +51,12 @@ public abstract class BaseUpdateHandler implements UpdateHandler {
         return State.None;
     }
 
-    protected void handleNoCurrentActivity(
-            TelegramBot bot,
-            UpdateContext context, Long chatId) {
+    protected void handleNoCurrentActivity(TelegramBot bot, UpdateContext context, Long chatId) {
         var text = "Вы не выбрали активность. Можете сделать это через главное меню.";
         sendDefaultMenuMessage(bot, context, chatId, text);
     }
 
-    protected void sendDefaultMenuMessage(TelegramBot bot,
-                                          UpdateContext context,
-                                          Long chatId,
-                                          String text) {
+    protected void sendDefaultMenuMessage(TelegramBot bot, UpdateContext context, Long chatId, String text) {
         var keyboard = KeyboardFactory.createMainMenu(context);
         bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
     }
