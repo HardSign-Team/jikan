@@ -55,6 +55,7 @@ public class UpdateListenerImpl implements UpdatesListener {
         updateHandlers.add(new CurrentMonthActivityPressHandler(bot, jikanApiClient, timeFormatter, timezoneHelper));
         updateHandlers.add(new CurrentDayActivityPressHandler(bot, jikanApiClient, timeFormatter, timezoneHelper));
         updateHandlers.add(new CustomDateActivityPressHandler(bot, userStateService));
+        updateHandlers.add(new SinceLastStartActivityPressHandler(bot, timeFormatter));
     }
 
     @Override

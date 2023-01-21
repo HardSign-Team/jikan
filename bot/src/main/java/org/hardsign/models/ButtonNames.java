@@ -11,7 +11,10 @@ public enum ButtonNames {
     STATISTICS(Emoji.UpwardChart + " Статистика"),
     CURRENT_MONTH_STATISTICS(Emoji.Calendar + " Текущий месяц"),
     CUSTOM_DATE_STATISTICS(Emoji.Calendar + " Указать период"),
-    CURRENT_DAY_STATISTICS(Emoji.Calendar + " Сегодня");
+    CURRENT_DAY_STATISTICS(Emoji.Calendar + " Сегодня"),
+    LAST_START_STATISTICS(Emoji.Calendar + " Последний старт"),
+    TIME_SINCE_LAST_START(Emoji.Calendar + " Время трекинга")
+    ;
 
     private final String name;
 

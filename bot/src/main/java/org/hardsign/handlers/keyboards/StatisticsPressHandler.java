@@ -3,8 +3,8 @@ package org.hardsign.handlers.keyboards;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
+import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.handlers.BaseTextUpdateHandler;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
@@ -29,14 +29,7 @@ public class StatisticsPressHandler extends BaseTextUpdateHandler implements Key
             return;
         }
 
-        var keyboard = new ReplyKeyboardMarkup(
-                new String[] {
-                        ButtonNames.CURRENT_DAY_STATISTICS.getName(), ButtonNames.CURRENT_MONTH_STATISTICS.getName()
-                },
-                new String[] {
-                        ButtonNames.CUSTOM_DATE_STATISTICS.getName(), ButtonNames.BACK.getName()
-                })
-                .resizeKeyboard(true);
+        var keyboard = KeyboardFactory.createStatisticsMenu(context);
         bot.execute(new SendMessage(chatId, "Выберите статистику").replyMarkup(keyboard));
     }
 }

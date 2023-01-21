@@ -22,15 +22,25 @@ public class KeyboardFactory {
         var activeTimestamp = context.getActiveTimestamp();
         if (activeTimestamp == null || activeTimestamp.getEnd() != null)
             return new ReplyKeyboardMarkup(
-                    ButtonNames.START_TIMESTAMP.getName(),
-                    ButtonNames.ACTIVITIES.getName(),
-                    ButtonNames.STATISTICS.getName())
+                    new String[]{
+
+                            ButtonNames.START_TIMESTAMP.getName(),
+                            ButtonNames.ACTIVITIES.getName(),
+                    },
+                    new String[]{
+                            ButtonNames.STATISTICS.getName()
+                    })
                     .resizeKeyboard(true);
 
         return new ReplyKeyboardMarkup(
-                ButtonNames.STOP_TIMESTAMP.getName(),
-                ButtonNames.ACTIVITIES.getName(),
-                ButtonNames.STATISTICS.getName())
+                new String[]{
+                        ButtonNames.STOP_TIMESTAMP.getName(),
+                        ButtonNames.ACTIVITIES.getName(),
+                },
+                new String[]{
+                        ButtonNames.TIME_SINCE_LAST_START.getName(),
+                        ButtonNames.STATISTICS.getName()
+                })
                 .resizeKeyboard(true);
     }
 
@@ -39,6 +49,30 @@ public class KeyboardFactory {
                 ButtonNames.CREATE_ACTIVITY.getName(),
                 ButtonNames.BACK.getName()
         ).resizeKeyboard(true);
+    }
+
+    public static ReplyKeyboardMarkup createStatisticsMenu(UpdateContext context) {
+        if (context.getActiveTimestamp() != null)
+            return new ReplyKeyboardMarkup(
+                new String[]{
+                        ButtonNames.CURRENT_DAY_STATISTICS.getName(), ButtonNames.CURRENT_MONTH_STATISTICS.getName()
+                },
+                new String[]{
+                        ButtonNames.CUSTOM_DATE_STATISTICS.getName(), ButtonNames.LAST_START_STATISTICS.getName()
+                },
+                new String[]{
+                        ButtonNames.BACK.getName()
+                })
+                .resizeKeyboard(true);
+
+        return new ReplyKeyboardMarkup(
+                new String[]{
+                        ButtonNames.CURRENT_DAY_STATISTICS.getName(), ButtonNames.CURRENT_MONTH_STATISTICS.getName()
+                },
+                new String[]{
+                        ButtonNames.CUSTOM_DATE_STATISTICS.getName(), ButtonNames.BACK.getName()
+                })
+                .resizeKeyboard(true);
     }
 
     public static ReplyKeyboardMarkup createBackButtonMenu() {
