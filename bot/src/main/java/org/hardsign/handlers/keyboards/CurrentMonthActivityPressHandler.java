@@ -3,6 +3,7 @@ package org.hardsign.handlers.keyboards;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import org.hardsign.clients.JikanApiClient;
+import org.hardsign.handlers.keyboards.abstracts.PeriodActivityPressHandler;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.DateRange;
 import org.hardsign.models.activities.ActivityDto;
@@ -37,13 +38,12 @@ public class CurrentMonthActivityPressHandler extends PeriodActivityPressHandler
     @NotNull
     @Override
     protected DateRange getDateRange(Update update) {
-        var utc = timezoneHelper.getUtcZone();
         var date = Instant.ofEpochSecond(update.message().date());
         var zone = timezoneHelper.getZone(update.message().location());
 
         var yearMonth = YearMonth.from(date.atZone(zone));
-        var from = yearMonth.atDay(1).atStartOfDay(utc).toInstant();
-        var to = yearMonth.atEndOfMonth().atStartOfDay(utc).toInstant();
+        var from = yearMonth.atDay(1).atStartOfDay(zone).toInstant();
+        var to = yearMonth.atEndOfMonth().atStartOfDay(zone).toInstant();
 
         return new DateRange(from, to);
     }

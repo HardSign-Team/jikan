@@ -1,4 +1,4 @@
-package org.hardsign.handlers.keyboards;
+package org.hardsign.handlers.keyboards.abstracts;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -7,6 +7,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.handlers.BaseTextUpdateHandler;
+import org.hardsign.handlers.keyboards.KeyboardPressHandler;
 import org.hardsign.models.DateRange;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
