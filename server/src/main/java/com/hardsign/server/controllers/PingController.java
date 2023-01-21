@@ -13,9 +13,9 @@ public class PingController {
         return "pong";
     }
 
-    @GetMapping(value = "/ping2")
+    @GetMapping(value = "/ping/authorized")
     @ResponseBody
-    public String ping2(){
+    public String pingAuthorized(){
         return "pong";
     }
 }
