@@ -3,9 +3,9 @@ package org.hardsign.handlers.keyboards;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
+import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.handlers.commands.DeleteActivityCommandHandler;
 import org.hardsign.handlers.commands.UnselectActivityCommandHandler;
 import org.hardsign.models.ButtonNames;
@@ -19,9 +19,7 @@ import org.hardsign.models.requests.BotRequest;
 import org.hardsign.handlers.BaseTextUpdateHandler;
 import org.hardsign.handlers.commands.SelectActivityCommandHandler;
 import org.hardsign.utils.TelegramUtils;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 public class ActivitiesPressHandler extends BaseTextUpdateHandler implements KeyboardPressHandler {
@@ -36,23 +34,15 @@ public class ActivitiesPressHandler extends BaseTextUpdateHandler implements Key
     @Override
     protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var activities = getActivities(context.getMeta());
-        var text = toText(activities, context);
-        var replyMarkup = new ReplyKeyboardMarkup(getButtons()).resizeKeyboard(true);
         var chatId = update.message().chat().id();
+        var text = toText(activities, context);
+        var replyMarkup = KeyboardFactory.createActivitiesMenu();
         bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup).parseMode(TelegramUtils.PARSE_MODE));
     }
 
     @Override
     protected String expectedText() {
         return ButtonNames.ACTIVITIES.getName();
-    }
-
-    @NotNull
-    private static String[] getButtons() {
-        var buttons = new ArrayList<String>();
-        buttons.add(ButtonNames.CREATE_ACTIVITY.getName());
-        buttons.add(ButtonNames.BACK.getName());
-        return buttons.toArray(new String[0]);
     }
 
     private String toText(ActivityOverviewDto[] activities, UpdateContext context) {

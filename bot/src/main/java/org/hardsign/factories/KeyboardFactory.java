@@ -34,6 +34,13 @@ public class KeyboardFactory {
                 .resizeKeyboard(true);
     }
 
+    public static ReplyKeyboardMarkup createActivitiesMenu() {
+        return new ReplyKeyboardMarkup(
+                ButtonNames.CREATE_ACTIVITY.getName(),
+                ButtonNames.BACK.getName()
+        ).resizeKeyboard(true);
+    }
+
     public static ReplyKeyboardMarkup createBackButtonMenu() {
         return new ReplyKeyboardMarkup(ButtonNames.BACK.getName())
                 .resizeKeyboard(true);
