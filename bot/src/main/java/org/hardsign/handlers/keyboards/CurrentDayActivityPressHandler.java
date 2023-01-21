@@ -12,16 +12,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.YearMonth;
 
-public class CurrentMonthActivityPressHandler extends PeriodActivityPressHandler {
+public class CurrentDayActivityPressHandler extends PeriodActivityPressHandler {
 
     private final TimeFormatter timeFormatter;
     private final TimezoneHelper timezoneHelper;
 
-    public CurrentMonthActivityPressHandler(
-            TelegramBot bot,
-            JikanApiClient jikanApiClient,
+    public CurrentDayActivityPressHandler(
+            TelegramBot bot, JikanApiClient jikanApiClient,
             TimeFormatter timeFormatter,
             TimezoneHelper timezoneHelper) {
         super(bot, jikanApiClient);
@@ -31,7 +29,7 @@ public class CurrentMonthActivityPressHandler extends PeriodActivityPressHandler
 
     @Override
     protected String expectedText() {
-        return ButtonNames.CURRENT_MONTH_STATISTICS.getName();
+        return ButtonNames.CURRENT_DAY_STATISTICS.getName();
     }
 
     @NotNull
@@ -41,9 +39,10 @@ public class CurrentMonthActivityPressHandler extends PeriodActivityPressHandler
         var date = Instant.ofEpochSecond(update.message().date());
         var zone = timezoneHelper.getZone(update.message().location());
 
-        var yearMonth = YearMonth.from(date.atZone(zone));
-        var from = yearMonth.atDay(1).atStartOfDay(utc).toInstant();
-        var to = yearMonth.atEndOfMonth().atStartOfDay(utc).toInstant();
+        var atZone = date.atZone(zone);
+
+        var from = atZone.toLocalDate().atStartOfDay(utc).toInstant();
+        var to = atZone.toLocalDate().atTime(23, 59, 59).atZone(utc).toInstant();
 
         return new DateRange(from, to);
     }
@@ -52,6 +51,6 @@ public class CurrentMonthActivityPressHandler extends PeriodActivityPressHandler
     protected String getTextMessage(ActivityDto activity, Duration duration) {
         var nameText = activity.getName();
         var durationText = timeFormatter.format(duration);
-        return "За текущий месяц времени потрачено на активность '" + nameText + "': " + durationText;
+        return "За сегодня месяц времени потрачено на активность '" + nameText + "': " + durationText;
     }
 }

@@ -30,9 +30,12 @@ public class StatisticsPressHandler extends BaseTextUpdateHandler implements Key
         }
 
         var keyboard = new ReplyKeyboardMarkup(
-                ButtonNames.CUSTOM_DATE_STATISTICS.getName(),
-                ButtonNames.CURRENT_MONTH_STATISTICS.getName(),
-                ButtonNames.BACK.getName())
+                new String[] {
+                        ButtonNames.CURRENT_DAY_STATISTICS.getName(), ButtonNames.CURRENT_MONTH_STATISTICS.getName()
+                },
+                new String[] {
+                        ButtonNames.CUSTOM_DATE_STATISTICS.getName(), ButtonNames.BACK.getName()
+                })
                 .resizeKeyboard(true);
         bot.execute(new SendMessage(chatId, "Выберите статистику").replyMarkup(keyboard));
     }
