@@ -8,6 +8,7 @@ import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.activities.Activity;
 import com.hardsign.server.models.timestamps.Timestamp;
 import com.hardsign.server.models.timestamps.TimestampModel;
+import com.hardsign.server.models.timestamps.TimestampPatch;
 import com.hardsign.server.models.timestamps.requests.*;
 import com.hardsign.server.models.users.User;
 import com.hardsign.server.services.activities.ActivitiesService;
@@ -18,8 +19,10 @@ import com.hardsign.server.utils.users.UserUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -53,7 +56,7 @@ public class TimestampsController {
 
         validateHasAccess(user, activity);
 
-        return timestampService.findAllTimestamps(activity.getUserId())
+        return timestampService.findAllTimestamps(activity.getId())
                 .stream()
                 .map(mapper::mapToModel)
                 .collect(Collectors.toList());
@@ -110,7 +113,8 @@ public class TimestampsController {
         if (lastTimestamp.isPresent())
             throw new ConflictException("Active timestamp not completed.");
 
-        var timestamp = timestampService.save(new Timestamp(activity.getId(), timeProvider.now()));
+        var timestamp = timestampService.save(new Timestamp(activity.getId(), timeProvider.now()))
+                .orElseThrow(ConflictException::new);
 
         return mapper.mapToModel(timestamp);
     }
@@ -127,7 +131,9 @@ public class TimestampsController {
                 .orElseThrow(() -> new NotFoundException("Active timestamp not found"));
         lastTimestamp.setEnd(timeProvider.now());
 
-        var timestamp = timestampService.save(lastTimestamp);
+        var timestamp = timestampService.save(lastTimestamp)
+                .orElseThrow(ConflictException::new);
+
         return mapper.mapToModel(timestamp);
     }
 
@@ -142,13 +148,48 @@ public class TimestampsController {
         var from = request.getStart().toInstant(ZoneOffset.UTC);
         var to = request.getEnd().toInstant(ZoneOffset.UTC);
 
-        if (from.isAfter(to))
-            throw new BadRequestException("From-date should be less than to-date.");
+        validateDateRange(from, to);
 
         var timestamp = timestampService.add(new Timestamp(activity.getId(), from, to))
                 .orElseThrow(ConflictException::new);
 
         return mapper.mapToModel(timestamp);
+    }
+
+    @PutMapping("edit")
+    public TimestampModel edit(@Valid @RequestBody EditTimestampRequest request) {
+        var user = getUserOrThrow();
+
+        if (request.getStart() == null && request.getEnd() == null)
+            throw new BadRequestException("Nothing changed.");
+
+        var timestamp = timestampService.findById(request.getTimestampId())
+                .orElseThrow(NotFoundException::new);
+
+        if (timestamp.getEnd() == null)
+            throw new BadRequestException("Can not edit active timestamps.");
+
+        var activity = getActivityOrThrow(timestamp.getActivityId());
+
+        validateHasAccess(user, activity);
+
+        var patch = createTimestampPatch(request);
+
+        var edited = patch.apply(timestamp);
+
+        validateDateRange(edited.getStart(), edited.getEnd());
+
+        var saved = timestampService.save(edited)
+                .orElseThrow(ConflictException::new);
+
+        return mapper.mapToModel(saved);
+    }
+
+    private static TimestampPatch createTimestampPatch(EditTimestampRequest request) {
+        return TimestampPatch.builder()
+                .start(Optional.ofNullable(request.getStart()).map(x -> x.toInstant(ZoneOffset.UTC)).orElse(null))
+                .end(Optional.ofNullable(request.getEnd()).map(x -> x.toInstant(ZoneOffset.UTC)).orElse(null))
+                .build();
     }
 
     @PostMapping(value = "delete")
@@ -178,5 +219,10 @@ public class TimestampsController {
     private static void validateHasAccess(User user, Activity activity) {
         if (!user.hasAccess(activity))
             throw new ForbiddenException("Has not access to activity.");
+    }
+
+    private static void validateDateRange(Instant from, Instant to) {
+        if (from.isAfter(to))
+            throw new BadRequestException("From-date should be less than to-date.");
     }
 }

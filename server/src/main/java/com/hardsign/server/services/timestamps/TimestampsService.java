@@ -18,7 +18,7 @@ public interface TimestampsService {
 
     List<Timestamp> findAllActiveTimestamps(User user);
 
-    Timestamp save(Timestamp timestamp);
+    Validation<Timestamp> save(Timestamp timestamp);
 
     Validation<Timestamp> add(Timestamp timestamp);
 

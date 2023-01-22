@@ -35,29 +35,23 @@ public class TimestampsServiceImpl implements TimestampsService {
         return repository.findById(id).map(mapper::map);
     }
 
-    public Timestamp save(Timestamp timestamp) {
-        var entity = mapper.mapToEntity(timestamp);
-
-        var saved = repository.save(entity);
-
-        return mapper.map(saved);
+    @Override
+    @Transactional
+    public Validation<Timestamp> save(Timestamp timestamp) {
+        return validateNotIntersect(timestamp)
+                .map(mapper::mapToEntity)
+                .map(repository::save)
+                .map(mapper::map);
     }
 
     @Override
     @Transactional
     public Validation<Timestamp> add(Timestamp timestamp) {
-        var entity = mapper.mapToEntity(timestamp);
-
-        var seconds = repository.getTotalTimeByActivityId(
-                timestamp.getActivityId(),
-                timestamp.getStart(),
-                timestamp.getEnd());
-        if (seconds > 0)
-            return Validation.invalid("Another timestamp found in range.");
-
-        var saved = repository.save(entity);
-
-        return Validation.valid(mapper.map(saved));
+        // todo: (tebaikin) 22.01.2023 remove duplicate
+        return validateNotIntersect(timestamp)
+                .map(mapper::mapToEntity)
+                .map(repository::save)
+                .map(mapper::map);
     }
 
     @Override
@@ -86,7 +80,18 @@ public class TimestampsServiceImpl implements TimestampsService {
 
     @Override
     public Duration getTotalTime(long id, Instant from, Instant to) {
-        var seconds = repository.getTotalTimeByActivityId(id, from, to);
+        var seconds = repository.getTotalTimeByActivityId(id, from, to, null);
         return Duration.ofSeconds(seconds);
+    }
+
+    private Validation<Timestamp> validateNotIntersect(Timestamp timestamp) {
+        var seconds = repository.getTotalTimeByActivityId(
+                timestamp.getActivityId(),
+                timestamp.getStart(),
+                timestamp.getEnd(),
+                timestamp.getId());
+        return seconds > 0
+                ? Validation.invalid("Another timestamp found in range.")
+                : Validation.valid(timestamp);
     }
 }

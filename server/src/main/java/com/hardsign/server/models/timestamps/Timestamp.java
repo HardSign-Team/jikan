@@ -22,4 +22,8 @@ public class Timestamp {
     public Timestamp(long activityId, Instant start, Instant end) {
         this(0, activityId, start, end);
     }
+
+    public Timestamp withDateRange(Instant start, Instant end) {
+        return new Timestamp(id, activityId, start, end);
+    }
 }
