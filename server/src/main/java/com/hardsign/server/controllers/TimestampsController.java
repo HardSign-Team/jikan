@@ -156,7 +156,7 @@ public class TimestampsController {
         return mapper.mapToModel(timestamp);
     }
 
-    @PutMapping("edit")
+    @PatchMapping("edit")
     public TimestampModel edit(@Valid @RequestBody EditTimestampRequest request) {
         var user = getUserOrThrow();
 
