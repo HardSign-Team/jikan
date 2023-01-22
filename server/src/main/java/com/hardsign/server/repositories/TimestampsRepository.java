@@ -21,9 +21,9 @@ public interface TimestampsRepository extends JpaRepository<TimestampEntity, Lon
     List<TimestampEntity> findTimestampEntitiesByActivity_User_IdAndEndIsNull(long userId);
 
     @Query(value =
-            "select coalesce(extract(epoch from sum(coalesce(end_at, current_timestamp) - start_at)), 0) from timestamps " +
+            "select coalesce(extract(epoch from sum(least(coalesce(end_at, current_timestamp), :to) - greatest(start_at, :from))), 0) from timestamps " +
             "where activity_id = :activityId " +
-            "AND :from <= start_at " +
-            "AND coalesce(end_at, current_timestamp) <= :to", nativeQuery = true)
+            "AND start_at < :to " +
+            "AND coalesce(end_at, current_timestamp) > :from", nativeQuery = true)
     Long getTotalTimeByActivityId(@Param("activityId") long activityId, @Param("from") Instant from, @Param("to") Instant to);
 }
