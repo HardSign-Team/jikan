@@ -18,4 +18,8 @@ public class Timestamp {
     public Timestamp(long activityId, Instant start) {
         this(0, activityId, start, null);
     }
+
+    public Timestamp(long activityId, Instant start, Instant end) {
+        this(0, activityId, start, end);
+    }
 }

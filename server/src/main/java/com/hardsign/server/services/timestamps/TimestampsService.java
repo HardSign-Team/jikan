@@ -2,6 +2,7 @@ package com.hardsign.server.services.timestamps;
 
 import com.hardsign.server.models.timestamps.Timestamp;
 import com.hardsign.server.models.users.User;
+import com.hardsign.server.utils.Validation;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -18,6 +19,8 @@ public interface TimestampsService {
     List<Timestamp> findAllActiveTimestamps(User user);
 
     Timestamp save(Timestamp timestamp);
+
+    Validation<Timestamp> add(Timestamp timestamp);
 
     void delete(long id);
 

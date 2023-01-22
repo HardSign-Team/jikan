@@ -4,8 +4,10 @@ import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.timestamps.Timestamp;
 import com.hardsign.server.models.users.User;
 import com.hardsign.server.repositories.TimestampsRepository;
+import com.hardsign.server.utils.Validation;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -39,6 +41,23 @@ public class TimestampsServiceImpl implements TimestampsService {
         var saved = repository.save(entity);
 
         return mapper.map(saved);
+    }
+
+    @Override
+    @Transactional
+    public Validation<Timestamp> add(Timestamp timestamp) {
+        var entity = mapper.mapToEntity(timestamp);
+
+        var seconds = repository.getTotalTimeByActivityId(
+                timestamp.getActivityId(),
+                timestamp.getStart(),
+                timestamp.getEnd());
+        if (seconds > 0)
+            return Validation.invalid("Another timestamp found in range.");
+
+        var saved = repository.save(entity);
+
+        return Validation.valid(mapper.map(saved));
     }
 
     @Override

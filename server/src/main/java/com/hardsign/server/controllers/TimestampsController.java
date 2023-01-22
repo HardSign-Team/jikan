@@ -1,5 +1,6 @@
 package com.hardsign.server.controllers;
 
+import com.hardsign.server.exceptions.BadRequestException;
 import com.hardsign.server.exceptions.ConflictException;
 import com.hardsign.server.exceptions.ForbiddenException;
 import com.hardsign.server.exceptions.NotFoundException;
@@ -7,10 +8,7 @@ import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.activities.Activity;
 import com.hardsign.server.models.timestamps.Timestamp;
 import com.hardsign.server.models.timestamps.TimestampModel;
-import com.hardsign.server.models.timestamps.requests.DeleteTimestampRequest;
-import com.hardsign.server.models.timestamps.requests.GetAllTimestampsRequest;
-import com.hardsign.server.models.timestamps.requests.StartTimestampRequest;
-import com.hardsign.server.models.timestamps.requests.StopTimestampRequest;
+import com.hardsign.server.models.timestamps.requests.*;
 import com.hardsign.server.models.users.User;
 import com.hardsign.server.services.activities.ActivitiesService;
 import com.hardsign.server.services.time.TimeProvider;
@@ -20,6 +18,7 @@ import com.hardsign.server.utils.users.UserUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -129,6 +128,26 @@ public class TimestampsController {
         lastTimestamp.setEnd(timeProvider.now());
 
         var timestamp = timestampService.save(lastTimestamp);
+        return mapper.mapToModel(timestamp);
+    }
+
+    @PutMapping("add")
+    public TimestampModel add(@Valid @RequestBody AddTimestampRequest request) {
+        var user = getUserOrThrow();
+
+        var activity = getActivityOrThrow(request.getActivityId());
+
+        validateHasAccess(user, activity);
+
+        var from = request.getStartAt().toInstant(ZoneOffset.UTC);
+        var to = request.getEndAt().toInstant(ZoneOffset.UTC);
+
+        if (from.isAfter(to))
+            throw new BadRequestException("From-date should be less than to-date.");
+
+        var timestamp = timestampService.add(new Timestamp(activity.getId(), from, to))
+                .orElseThrow(ConflictException::new);
+
         return mapper.mapToModel(timestamp);
     }
 
