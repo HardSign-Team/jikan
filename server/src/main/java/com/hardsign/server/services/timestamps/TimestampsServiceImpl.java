@@ -45,16 +45,6 @@ public class TimestampsServiceImpl implements TimestampsService {
     }
 
     @Override
-    @Transactional
-    public Validation<Timestamp> add(Timestamp timestamp) {
-        // todo: (tebaikin) 22.01.2023 remove duplicate
-        return validateNotIntersect(timestamp)
-                .map(mapper::mapToEntity)
-                .map(repository::save)
-                .map(mapper::map);
-    }
-
-    @Override
     public Optional<Timestamp> findActiveTimestamp(long activityId) {
         return repository.findFirstByActivityIdAndEndIsNull(activityId)
                 .map(mapper::map);

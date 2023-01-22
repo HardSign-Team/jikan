@@ -20,8 +20,6 @@ public interface TimestampsService {
 
     Validation<Timestamp> save(Timestamp timestamp);
 
-    Validation<Timestamp> add(Timestamp timestamp);
-
     void delete(long id);
 
     Optional<Timestamp> getLast(long activityId);

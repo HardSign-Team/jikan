@@ -150,7 +150,7 @@ public class TimestampsController {
 
         validateDateRange(from, to);
 
-        var timestamp = timestampService.add(new Timestamp(activity.getId(), from, to))
+        var timestamp = timestampService.save(new Timestamp(activity.getId(), from, to))
                 .orElseThrow(ConflictException::new);
 
         return mapper.mapToModel(timestamp);
