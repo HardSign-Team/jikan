@@ -14,9 +14,9 @@ public class AddTimestampRequest {
 
     @NotNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime startAt;
+    private LocalDateTime start;
 
     @NotNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime endAt;
+    private LocalDateTime end;
 }

@@ -139,8 +139,8 @@ public class TimestampsController {
 
         validateHasAccess(user, activity);
 
-        var from = request.getStartAt().toInstant(ZoneOffset.UTC);
-        var to = request.getEndAt().toInstant(ZoneOffset.UTC);
+        var from = request.getStart().toInstant(ZoneOffset.UTC);
+        var to = request.getEnd().toInstant(ZoneOffset.UTC);
 
         if (from.isAfter(to))
             throw new BadRequestException("From-date should be less than to-date.");
