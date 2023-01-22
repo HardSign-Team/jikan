@@ -3,12 +3,10 @@ package com.hardsign.server.utils;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.lang.Nullable;
 
 import java.util.function.Function;
 
-@Data
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Validation<T> {
     @Nullable
