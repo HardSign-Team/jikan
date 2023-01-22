@@ -6,6 +6,7 @@ import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.UpdateContext;
+import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.users.State;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,6 +54,11 @@ public abstract class BaseUpdateHandler implements UpdateHandler {
 
     protected void handleNoCurrentActivity(TelegramBot bot, UpdateContext context, Long chatId) {
         var text = "Вы не выбрали активность. Можете сделать это через главное меню.";
+        sendDefaultMenuMessage(bot, context, chatId, text);
+    }
+
+    protected void handleActivityNotStarted(TelegramBot bot, UpdateContext context, ActivityDto activity, Long chatId) {
+        var text = "Вы не начинали активность '" + activity.getName() + "'";
         sendDefaultMenuMessage(bot, context, chatId, text);
     }
 

@@ -18,7 +18,8 @@ public enum Emoji {
     Memo("\uD83D\uDCDD"),
     Clock1("\uD83D\uDD50"),
     Calendar("\uD83D\uDCC6"),
-    UpwardChart("\uD83D\uDCC8")
+    UpwardChart("\uD83D\uDCC8"),
+    Gear("⚙️")
     ;
 
     private final String value;

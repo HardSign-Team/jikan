@@ -28,7 +28,7 @@ public class KeyboardFactory {
                             ButtonNames.ACTIVITIES.getName(),
                     },
                     new String[]{
-                            ButtonNames.STATISTICS.getName()
+                            ButtonNames.ACTIVITY_MENU.getName()
                     })
                     .resizeKeyboard(true);
 
@@ -39,7 +39,7 @@ public class KeyboardFactory {
                 },
                 new String[]{
                         ButtonNames.TIME_SINCE_LAST_START.getName(),
-                        ButtonNames.STATISTICS.getName()
+                        ButtonNames.ACTIVITY_MENU.getName()
                 })
                 .resizeKeyboard(true);
     }
@@ -77,6 +77,11 @@ public class KeyboardFactory {
 
     public static ReplyKeyboardMarkup createBackButtonMenu() {
         return new ReplyKeyboardMarkup(ButtonNames.BACK.getName())
+                .resizeKeyboard(true);
+    }
+
+    public static ReplyKeyboardMarkup createActivityMenu() {
+        return new ReplyKeyboardMarkup(ButtonNames.STATISTICS.getName(), ButtonNames.BACK.getName())
                 .resizeKeyboard(true);
     }
 }

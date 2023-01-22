@@ -46,7 +46,7 @@ public class SinceLastStartActivityPressHandler extends BaseUpdateHandler implem
 
         var timestamp = context.getActiveTimestamp();
         if (timestamp == null) {
-            handleActivityNotStarted(context, activity, chatId);
+            handleActivityNotStarted(bot, context, activity, chatId);
             return;
         }
 
@@ -56,12 +56,6 @@ public class SinceLastStartActivityPressHandler extends BaseUpdateHandler implem
         var totalTime = Duration.between(from, to);
 
         sendMessage(context, activity, chatId, totalTime);
-    }
-
-    private void handleActivityNotStarted(UpdateContext context, ActivityDto activity, Long chatId) {
-         var text = "Вы не начинали активность '" + activity.getName() + "'";
-         var keyboard = KeyboardFactory.createMainMenu(context);
-         bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
     }
 
     private void sendMessage(UpdateContext context, ActivityDto activity, Long chatId, Duration duration) {
