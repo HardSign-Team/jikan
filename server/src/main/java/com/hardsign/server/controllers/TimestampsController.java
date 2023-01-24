@@ -185,13 +185,6 @@ public class TimestampsController {
         return mapper.mapToModel(saved);
     }
 
-    private static TimestampPatch createTimestampPatch(EditTimestampRequest request) {
-        return TimestampPatch.builder()
-                .start(Optional.ofNullable(request.getStart()).map(x -> x.toInstant(ZoneOffset.UTC)).orElse(null))
-                .end(Optional.ofNullable(request.getEnd()).map(x -> x.toInstant(ZoneOffset.UTC)).orElse(null))
-                .build();
-    }
-
     @PostMapping(value = "delete")
     public void delete(@Valid @RequestBody DeleteTimestampRequest request) {
         var user = getUserOrThrow();
@@ -214,6 +207,13 @@ public class TimestampsController {
     private Activity getActivityOrThrow(long activityId) {
         return activitiesService.findById(activityId)
                 .orElseThrow(() -> new NotFoundException("Activity not found."));
+    }
+
+    private static TimestampPatch createTimestampPatch(EditTimestampRequest request) {
+        return TimestampPatch.builder()
+                .start(Optional.ofNullable(request.getStart()).map(x -> x.toInstant(ZoneOffset.UTC)).orElse(null))
+                .end(Optional.ofNullable(request.getEnd()).map(x -> x.toInstant(ZoneOffset.UTC)).orElse(null))
+                .build();
     }
 
     private static void validateHasAccess(User user, Activity activity) {
