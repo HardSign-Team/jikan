@@ -27,6 +27,12 @@ public abstract class BotBaseClient extends RpcBaseClient {
         this.authorizer = authorizer;
     }
 
+    public <TResponse> JikanResponse<TResponse> put(String url, BotRequest<?> request, Class<TResponse> typeHint) {
+        var payload = request.getRequest();
+        var meta = request.getUserMeta();
+        return sendBody(payload, json -> send(url, meta, r -> r.put(RequestBody.create(json, JSON)), typeHint));
+    }
+
     public <TResponse> JikanResponse<TResponse> post(String url, BotRequest<?> request, Class<TResponse> typeHint) {
         var payload = request.getRequest();
         var meta = request.getUserMeta();

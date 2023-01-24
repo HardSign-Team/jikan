@@ -11,5 +11,6 @@ public interface TimestampsClient {
     JikanResponse<TimestampDto> getLast(BotRequest<GetLastTimestampByActivityIdRequest> request);
     JikanResponse<TimestampDto> start(BotRequest<StartActivityRequest> request);
     JikanResponse<TimestampDto> stop(BotRequest<StopActivityRequest> request);
+    JikanResponse<TimestampDto> add(BotRequest<AddTimestampRequest> request);
     JikanResponse<?> delete(BotRequest<DeleteTimestampByIdRequest> request);
 }

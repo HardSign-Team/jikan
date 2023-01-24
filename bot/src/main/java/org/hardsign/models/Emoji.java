@@ -19,7 +19,7 @@ public enum Emoji {
     Clock1("\uD83D\uDD50"),
     Calendar("\uD83D\uDCC6"),
     UpwardChart("\uD83D\uDCC8"),
-    Gear("⚙️")
+    Gear("⚙️"),
     ;
 
     private final String value;

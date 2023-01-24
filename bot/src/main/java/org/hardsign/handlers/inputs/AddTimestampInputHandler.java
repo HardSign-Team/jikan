@@ -6,36 +6,33 @@ import com.pengrad.telegrambot.model.User;
 import org.hardsign.clients.JikanApiClient;
 import org.hardsign.handlers.BaseUpdateHandler;
 import org.hardsign.models.DateRange;
+import org.hardsign.models.HttpCodes;
+import org.hardsign.models.JikanResponse;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
-import org.hardsign.models.activities.ActivityTotalTimeDto;
-import org.hardsign.models.activities.requests.GetActivityTotalTimeRequest;
 import org.hardsign.models.requests.BotRequest;
+import org.hardsign.models.timestamps.TimestampDto;
+import org.hardsign.models.timestamps.requests.AddTimestampRequest;
 import org.hardsign.models.users.State;
 import org.hardsign.services.users.UserStateService;
-import org.hardsign.utils.*;
+import org.hardsign.utils.DateParserFromUpdate;
+import org.hardsign.utils.MessagesHelper;
 
-import java.time.*;
+public class AddTimestampInputHandler extends BaseUpdateHandler implements InputHandler {
 
-public class CustomDateInputHandler extends BaseUpdateHandler implements InputHandler {
-    public static final String DATE_FORMAT_HINT = Hints.DATE_FORMAT_HINT;
-    public static final String DATE_RANGE_FORMAT_HINT = Hints.DATE_RANGE_FORMAT_HINT; // todo: (tebaikin) 24.01.2023 inline
     private final TelegramBot bot;
     private final JikanApiClient jikanApiClient;
     private final UserStateService userStateService;
-    private final TimeFormatter timeFormatter;
     private final DateParserFromUpdate dateParser;
 
-    public CustomDateInputHandler(
+    public AddTimestampInputHandler(
             TelegramBot bot,
             JikanApiClient jikanApiClient,
             UserStateService userStateService,
-            TimeFormatter timeFormatter,
             DateParserFromUpdate dateParser) {
         this.bot = bot;
         this.jikanApiClient = jikanApiClient;
         this.userStateService = userStateService;
-        this.timeFormatter = timeFormatter;
         this.dateParser = dateParser;
     }
 
@@ -55,24 +52,35 @@ public class CustomDateInputHandler extends BaseUpdateHandler implements InputHa
             return;
         }
 
+        var result = addTimestamp(context, activity, dateRange.get());
+
+        if (HttpCodes.Conflict.is(result.getCode())) {
+            sendConflictMessage(chatId, context);
+            return;
+        }
+
+        result.ensureSuccess();
+
         userStateService.setState(user, State.None);
         context.setState(State.None);
 
-        var totalTime = getTotalTime(context, activity, dateRange.get());
-
-        sendMessage(update, context, chatId, activity, totalTime);
+        sendSuccessMessage(update, context, chatId, activity);
     }
 
-    private void sendMessage(
-            Update update,
-            UpdateContext context,
-            Long chatId,
-            ActivityDto activity,
-            ActivityTotalTimeDto totalTime) {
+    private JikanResponse<TimestampDto> addTimestamp(UpdateContext context, ActivityDto activity, DateRange dateRange) {
+        var apiRequest = new AddTimestampRequest(activity.getId(), dateRange.getFrom(), dateRange.getTo());
+        var request = new BotRequest<>(apiRequest, context.getMeta());
+        return jikanApiClient.timestamps().add(request);
+    }
+
+    private void sendSuccessMessage(Update update, UpdateContext context, Long chatId, ActivityDto activity) {
         var input = update.message().text();
-        var name = activity.getName();
-        var time = timeFormatter.format(Duration.ofSeconds(totalTime.getDurationSec()));
-        var text = "За период " + input + " времени потрачено на активность '" + name + "': " + time;
+        var text = "Добавлена фиксация времени '" + input + "' для активности '" + activity.getName() + "'.";
+        sendDefaultMenuMessage(bot, context, chatId, text);
+    }
+
+    private void sendConflictMessage(Long chatId, UpdateContext context) {
+        var text = "Введенный период пересекается с другой фиксацией. Пожалуйста, измени период :o";
         sendDefaultMenuMessage(bot, context, chatId, text);
     }
 
@@ -81,15 +89,8 @@ public class CustomDateInputHandler extends BaseUpdateHandler implements InputHa
         sendDefaultMenuMessage(bot, context, chatId, text);
     }
 
-    private ActivityTotalTimeDto getTotalTime(UpdateContext context, ActivityDto activity, DateRange dateRange)
-            throws Exception {
-        var apiRequest = new GetActivityTotalTimeRequest(activity.getId(), dateRange.getFrom(), dateRange.getTo());
-        var botRequest = new BotRequest<>(apiRequest, context.getMeta());
-        return jikanApiClient.activities().getTotalTime(botRequest).getValueOrThrow();
-    }
-
     @Override
     protected State requiredState() {
-        return State.SelectCustomDateRangeStatistics;
+        return State.AddTimestampDateRange;
     }
 }

@@ -3,6 +3,7 @@ package org.hardsign.models;
 public enum HttpCodes {
     Ok(200),
     NotFound(404),
+    Conflict(409)
     ;
 
     private final int code;

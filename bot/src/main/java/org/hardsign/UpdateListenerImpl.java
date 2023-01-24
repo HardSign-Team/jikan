@@ -8,10 +8,13 @@ import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.UpdateContextFactory;
 import org.hardsign.handlers.UpdateHandler;
 import org.hardsign.handlers.commands.*;
+import org.hardsign.handlers.inputs.AddTimestampInputHandler;
 import org.hardsign.handlers.inputs.CreateActivityInputHandler;
 import org.hardsign.handlers.inputs.CustomDateInputHandler;
 import org.hardsign.services.users.UserStateService;
 import org.hardsign.handlers.keyboards.*;
+import org.hardsign.utils.DateParser;
+import org.hardsign.utils.DateParserFromUpdate;
 import org.hardsign.utils.TimeFormatter;
 import org.hardsign.utils.TimezoneHelper;
 
@@ -33,11 +36,13 @@ public class UpdateListenerImpl implements UpdatesListener {
         this.bot = bot;
         var timeFormatter = new TimeFormatter();
         var timezoneHelper = new TimezoneHelper();
+        var dateParser = new DateParserFromUpdate(new DateParser(), timezoneHelper);
 
         updateContextFactory = new UpdateContextFactory(jikanApiClient, userStateService);
 
         updateHandlers.add(new CreateActivityInputHandler(bot, jikanApiClient, userStateService));
-        updateHandlers.add(new CustomDateInputHandler(bot, jikanApiClient, userStateService, timeFormatter, timezoneHelper));
+        updateHandlers.add(new CustomDateInputHandler(bot, jikanApiClient, userStateService, timeFormatter, dateParser));
+        updateHandlers.add(new AddTimestampInputHandler(bot, jikanApiClient, userStateService, dateParser));
 
         updateHandlers.add(new StartCommandHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new SelectActivityCommandHandler(bot, jikanApiClient, userStateService));
@@ -57,6 +62,7 @@ public class UpdateListenerImpl implements UpdatesListener {
         updateHandlers.add(new CustomDateActivityPressHandler(bot, userStateService));
         updateHandlers.add(new SinceLastStartActivityPressHandler(bot, timeFormatter));
         updateHandlers.add(new ActivityMenuPressHandler(bot));
+        updateHandlers.add(new AddTimestampPressHandler(bot, userStateService));
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.hardsign.clients;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import okhttp3.*;
 import org.hardsign.models.JikanResponse;
@@ -18,7 +19,9 @@ import java.util.function.Supplier;
 public abstract class RpcBaseClient {
     public final String AUTHORIZATION_HEADER = "Authorization";
     public static final MediaType JSON = MediaType.get("application/json");
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     private final OkHttpClient client;
     private final String baseUrl;
     private final Supplier<BotSettings> settingsProvider;

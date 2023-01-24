@@ -81,7 +81,14 @@ public class KeyboardFactory {
     }
 
     public static ReplyKeyboardMarkup createActivityMenu() {
-        return new ReplyKeyboardMarkup(ButtonNames.STATISTICS.getName(), ButtonNames.BACK.getName())
+        return new ReplyKeyboardMarkup(
+                new String[] {
+                        ButtonNames.ADD_TIMESTAMP.getName()
+                },
+                new String[] {
+                        ButtonNames.STATISTICS.getName(), ButtonNames.BACK.getName()
+                }
+        )
                 .resizeKeyboard(true);
     }
 }

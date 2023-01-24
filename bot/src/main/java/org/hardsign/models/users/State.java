@@ -4,7 +4,9 @@ public enum State {
     None,
     CreateActivityName,
     DeleteActivityConfirmation,
-    SelectCustomDateRangeStatistics;
+    SelectCustomDateRangeStatistics,
+    AddTimestampDateRange,
+    ;
 
     public boolean isDefault() {
         return this == None;
