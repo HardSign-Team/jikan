@@ -6,9 +6,7 @@ import com.hardsign.server.exceptions.ForbiddenException;
 import com.hardsign.server.exceptions.NotFoundException;
 import com.hardsign.server.mappers.Mapper;
 import com.hardsign.server.models.activities.Activity;
-import com.hardsign.server.models.timestamps.Timestamp;
-import com.hardsign.server.models.timestamps.TimestampModel;
-import com.hardsign.server.models.timestamps.TimestampPatch;
+import com.hardsign.server.models.timestamps.*;
 import com.hardsign.server.models.timestamps.requests.*;
 import com.hardsign.server.models.users.User;
 import com.hardsign.server.services.activities.ActivitiesService;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +33,10 @@ public class TimestampsController {
     private final TimestampsService timestampService;
     private final TimeProvider timeProvider;
     private final Mapper mapper;
+    private final TimestampSortField[] defaultSortFields = {
+            TimestampSortField.START,
+            TimestampSortField.END
+    };
 
     public TimestampsController(
             CurrentUserProvider currentUserProvider,
@@ -99,6 +102,21 @@ public class TimestampsController {
                 .orElseThrow(NotFoundException::new);
 
         return mapper.mapToModel(timestamp);
+    }
+
+    @PostMapping("find")
+    public List<TimestampModel> findTimestamps(@Valid @RequestBody FindTimestampsRequest request) {
+        var user = getUserOrThrow();
+
+        var activity = getActivityOrThrow(request.getActivityId());
+
+        validateHasAccess(user, activity);
+
+        var findArgs = toFindTimestampsArgs(request);
+
+        var timestamps = timestampService.findTimestamps(findArgs);
+
+        return timestamps.stream().map(mapper::mapToModel).collect(Collectors.toList());
     }
 
     @PostMapping(value = "start")
@@ -207,6 +225,21 @@ public class TimestampsController {
     private Activity getActivityOrThrow(long activityId) {
         return activitiesService.findById(activityId)
                 .orElseThrow(() -> new NotFoundException("Activity not found."));
+    }
+
+    private FindTimestampsArgs toFindTimestampsArgs(FindTimestampsRequest request) {
+        var now = timeProvider.now();
+        return new FindTimestampsArgs(
+                request.getActivityId(),
+                Optional.ofNullable(request.getFrom()).map(TimestampsController::toInstant).orElse(now),
+                Optional.ofNullable(request.getTo()).map(TimestampsController::toInstant).orElse(now),
+                request.getSkip(),
+                request.getTake(),
+                Optional.ofNullable(request.getSortBy()).orElse(defaultSortFields));
+    }
+
+    private static Instant toInstant(LocalDateTime localDateTime) {
+        return localDateTime.toInstant(ZoneOffset.UTC);
     }
 
     private static TimestampPatch createTimestampPatch(EditTimestampRequest request) {

@@ -1,5 +1,6 @@
 package com.hardsign.server.services.timestamps;
 
+import com.hardsign.server.models.timestamps.FindTimestampsArgs;
 import com.hardsign.server.models.timestamps.Timestamp;
 import com.hardsign.server.models.users.User;
 import com.hardsign.server.utils.Validation;
@@ -17,6 +18,8 @@ public interface TimestampsService {
     Optional<Timestamp> findActiveTimestamp(long activityId);
 
     List<Timestamp> findAllActiveTimestamps(User user);
+
+    List<Timestamp> findTimestamps(FindTimestampsArgs args);
 
     Validation<Timestamp> save(Timestamp timestamp);
 
