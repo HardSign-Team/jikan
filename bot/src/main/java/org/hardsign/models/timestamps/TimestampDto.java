@@ -16,4 +16,8 @@ public class TimestampDto {
     private Instant start;
     @Nullable
     private Instant end;
+
+    public static int compareAscending(TimestampDto x, TimestampDto y) {
+        return x.getStart().compareTo(y.getStart());
+    }
 }

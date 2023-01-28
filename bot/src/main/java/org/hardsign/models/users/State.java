@@ -6,6 +6,7 @@ public enum State {
     DeleteActivityConfirmation,
     SelectCustomDateRangeStatistics,
     AddTimestampDateRange,
+    SelectCustomDateRangeTimestamps,
     ;
 
     public boolean isDefault() {

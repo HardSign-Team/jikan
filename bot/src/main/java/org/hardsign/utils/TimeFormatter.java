@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 public class TimeFormatter {
 
-    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss");
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm:ss");
 
     public String format(ZonedDateTime date) {
         return date.format(dateTimeFormatter);

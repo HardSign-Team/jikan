@@ -83,10 +83,22 @@ public class KeyboardFactory {
     public static ReplyKeyboardMarkup createActivityMenu() {
         return new ReplyKeyboardMarkup(
                 new String[] {
-                        ButtonNames.ADD_TIMESTAMP.getName(), ButtonNames.TIMESTAMPS.getName(),
+                        ButtonNames.TIMESTAMPS.getName(), ButtonNames.STATISTICS.getName()
                 },
                 new String[] {
-                        ButtonNames.STATISTICS.getName(), ButtonNames.BACK.getName()
+                        ButtonNames.BACK.getName()
+                }
+        )
+                .resizeKeyboard(true);
+    }
+
+    public static ReplyKeyboardMarkup createTimestampsMenu() {
+        return new ReplyKeyboardMarkup(
+                new String[]{
+                        ButtonNames.ADD_TIMESTAMP.getName(), ButtonNames.CUSTOM_DATE_TIMESTAMPS.getName()
+                },
+                new String[]{
+                        ButtonNames.BACK.getName()
                 }
         )
                 .resizeKeyboard(true);

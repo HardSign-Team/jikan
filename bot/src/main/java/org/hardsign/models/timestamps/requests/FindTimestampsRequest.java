@@ -21,4 +21,8 @@ public class FindTimestampsRequest {
     private int pageSize;
     @Nullable
     private List<SortField<TimestampField>> sortFields;
+
+    public FindTimestampsRequest(long activityId, Instant from, Instant to) {
+        this(activityId, from, to, 0, 10000, null);
+    }
 }

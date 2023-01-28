@@ -5,12 +5,14 @@ import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
+import org.hardsign.factories.TimestampsListFactory;
 import org.hardsign.factories.UpdateContextFactory;
 import org.hardsign.handlers.UpdateHandler;
 import org.hardsign.handlers.commands.*;
 import org.hardsign.handlers.inputs.AddTimestampInputHandler;
 import org.hardsign.handlers.inputs.CreateActivityInputHandler;
 import org.hardsign.handlers.inputs.CustomDateInputHandler;
+import org.hardsign.handlers.inputs.CustomDateTimestampsInputHandler;
 import org.hardsign.services.users.UserStateService;
 import org.hardsign.handlers.keyboards.*;
 import org.hardsign.utils.DateParser;
@@ -37,12 +39,14 @@ public class UpdateListenerImpl implements UpdatesListener {
         var timeFormatter = new TimeFormatter();
         var timezoneHelper = new TimezoneHelper();
         var dateParser = new DateParserFromUpdate(new DateParser(), timezoneHelper);
+        var timestampsListFactory = new TimestampsListFactory(timeFormatter);
 
         updateContextFactory = new UpdateContextFactory(jikanApiClient, userStateService);
 
         updateHandlers.add(new CreateActivityInputHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new CustomDateInputHandler(bot, jikanApiClient, userStateService, timeFormatter, dateParser));
         updateHandlers.add(new AddTimestampInputHandler(bot, jikanApiClient, userStateService, dateParser));
+        updateHandlers.add(new CustomDateTimestampsInputHandler(bot, jikanApiClient, userStateService, dateParser, timestampsListFactory, timezoneHelper));
 
         updateHandlers.add(new StartCommandHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new SelectActivityCommandHandler(bot, jikanApiClient, userStateService));
@@ -50,7 +54,7 @@ public class UpdateListenerImpl implements UpdatesListener {
         updateHandlers.add(new DeleteActivityCommandHandler(bot, jikanApiClient, userStateService));
 
         updateHandlers.add(new ActivitiesPressHandler(bot, jikanApiClient));
-        updateHandlers.add(new TimestampsPressHandler(bot, jikanApiClient, timeFormatter, timezoneHelper));
+        updateHandlers.add(new TimestampsPressHandler(bot, jikanApiClient, timestampsListFactory, timezoneHelper));
         updateHandlers.add(new AcceptDeleteActivityPressHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new CreateActivityPressHandler(bot, userStateService));
         updateHandlers.add(new CancelDeleteActivityPressHandler(bot, userStateService));
@@ -61,6 +65,7 @@ public class UpdateListenerImpl implements UpdatesListener {
         updateHandlers.add(new CurrentMonthActivityPressHandler(bot, jikanApiClient, timeFormatter, timezoneHelper));
         updateHandlers.add(new CurrentDayActivityPressHandler(bot, jikanApiClient, timeFormatter, timezoneHelper));
         updateHandlers.add(new CustomDateActivityPressHandler(bot, userStateService));
+        updateHandlers.add(new SelectCustomDateForTimestampsButton(bot, userStateService));
         updateHandlers.add(new SinceLastStartActivityPressHandler(bot, timeFormatter));
         updateHandlers.add(new ActivityMenuPressHandler(bot));
         updateHandlers.add(new AddTimestampPressHandler(bot, userStateService));
