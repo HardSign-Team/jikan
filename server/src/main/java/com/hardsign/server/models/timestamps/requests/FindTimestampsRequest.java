@@ -1,12 +1,14 @@
 package com.hardsign.server.models.timestamps.requests;
 
-import com.hardsign.server.models.timestamps.TimestampSortField;
+import com.hardsign.server.models.SortField;
+import com.hardsign.server.models.timestamps.TimestampField;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.Positive;
 import java.time.Instant;
+import java.util.List;
 
 @Data
 public class FindTimestampsRequest {
@@ -21,9 +23,9 @@ public class FindTimestampsRequest {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Instant to;
 
-    private int skip = 0;
+    private int page = 0;
 
-    private int take = 1000;
+    private int pageSize = 1000;
 
-    private TimestampSortField[] sortFields = null;
+    private List<SortField<TimestampField>> sortFields = null;
 }

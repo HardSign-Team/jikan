@@ -5,6 +5,8 @@ import com.hardsign.server.exceptions.ConflictException;
 import com.hardsign.server.exceptions.ForbiddenException;
 import com.hardsign.server.exceptions.NotFoundException;
 import com.hardsign.server.mappers.Mapper;
+import com.hardsign.server.models.SortField;
+import com.hardsign.server.models.SortDirection;
 import com.hardsign.server.models.activities.Activity;
 import com.hardsign.server.models.timestamps.*;
 import com.hardsign.server.models.timestamps.requests.*;
@@ -32,10 +34,9 @@ public class TimestampsController {
     private final TimestampsService timestampService;
     private final TimeProvider timeProvider;
     private final Mapper mapper;
-    private final TimestampSortField[] defaultSortFields = {
-            TimestampSortField.START,
-            TimestampSortField.END
-    };
+    private final List<SortField<TimestampField>> defaultSortFields = List.of(
+            new SortField<>(TimestampField.START, SortDirection.Ascending),
+            new SortField<>(TimestampField.END, SortDirection.Descending));
 
     public TimestampsController(
             CurrentUserProvider currentUserProvider,
@@ -232,8 +233,8 @@ public class TimestampsController {
                 request.getActivityId(),
                 Optional.ofNullable(request.getFrom()).orElse(Instant.EPOCH),
                 Optional.ofNullable(request.getTo()).orElse(now),
-                request.getSkip(),
-                request.getTake(),
+                request.getPage(),
+                request.getPageSize(),
                 Optional.ofNullable(request.getSortFields()).orElse(defaultSortFields));
     }
 

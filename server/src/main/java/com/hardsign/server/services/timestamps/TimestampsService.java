@@ -4,6 +4,7 @@ import com.hardsign.server.models.timestamps.FindTimestampsArgs;
 import com.hardsign.server.models.timestamps.Timestamp;
 import com.hardsign.server.models.users.User;
 import com.hardsign.server.utils.Validation;
+import org.springframework.data.domain.Page;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -19,7 +20,7 @@ public interface TimestampsService {
 
     List<Timestamp> findAllActiveTimestamps(User user);
 
-    List<Timestamp> findTimestamps(FindTimestampsArgs args);
+    Page<Timestamp> findTimestamps(FindTimestampsArgs args);
 
     Validation<Timestamp> save(Timestamp timestamp);
 
