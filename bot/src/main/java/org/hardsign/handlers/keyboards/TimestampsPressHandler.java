@@ -7,19 +7,21 @@ import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.handlers.BaseTextUpdateHandler;
-import org.hardsign.models.ButtonNames;
-import org.hardsign.models.Emoji;
-import org.hardsign.models.UpdateContext;
+import org.hardsign.models.*;
 import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.timestamps.TimestampDto;
+import org.hardsign.models.timestamps.TimestampField;
 import org.hardsign.models.timestamps.requests.FindTimestampsRequest;
 import org.hardsign.utils.TelegramUtils;
 import org.hardsign.utils.TimeFormatter;
 import org.hardsign.utils.TimezoneHelper;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Instant;
 import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static java.lang.System.lineSeparator;
@@ -52,14 +54,23 @@ public class TimestampsPressHandler extends BaseTextUpdateHandler implements Key
             return;
         }
 
-        var request = new BotRequest<>(new FindTimestampsRequest(activity.getId()), context.getMeta());
-        var timestamps = jikanApiClient.timestamps().find(request).getValueOrThrow();
+        var timestamps = getTimestamps(context, activity);
 
         var zone = timezoneHelper.getZone(update.message().location());
 
         var text = createText(activity, timestamps, zone);
         var keyboard = KeyboardFactory.createMainMenu(context);
         bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard).parseMode(TelegramUtils.PARSE_MODE));
+    }
+
+    private TimestampDto[] getTimestamps(UpdateContext context, ActivityDto activity) throws Exception {
+        var start = Instant.EPOCH;
+        var end = Instant.now();
+        var sort = List.of(new SortField<>(TimestampField.START, SortDirection.Descending));
+        var request = new BotRequest<>(new FindTimestampsRequest(activity.getId(), start, end, 0, 15, sort), context.getMeta());
+        var timestamps = jikanApiClient.timestamps().find(request).getValueOrThrow();
+
+        return Arrays.stream(timestamps).sorted(this::compareAscending).toArray(TimestampDto[]::new);
     }
 
     @NotNull
@@ -91,5 +102,9 @@ public class TimestampsPressHandler extends BaseTextUpdateHandler implements Key
         timestampSb.append("Удалить: ").append("/delt_").append(timestamp.getId()).append(lineSeparator());
 
         return timestampSb.toString();
+    }
+
+    private int compareAscending(TimestampDto x, TimestampDto y) {
+        return x.getStart().compareTo(y.getStart());
     }
 }

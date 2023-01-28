@@ -2,10 +2,12 @@ package org.hardsign.models.timestamps.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.hardsign.models.timestamps.TimestampSortField;
+import org.hardsign.models.SortField;
+import org.hardsign.models.timestamps.TimestampField;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -15,16 +17,8 @@ public class FindTimestampsRequest {
     private Instant from;
     @Nullable
     private Instant to;
-    private int skip;
-    private int take;
+    private int page;
+    private int pageSize;
     @Nullable
-    private TimestampSortField[] sortFields;
-
-    public FindTimestampsRequest(long activityId) {
-        this(activityId, null, null, 0, 15, null);
-    }
-
-    public FindTimestampsRequest(long activityId, Instant from, Instant to) {
-        this(activityId, from, to, 0, 15, null);
-    }
+    private List<SortField<TimestampField>> sortFields;
 }

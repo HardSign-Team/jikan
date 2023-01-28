@@ -1,6 +1,6 @@
 package org.hardsign.models;
 
-public enum SortType {
+public enum SortDirection {
     Ascending,
     Descending
 }
