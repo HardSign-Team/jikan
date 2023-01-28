@@ -5,7 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.Positive;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Data
 public class EditTimestampRequest {
@@ -14,9 +14,9 @@ public class EditTimestampRequest {
 
     @Nullable
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime start;
+    private Instant start;
 
     @Nullable
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime end;
+    private Instant end;
 }

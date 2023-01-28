@@ -6,7 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.Positive;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Data
 public class FindTimestampsRequest {
@@ -15,15 +15,15 @@ public class FindTimestampsRequest {
 
     @Nullable
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime from;
+    private Instant from;
 
     @Nullable
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime to;
-
-    private int take = 1000;
+    private Instant to;
 
     private int skip = 0;
 
-    private TimestampSortField[] sortBy = null;
+    private int take = 1000;
+
+    private TimestampSortField[] sortFields = null;
 }

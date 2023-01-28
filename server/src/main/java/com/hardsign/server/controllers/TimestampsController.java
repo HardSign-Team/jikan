@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
@@ -231,21 +230,17 @@ public class TimestampsController {
         var now = timeProvider.now();
         return new FindTimestampsArgs(
                 request.getActivityId(),
-                Optional.ofNullable(request.getFrom()).map(TimestampsController::toInstant).orElse(now),
-                Optional.ofNullable(request.getTo()).map(TimestampsController::toInstant).orElse(now),
+                Optional.ofNullable(request.getFrom()).orElse(Instant.EPOCH),
+                Optional.ofNullable(request.getTo()).orElse(now),
                 request.getSkip(),
                 request.getTake(),
-                Optional.ofNullable(request.getSortBy()).orElse(defaultSortFields));
-    }
-
-    private static Instant toInstant(LocalDateTime localDateTime) {
-        return localDateTime.toInstant(ZoneOffset.UTC);
+                Optional.ofNullable(request.getSortFields()).orElse(defaultSortFields));
     }
 
     private static TimestampPatch createTimestampPatch(EditTimestampRequest request) {
         return TimestampPatch.builder()
-                .start(Optional.ofNullable(request.getStart()).map(x -> x.toInstant(ZoneOffset.UTC)).orElse(null))
-                .end(Optional.ofNullable(request.getEnd()).map(x -> x.toInstant(ZoneOffset.UTC)).orElse(null))
+                .start(request.getStart())
+                .end(request.getEnd())
                 .build();
     }
 
