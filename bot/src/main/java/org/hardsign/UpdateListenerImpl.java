@@ -11,7 +11,7 @@ import org.hardsign.handlers.UpdateHandler;
 import org.hardsign.handlers.commands.*;
 import org.hardsign.handlers.inputs.AddTimestampInputHandler;
 import org.hardsign.handlers.inputs.CreateActivityInputHandler;
-import org.hardsign.handlers.inputs.CustomDateInputHandler;
+import org.hardsign.handlers.inputs.CustomDateActivityStatisticsInputHandler;
 import org.hardsign.handlers.inputs.CustomDateTimestampsInputHandler;
 import org.hardsign.services.users.UserStateService;
 import org.hardsign.handlers.keyboards.*;
@@ -44,7 +44,7 @@ public class UpdateListenerImpl implements UpdatesListener {
         updateContextFactory = new UpdateContextFactory(jikanApiClient, userStateService);
 
         updateHandlers.add(new CreateActivityInputHandler(bot, jikanApiClient, userStateService));
-        updateHandlers.add(new CustomDateInputHandler(bot, jikanApiClient, userStateService, timeFormatter, dateParser));
+        updateHandlers.add(new CustomDateActivityStatisticsInputHandler(bot, jikanApiClient, userStateService, timeFormatter, dateParser));
         updateHandlers.add(new AddTimestampInputHandler(bot, jikanApiClient, userStateService, dateParser));
         updateHandlers.add(new CustomDateTimestampsInputHandler(bot, jikanApiClient, userStateService, dateParser, timestampsListFactory, timezoneHelper));
 

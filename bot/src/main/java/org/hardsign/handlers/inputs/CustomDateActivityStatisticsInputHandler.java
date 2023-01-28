@@ -17,14 +17,14 @@ import org.hardsign.utils.*;
 
 import java.time.*;
 
-public class CustomDateInputHandler extends BaseUpdateHandler implements InputHandler {
+public class CustomDateActivityStatisticsInputHandler extends BaseUpdateHandler implements InputHandler {
     private final TelegramBot bot;
     private final JikanApiClient jikanApiClient;
     private final UserStateService userStateService;
     private final TimeFormatter timeFormatter;
     private final DateParserFromUpdate dateParser;
 
-    public CustomDateInputHandler(
+    public CustomDateActivityStatisticsInputHandler(
             TelegramBot bot,
             JikanApiClient jikanApiClient,
             UserStateService userStateService,
