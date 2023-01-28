@@ -50,7 +50,7 @@ public class SinceLastStartActivityPressHandler extends BaseUpdateHandler implem
             return;
         }
 
-        var from = timestamp.getStart().toInstant();
+        var from = timestamp.getStart();
         var to = Instant.ofEpochSecond(update.message().date());
 
         var totalTime = Duration.between(from, to);

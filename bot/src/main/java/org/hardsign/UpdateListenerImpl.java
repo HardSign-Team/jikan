@@ -50,6 +50,7 @@ public class UpdateListenerImpl implements UpdatesListener {
         updateHandlers.add(new DeleteActivityCommandHandler(bot, jikanApiClient, userStateService));
 
         updateHandlers.add(new ActivitiesPressHandler(bot, jikanApiClient));
+        updateHandlers.add(new TimestampsPressHandler(bot, jikanApiClient, timeFormatter, timezoneHelper));
         updateHandlers.add(new AcceptDeleteActivityPressHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new CreateActivityPressHandler(bot, userStateService));
         updateHandlers.add(new CancelDeleteActivityPressHandler(bot, userStateService));

@@ -48,7 +48,7 @@ public class StopPressHandler extends BaseTextUpdateHandler implements KeyboardP
         context.setActiveTimestamp(null);
 
         assert timestamp.getEnd() != null;
-        var duration = Duration.ofMillis(timestamp.getEnd().getTime() - timestamp.getStart().getTime());
+        var duration = Duration.ofMillis(timestamp.getEnd().toEpochMilli() - timestamp.getStart().toEpochMilli());
         var durationText = timeFormatter.format(duration);
 
         var activityName = TelegramUtils.bold(activity.getName());

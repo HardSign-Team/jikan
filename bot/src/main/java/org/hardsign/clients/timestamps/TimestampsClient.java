@@ -12,5 +12,7 @@ public interface TimestampsClient {
     JikanResponse<TimestampDto> start(BotRequest<StartActivityRequest> request);
     JikanResponse<TimestampDto> stop(BotRequest<StopActivityRequest> request);
     JikanResponse<TimestampDto> add(BotRequest<AddTimestampRequest> request);
+    JikanResponse<TimestampDto> edit(BotRequest<EditTimestampRequest> request);
+    JikanResponse<TimestampDto[]> find(BotRequest<FindTimestampsRequest> request);
     JikanResponse<?> delete(BotRequest<DeleteTimestampByIdRequest> request);
 }

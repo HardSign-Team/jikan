@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Data
 @AllArgsConstructor
@@ -13,7 +13,7 @@ import java.util.Date;
 public class TimestampDto {
     private long id;
     private long activityId;
-    private Date start;
+    private Instant start;
     @Nullable
-    private Date end;
+    private Instant end;
 }

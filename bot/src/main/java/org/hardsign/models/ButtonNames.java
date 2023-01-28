@@ -15,7 +15,8 @@ public enum ButtonNames {
     LAST_START_STATISTICS(Emoji.Calendar + " Последний старт"),
     TIME_SINCE_LAST_START(Emoji.Calendar + " Время трекинга"),
     ACTIVITY_MENU(Emoji.Gear + " Меню активности"),
-    ADD_TIMESTAMP(Emoji.Memo + " Добавить фиксацию")
+    ADD_TIMESTAMP(Emoji.Memo + " Добавить фиксацию"),
+    TIMESTAMPS(Emoji.Memo + " Фиксации")
     ;
 
     private final String name;

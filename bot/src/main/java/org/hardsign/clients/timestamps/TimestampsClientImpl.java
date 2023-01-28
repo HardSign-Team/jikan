@@ -51,6 +51,16 @@ public class TimestampsClientImpl extends BotBaseClient implements TimestampsCli
     }
 
     @Override
+    public JikanResponse<TimestampDto> edit(BotRequest<EditTimestampRequest> request) {
+        return patch("edit", request, TimestampDto.class);
+    }
+
+    @Override
+    public JikanResponse<TimestampDto[]> find(BotRequest<FindTimestampsRequest> request) {
+        return post("find", request, TimestampDto[].class);
+    }
+
+    @Override
     public JikanResponse<?> delete(BotRequest<DeleteTimestampByIdRequest> request) {
         return delete(Long.toString(request.getRequest().getActivityId()), request, Object.class);
     }

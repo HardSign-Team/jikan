@@ -1,8 +1,17 @@
 package org.hardsign.utils;
 
 import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class TimeFormatter {
+
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss");
+
+    public String format(ZonedDateTime date) {
+        return date.format(dateTimeFormatter);
+    }
+
     public String format(Duration duration) {
         var days = duration.toDaysPart();
         var hours = duration.toHoursPart();

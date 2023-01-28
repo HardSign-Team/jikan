@@ -83,7 +83,7 @@ public class KeyboardFactory {
     public static ReplyKeyboardMarkup createActivityMenu() {
         return new ReplyKeyboardMarkup(
                 new String[] {
-                        ButtonNames.ADD_TIMESTAMP.getName()
+                        ButtonNames.ADD_TIMESTAMP.getName(), ButtonNames.TIMESTAMPS.getName(),
                 },
                 new String[] {
                         ButtonNames.STATISTICS.getName(), ButtonNames.BACK.getName()
