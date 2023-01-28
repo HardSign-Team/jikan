@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -24,6 +25,7 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,6 +35,17 @@ import java.util.List;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
     private final JwtFilter jwtFilter;
+    private final String[] permittedEndpoints = new String[] {
+            "/api/auth/login",
+            "/api/auth/token",
+            "/ping",
+            "/api/activities/**",
+            "/api/timestamps/**",
+            "/api/users/**",
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+            "/v2/api-docs",
+    };
 
     public WebSecurityConfig(JwtFilter jwtFilter){
         this.jwtFilter = jwtFilter;
@@ -59,34 +72,25 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        final var permittedEndpoints = new String[] {
-                "/api/auth/login",
-                "/api/auth/token",
-                "/ping",
-                "/api/activities/**",
-                "/api/timestamps/**",
-                "/api/users/**",
-                "/swagger-ui/**",
-                "/swagger-resources/**",
-                "/v2/api-docs",
-        };
         return http
-                .cors().configurationSource(request -> createCorsConfiguration())
+                .cors().configurationSource(this::createCorsConfiguration)
                 .and()
                 .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeHttpRequests(
-                        auth -> auth
-                                .antMatchers(permittedEndpoints).permitAll()
-                                .anyRequest().authenticated()
-                                .and()
-                                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                ).build();
+                .authorizeHttpRequests(this::getHttpSecurity).build();
     }
 
-    private CorsConfiguration createCorsConfiguration()
+    private void getHttpSecurity(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry auth) {
+        auth
+                .antMatchers(permittedEndpoints).permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    private CorsConfiguration createCorsConfiguration(HttpServletRequest request)
     {
         var corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
@@ -107,9 +111,8 @@ public class WebSecurityConfig {
     }
 
     private List<SecurityReference> defaultAuth() {
-        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
-        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-        authorizationScopes[0] = authorizationScope;
-        return List.of(new SecurityReference("JWT", authorizationScopes));
+        var authorizationScope = new AuthorizationScope("global", "accessEverything");
+        var securityReference = new SecurityReference("JWT", new AuthorizationScope[]{authorizationScope});
+        return List.of(securityReference);
     }
 }
