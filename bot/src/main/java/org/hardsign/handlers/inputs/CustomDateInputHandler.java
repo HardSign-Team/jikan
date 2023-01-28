@@ -18,8 +18,6 @@ import org.hardsign.utils.*;
 import java.time.*;
 
 public class CustomDateInputHandler extends BaseUpdateHandler implements InputHandler {
-    public static final String DATE_FORMAT_HINT = Hints.DATE_FORMAT_HINT;
-    public static final String DATE_RANGE_FORMAT_HINT = Hints.DATE_RANGE_FORMAT_HINT; // todo: (tebaikin) 24.01.2023 inline
     private final TelegramBot bot;
     private final JikanApiClient jikanApiClient;
     private final UserStateService userStateService;

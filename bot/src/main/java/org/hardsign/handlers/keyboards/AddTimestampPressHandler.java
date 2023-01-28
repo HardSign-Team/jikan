@@ -4,11 +4,11 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import org.hardsign.handlers.BaseTextUpdateHandler;
-import org.hardsign.handlers.inputs.CustomDateInputHandler;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.users.State;
 import org.hardsign.services.users.UserStateService;
+import org.hardsign.utils.Hints;
 
 public class AddTimestampPressHandler extends BaseTextUpdateHandler implements KeyboardPressHandler {
     private final TelegramBot bot;
@@ -41,8 +41,8 @@ public class AddTimestampPressHandler extends BaseTextUpdateHandler implements K
 
         var text = "Укажите период фиксации. Обратите внимание, что он не должен пересекаться с другими фиксациями.\n" +
                 "Правильный формат:\n" +
-                CustomDateInputHandler.DATE_FORMAT_HINT + "\n" +
-                CustomDateInputHandler.DATE_RANGE_FORMAT_HINT;
+                Hints.DATE_FORMAT_HINT + "\n" +
+                Hints.DATE_RANGE_FORMAT_HINT;
         sendDefaultMenuMessage(bot, context, chatId, text);
     }
 }

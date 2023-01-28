@@ -6,11 +6,11 @@ import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.handlers.BaseTextUpdateHandler;
-import org.hardsign.handlers.inputs.CustomDateInputHandler;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.users.State;
 import org.hardsign.services.users.UserStateService;
+import org.hardsign.utils.Hints;
 
 public class CustomDateActivityPressHandler extends BaseTextUpdateHandler implements KeyboardPressHandler {
 
@@ -42,8 +42,8 @@ public class CustomDateActivityPressHandler extends BaseTextUpdateHandler implem
 
         var text = "Укажите период.\n" +
                 "Правильный формат:\n" +
-                CustomDateInputHandler.DATE_FORMAT_HINT + "\n" +
-                CustomDateInputHandler.DATE_RANGE_FORMAT_HINT;
+                Hints.DATE_FORMAT_HINT + "\n" +
+                Hints.DATE_RANGE_FORMAT_HINT;
         var keyboard = KeyboardFactory.createBackButtonMenu();
         bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
     }
