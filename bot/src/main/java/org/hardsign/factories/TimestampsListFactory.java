@@ -1,6 +1,7 @@
 package org.hardsign.factories;
 
 import org.hardsign.handlers.commands.DeleteTimestampCommandHandler;
+import org.hardsign.handlers.commands.EditTimestampCommandHandler;
 import org.hardsign.models.Emoji;
 import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.timestamps.TimestampDto;
@@ -45,7 +46,7 @@ public class TimestampsListFactory {
 
         timestampSb.append(Emoji.Clock1).append(' ');
         timestampSb.append(position).append(". ").append(bold(start)).append(" — ").append(bold(end)).append(lineSeparator());
-        timestampSb.append("Редактировать: ").append("/edit_").append(timestamp.getId()).append(lineSeparator());
+        timestampSb.append("Редактировать: ").append(EditTimestampCommandHandler.create(timestamp.getId())).append(lineSeparator());
         timestampSb.append("Удалить: ").append(DeleteTimestampCommandHandler.create(timestamp.getId())).append(lineSeparator());
 
         return timestampSb.toString();

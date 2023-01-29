@@ -9,10 +9,7 @@ import org.hardsign.factories.TimestampsListFactory;
 import org.hardsign.factories.UpdateContextFactory;
 import org.hardsign.handlers.UpdateHandler;
 import org.hardsign.handlers.commands.*;
-import org.hardsign.handlers.inputs.AddTimestampInputHandler;
-import org.hardsign.handlers.inputs.CreateActivityInputHandler;
-import org.hardsign.handlers.inputs.CustomDateActivityStatisticsInputHandler;
-import org.hardsign.handlers.inputs.CustomDateTimestampsInputHandler;
+import org.hardsign.handlers.inputs.*;
 import org.hardsign.services.users.UserStateService;
 import org.hardsign.handlers.keyboards.*;
 import org.hardsign.utils.DateParser;
@@ -47,6 +44,7 @@ public class UpdateListenerImpl implements UpdatesListener {
         updateHandlers.add(new CustomDateActivityStatisticsInputHandler(bot, jikanApiClient, userStateService, timeFormatter, dateParser));
         updateHandlers.add(new AddTimestampInputHandler(bot, jikanApiClient, userStateService, dateParser));
         updateHandlers.add(new CustomDateTimestampsInputHandler(bot, jikanApiClient, userStateService, dateParser, timestampsListFactory, timezoneHelper));
+        updateHandlers.add(new EditTimestampInputHandler(bot, jikanApiClient, userStateService, dateParser));
 
         updateHandlers.add(new StartCommandHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new SelectActivityCommandHandler(bot, jikanApiClient, userStateService));
@@ -69,6 +67,7 @@ public class UpdateListenerImpl implements UpdatesListener {
         updateHandlers.add(new SelectCustomDateForTimestampsButton(bot, userStateService));
         updateHandlers.add(new SinceLastStartActivityPressHandler(bot, timeFormatter));
         updateHandlers.add(new ActivityMenuPressHandler(bot));
+        updateHandlers.add(new EditTimestampCommandHandler(bot, jikanApiClient, userStateService, timeFormatter, timezoneHelper));
         updateHandlers.add(new AddTimestampPressHandler(bot, userStateService));
         updateHandlers.add(new AcceptDeleteTimestampPressHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new CancelDeleteTimestampPressHandler(bot, userStateService));

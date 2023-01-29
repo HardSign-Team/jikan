@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Data
 @NoArgsConstructor
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class EditTimestampRequest {
     private long timestampId;
     @Nullable
-    private LocalDateTime start;
+    private Instant start;
     @Nullable
-    private LocalDateTime end;
+    private Instant end;
 }
