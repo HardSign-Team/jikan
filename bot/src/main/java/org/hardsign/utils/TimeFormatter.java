@@ -6,12 +6,11 @@ import org.jetbrains.annotations.Nullable;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.Optional;
 
 public class TimeFormatter {
 
-    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm:ss").localizedBy(new Locale("ru", "RU"));
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
     public String format(TimestampZonedDateRange dateRange) {
         return format(dateRange.getFrom(), dateRange.getTo());
