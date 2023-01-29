@@ -14,5 +14,6 @@ public class UserState {
     private State state;
     private long activityId;
     private long deleteActivityId;
+    private StateData stateData;
 }
 

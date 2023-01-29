@@ -1,10 +1,9 @@
 package org.hardsign.services.users;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pengrad.telegrambot.model.User;
-import org.hardsign.models.users.State;
-import org.hardsign.models.users.UserState;
-import org.hardsign.models.users.UserStateEntity;
-import org.hardsign.models.users.UserStatePatch;
+import org.hardsign.models.users.*;
 import org.hardsign.repositories.UserStateRepository;
 
 import java.util.function.Consumer;
@@ -12,10 +11,13 @@ import java.util.function.Function;
 
 public class UserStateServiceImpl implements UserStateService {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final UserStateRepository repository;
+    private final String defaultStateDataJson;
 
     public UserStateServiceImpl(UserStateRepository repository) {
         this.repository = repository;
+        this.defaultStateDataJson = toJsonSafety(StateData.empty());
     }
 
     @Override
@@ -33,9 +35,10 @@ public class UserStateServiceImpl implements UserStateService {
     @Override
     public void update(User user, UserStatePatch patch) {
         var entity = repository.findByUserId(user.id()).orElseGet(() -> createDefaultState(user.id()));
-        applyPatch(patch, UserStatePatch::getDeleteActivityId, entity::setDeletionActivityId);
         applyPatch(patch, UserStatePatch::getState, entity::setState);
         applyPatch(patch, UserStatePatch::getActivityId, entity::setActivityId);
+        applyPatch(patch, UserStatePatch::getDeleteActivityId, entity::setDeletionActivityId);
+        applyPatch(patch, UserStatePatch::getStateData, value -> entity.setStateDataJson(toJsonSafety(value)));
         repository.save(entity);
     }
 
@@ -60,7 +63,7 @@ public class UserStateServiceImpl implements UserStateService {
     }
 
     private UserStateEntity createDefaultState(long userId) {
-        return repository.save(new UserStateEntity(0, userId, State.None, 0, 0));
+        return repository.save(new UserStateEntity(userId, State.None, defaultStateDataJson));
     }
 
     private UserState map(UserStateEntity entity) {
@@ -68,6 +71,26 @@ public class UserStateServiceImpl implements UserStateService {
                 entity.getUserId(),
                 entity.getState(),
                 entity.getActivityId(),
-                entity.getDeletionActivityId());
+                entity.getDeletionActivityId(),
+                getStateData(entity));
+    }
+
+    private StateData getStateData(UserStateEntity entity) {
+        try {
+            var stateDataJson = entity.getStateDataJson();
+            if (stateDataJson == null)
+                return StateData.empty();
+            return objectMapper.readValue(stateDataJson, StateData.class);
+        } catch (JsonProcessingException e) {
+            return StateData.empty();
+        }
+    }
+
+    private String toJsonSafety(StateData value) {
+        try {
+            return objectMapper.writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            return defaultStateDataJson;
+        }
     }
 }

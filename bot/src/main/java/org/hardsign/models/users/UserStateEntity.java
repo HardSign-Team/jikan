@@ -10,10 +10,10 @@ public class UserStateEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private long userId;
 
-    @Column(name = "state")
+    @Column(name = "state", nullable = false)
     private State state;
 
     @Column(name = "current_activity_id")
@@ -22,14 +22,28 @@ public class UserStateEntity {
     @Column(name = "deletion_activity_id")
     private long deletionActivityId;
 
+    @Column(name = "custom_data")
+    private String stateDataJson;
+
     public UserStateEntity() {}
 
-    public UserStateEntity(long id, long userId, State state, long activityId, long deletionActivityId) {
+    public UserStateEntity(long userId, State state, String stateDataJson) {
+        this(0, userId, state, 0, 0, stateDataJson);
+    }
+
+    public UserStateEntity(
+            long id,
+            long userId,
+            State state,
+            long activityId,
+            long deletionActivityId,
+            String customDataJson) {
         this.id = id;
         this.userId = userId;
         this.state = state;
         this.activityId = activityId;
         this.deletionActivityId = deletionActivityId;
+        this.stateDataJson = customDataJson;
     }
 
     public long getId() {
@@ -70,5 +84,13 @@ public class UserStateEntity {
 
     public void setDeletionActivityId(long deletionActivityId) {
         this.deletionActivityId = deletionActivityId;
+    }
+
+    public String getStateDataJson() {
+        return stateDataJson;
+    }
+
+    public void setStateDataJson(String stateDataJson) {
+        this.stateDataJson = stateDataJson;
     }
 }

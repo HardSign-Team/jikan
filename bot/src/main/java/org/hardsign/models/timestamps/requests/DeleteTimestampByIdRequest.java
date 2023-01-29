@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DeleteTimestampByIdRequest {
-    private long activityId;
+    private long timestampId;
 }

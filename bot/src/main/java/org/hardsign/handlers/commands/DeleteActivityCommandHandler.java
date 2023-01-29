@@ -3,12 +3,10 @@ package org.hardsign.handlers.commands;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.handlers.commands.abstracts.BaseActivityCommandsHandler;
-import org.hardsign.models.ButtonNames;
 import org.hardsign.models.Emoji;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
@@ -74,10 +72,7 @@ public class DeleteActivityCommandHandler extends BaseActivityCommandsHandler im
         userStateService.update(user, createPatch(activity.getId()));
         context.setState(State.DeleteActivityConfirmation);
 
-        var replyMarkup = new ReplyKeyboardMarkup(
-                ButtonNames.ACCEPT_DELETE.getName(),
-                ButtonNames.CANCEL_DELETE.getName())
-                .resizeKeyboard(true);
+        var replyMarkup = KeyboardFactory.createConfirmationMenu();
         var text = "Вы уверены, что хотите удалить активность " + TelegramUtils.bold(activity.getName()) + "?";
         bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup).parseMode(TelegramUtils.PARSE_MODE));
     }

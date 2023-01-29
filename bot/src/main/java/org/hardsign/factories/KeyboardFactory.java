@@ -103,4 +103,11 @@ public class KeyboardFactory {
         )
                 .resizeKeyboard(true);
     }
+
+    public static ReplyKeyboardMarkup createConfirmationMenu() {
+        return new ReplyKeyboardMarkup(
+                ButtonNames.ACCEPT_DELETE.getName(),
+                ButtonNames.CANCEL_DELETE.getName())
+                .resizeKeyboard(true);
+    }
 }

@@ -13,4 +13,6 @@ public class UserStatePatch {
     private Long activityId;
     @Nullable
     private Long deleteActivityId;
+    @Nullable
+    private StateData stateData;
 }

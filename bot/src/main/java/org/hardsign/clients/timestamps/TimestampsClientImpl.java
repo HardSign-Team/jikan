@@ -62,6 +62,6 @@ public class TimestampsClientImpl extends BotBaseClient implements TimestampsCli
 
     @Override
     public JikanResponse<?> delete(BotRequest<DeleteTimestampByIdRequest> request) {
-        return delete(Long.toString(request.getRequest().getActivityId()), request, Object.class);
+        return delete(Long.toString(request.getRequest().getTimestampId()), request, Object.class);
     }
 }

@@ -52,6 +52,7 @@ public class UpdateListenerImpl implements UpdatesListener {
         updateHandlers.add(new SelectActivityCommandHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new UnselectActivityCommandHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new DeleteActivityCommandHandler(bot, jikanApiClient, userStateService));
+        updateHandlers.add(new DeleteTimestampCommandHandler(bot, jikanApiClient, userStateService, timeFormatter, timezoneHelper));
 
         updateHandlers.add(new ActivitiesPressHandler(bot, jikanApiClient));
         updateHandlers.add(new TimestampsPressHandler(bot, jikanApiClient, timestampsListFactory, timezoneHelper));
@@ -69,6 +70,8 @@ public class UpdateListenerImpl implements UpdatesListener {
         updateHandlers.add(new SinceLastStartActivityPressHandler(bot, timeFormatter));
         updateHandlers.add(new ActivityMenuPressHandler(bot));
         updateHandlers.add(new AddTimestampPressHandler(bot, userStateService));
+        updateHandlers.add(new AcceptDeleteTimestampPressHandler(bot, jikanApiClient, userStateService));
+        updateHandlers.add(new CancelDeleteTimestampPressHandler(bot, userStateService));
     }
 
     @Override

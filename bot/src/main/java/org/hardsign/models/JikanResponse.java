@@ -53,7 +53,7 @@ public class JikanResponse<T> {
     }
 
     public boolean isFail() {
-        return error != null;
+        return error != null || code != 200;
     }
 
     public boolean isSuccess() { return error == null; }

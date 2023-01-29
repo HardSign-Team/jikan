@@ -7,7 +7,7 @@ public enum State {
     SelectCustomDateRangeStatistics,
     AddTimestampDateRange,
     SelectCustomDateRangeTimestamps,
-    ;
+    DeleteTimestampConfirmation;
 
     public boolean isDefault() {
         return this == None;
