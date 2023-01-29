@@ -19,6 +19,7 @@ import com.hardsign.server.utils.users.UserUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.POST, RequestMethod.GET}, allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.DELETE}, allowCredentials = "true")
 @RequestMapping(value = "/api/timestamps/")
 public class TimestampsController {
     private final CurrentUserProvider currentUserProvider;
@@ -203,11 +204,11 @@ public class TimestampsController {
         return mapper.mapToModel(saved);
     }
 
-    @PostMapping(value = "delete")
-    public void delete(@Valid @RequestBody DeleteTimestampRequest request) {
+    @DeleteMapping("{id}")
+    public void delete(@Positive @PathVariable long id) {
         var user = getUserOrThrow();
 
-        var timestamp = timestampService.findById(request.getTimestampId())
+        var timestamp = timestampService.findById(id)
                 .orElseThrow(NotFoundException::new);
 
         var activity = activitiesService.findById(timestamp.getActivityId())
