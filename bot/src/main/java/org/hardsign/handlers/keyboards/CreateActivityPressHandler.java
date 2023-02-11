@@ -3,8 +3,8 @@ package org.hardsign.handlers.keyboards;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
+import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.handlers.BaseTextUpdateHandler;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
@@ -30,7 +30,7 @@ public class CreateActivityPressHandler extends BaseTextUpdateHandler implements
         userStateService.with(context).setState(user, State.CreateActivityName);
         var chatId = update.message().chat().id();
         var text = "Напишите название для активности";
-        var replyMarkup = new ReplyKeyboardMarkup(ButtonNames.BACK.getName()).resizeKeyboard(true); // todo: (tebaikin) 11.02.2023 refactor with Backbutton menu
+        var replyMarkup = KeyboardFactory.createBackButtonMenu();
         bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup));
     }
 }
