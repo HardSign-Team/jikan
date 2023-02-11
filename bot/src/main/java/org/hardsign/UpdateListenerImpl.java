@@ -39,6 +39,7 @@ public class UpdateListenerImpl implements UpdatesListener {
         var timestampsListFactory = new TimestampsListFactory(timeFormatter);
 
         updateContextFactory = new UpdateContextFactory(jikanApiClient, userStateService);
+        updateHandlers.add(new BackPressHandler(bot, userStateService));
 
         updateHandlers.add(new CreateActivityInputHandler(bot, jikanApiClient, userStateService));
         updateHandlers.add(new CustomDateActivityStatisticsInputHandler(bot, jikanApiClient, userStateService, timeFormatter, dateParser));
@@ -59,7 +60,6 @@ public class UpdateListenerImpl implements UpdatesListener {
         updateHandlers.add(new CancelDeleteActivityPressHandler(bot, userStateService));
         updateHandlers.add(new StartPressHandler(bot, jikanApiClient));
         updateHandlers.add(new StopPressHandler(bot, jikanApiClient, timeFormatter));
-        updateHandlers.add(new BackPressHandler(bot, userStateService));
         updateHandlers.add(new StatisticsPressHandler(bot));
         updateHandlers.add(new CurrentMonthActivityPressHandler(bot, jikanApiClient, timeFormatter, timezoneHelper));
         updateHandlers.add(new CurrentDayActivityPressHandler(bot, jikanApiClient, timeFormatter, timezoneHelper));
