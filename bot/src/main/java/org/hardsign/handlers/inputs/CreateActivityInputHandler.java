@@ -31,8 +31,7 @@ public class CreateActivityInputHandler extends BaseUpdateHandler implements Inp
         var request = new BotRequest<>(new CreateActivityRequest(name), context.getMeta());
         var activity = jikanApiClient.activities().create(request).getValueOrThrow();
 
-        userStateService.setState(user, State.None);
-        context.setState(State.None);
+        userStateService.with(context).setState(user, State.None);
 
         var chatId = update.message().chat().id();
         var replyMarkup = KeyboardFactory.createMainMenu(context);

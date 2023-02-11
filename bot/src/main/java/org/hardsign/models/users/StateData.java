@@ -16,4 +16,8 @@ public class StateData {
     public static StateData empty() {
         return new StateData();
     }
+
+    public static StateData fromTimestamp(long timestampId) {
+        return StateData.builder().timestampId(timestampId).build();
+    }
 }

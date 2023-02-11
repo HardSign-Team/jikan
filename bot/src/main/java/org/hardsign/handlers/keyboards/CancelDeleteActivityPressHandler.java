@@ -9,6 +9,7 @@ import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.users.State;
 import org.hardsign.handlers.keyboards.abstracts.ConfirmationDeleteActivityPressHandler;
+import org.hardsign.models.users.UserStatePatch;
 import org.hardsign.services.users.UserStateService;
 
 public class CancelDeleteActivityPressHandler extends ConfirmationDeleteActivityPressHandler implements KeyboardPressHandler {
@@ -27,7 +28,7 @@ public class CancelDeleteActivityPressHandler extends ConfirmationDeleteActivity
         var state = userStateService.getState(user);
         var activityId = state.getDeleteActivityId();
 
-        clearState(user, userStateService, context);
+        userStateService.with(context).update(user, UserStatePatch.createDefault());
 
         if (activityId == 0) {
             handleNotFoundActivity(bot, chatId, context);

@@ -3,6 +3,7 @@ package org.hardsign.services.users;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pengrad.telegrambot.model.User;
+import org.hardsign.models.UpdateContext;
 import org.hardsign.models.users.*;
 import org.hardsign.repositories.UserStateRepository;
 
@@ -50,6 +51,11 @@ public class UserStateServiceImpl implements UserStateService {
     @Override
     public void setActivity(User user, long activityId) {
         update(user, UserStatePatch.builder().activityId(activityId).build());
+    }
+
+    @Override
+    public ContextBoundedUserStateService with(UpdateContext context) {
+        return new ContextBoundedUserStateServiceImpl(this, context);
     }
 
     private <TProperty> void applyPatch(

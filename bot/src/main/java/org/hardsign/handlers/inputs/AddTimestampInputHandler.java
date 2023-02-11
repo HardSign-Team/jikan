@@ -61,8 +61,7 @@ public class AddTimestampInputHandler extends BaseUpdateHandler implements Input
 
         result.ensureSuccess();
 
-        userStateService.setState(user, State.None);
-        context.setState(State.None);
+        userStateService.with(context).setState(user, State.None);
 
         sendSuccessMessage(update, context, chatId, activity);
     }

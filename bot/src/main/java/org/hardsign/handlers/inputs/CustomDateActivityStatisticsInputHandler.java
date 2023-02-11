@@ -53,8 +53,7 @@ public class CustomDateActivityStatisticsInputHandler extends BaseUpdateHandler 
             return;
         }
 
-        userStateService.setState(user, State.None);
-        context.setState(State.None);
+        userStateService.with(context).setState(user, State.None);
 
         var totalTime = getTotalTime(context, activity, dateRange.get());
 

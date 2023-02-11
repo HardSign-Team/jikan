@@ -83,11 +83,11 @@ public class DeleteTimestampCommandHandler extends BaseIdCommandsHandler impleme
     }
 
     private void handleSuccess(User user, UpdateContext context, Long chatId, TimestampDto timestamp, ZoneId zone) {
-        var state = State.DeleteTimestampConfirmation;
-        var stateData = StateData.builder().timestampId(timestamp.getId()).build();
-        var patch = UserStatePatch.builder().state(state).stateData(stateData).build();
-        userStateService.update(user, patch);
-        context.setState(state);
+        var patch = UserStatePatch.builder()
+                .state(State.DeleteTimestampConfirmation)
+                .stateData(StateData.fromTimestamp(timestamp.getId()))
+                .build();
+        userStateService.with(context).update(user, patch);
 
         var dateText = formatter.format(timestamp.getDateRange(zone));
         var text = "Вы уверены, что хотите удалить фиксацию " + TelegramUtils.bold(dateText) + "?";

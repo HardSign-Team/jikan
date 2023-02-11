@@ -23,8 +23,7 @@ public class BackPressHandler extends BaseTextUpdateHandler implements KeyboardP
 
     @Override
     protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
-        userStateService.setState(user, State.None);
-        context.setState(State.None);
+        userStateService.with(context).setState(user, State.None);
 
         var chatId = update.message().chat().id();
         var keyboard = KeyboardFactory.createMainMenu(context);

@@ -37,8 +37,7 @@ public class CustomDateActivityPressHandler extends BaseTextUpdateHandler implem
             return;
         }
 
-        userStateService.setState(user, State.SelectCustomDateRangeStatistics);
-        context.setState(State.SelectCustomDateRangeStatistics);
+        userStateService.with(context).setState(user, State.SelectCustomDateRangeStatistics);
 
         var text = "Укажите период.\n" +
                 "Правильный формат:\n" +

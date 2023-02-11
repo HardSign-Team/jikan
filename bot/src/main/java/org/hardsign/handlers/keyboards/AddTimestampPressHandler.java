@@ -36,8 +36,7 @@ public class AddTimestampPressHandler extends BaseTextUpdateHandler implements K
             return;
         }
 
-        userStateService.setState(user, State.AddTimestampDateRange);
-        context.setState(State.AddTimestampDateRange);
+        userStateService.with(context).setState(user, State.AddTimestampDateRange);
 
         var text = "Укажите период фиксации. Обратите внимание, что он не должен пересекаться с другими фиксациями.\n" +
                 "Правильный формат:\n" +

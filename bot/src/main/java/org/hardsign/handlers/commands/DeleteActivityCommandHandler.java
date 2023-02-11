@@ -69,8 +69,7 @@ public class DeleteActivityCommandHandler extends BaseActivityCommandsHandler im
     }
 
     private void handleSuccess(User user, UpdateContext context, Long chatId, ActivityDto activity) {
-        userStateService.update(user, createPatch(activity.getId()));
-        context.setState(State.DeleteActivityConfirmation);
+        userStateService.with(context).update(user, createPatch(activity.getId()));
 
         var replyMarkup = KeyboardFactory.createConfirmationMenu();
         var text = "Вы уверены, что хотите удалить активность " + TelegramUtils.bold(activity.getName()) + "?";

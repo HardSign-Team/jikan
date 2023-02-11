@@ -15,7 +15,6 @@ import org.hardsign.models.timestamps.TimestampDto;
 import org.hardsign.models.timestamps.requests.EditTimestampRequest;
 import org.hardsign.models.timestamps.requests.GetTimestampByIdRequest;
 import org.hardsign.models.users.State;
-import org.hardsign.models.users.StateData;
 import org.hardsign.models.users.UserStatePatch;
 import org.hardsign.services.users.UserStateService;
 import org.hardsign.utils.DateParserFromUpdate;
@@ -46,8 +45,7 @@ public class EditTimestampInputHandler extends BaseUpdateHandler implements Inpu
         var data = state.getStateData();
         var timestampId = data.getTimestampId();
 
-        userStateService.update(user, UserStatePatch.builder().state(State.None).stateData(StateData.empty()).build());
-        context.setState(State.None);
+        userStateService.with(context).update(user, UserStatePatch.createDefault());
 
         if (timestampId == 0) {
             handleNoCurrentTimestamp(context, chatId);

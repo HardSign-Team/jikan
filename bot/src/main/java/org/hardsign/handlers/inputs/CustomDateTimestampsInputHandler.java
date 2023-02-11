@@ -67,8 +67,7 @@ public class CustomDateTimestampsInputHandler extends BaseUpdateHandler implemen
             return;
         }
 
-        userStateService.setState(user, State.None);
-        context.setState(State.None);
+        userStateService.with(context).setState(user, State.None);
 
         var timestamps = requestTimestamps(context, activity, dateRange.get());
 

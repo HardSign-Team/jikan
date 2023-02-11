@@ -7,7 +7,6 @@ import org.hardsign.handlers.BaseTextUpdateHandler;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.users.State;
-import org.hardsign.models.users.StateData;
 import org.hardsign.models.users.UserStatePatch;
 import org.hardsign.services.users.UserStateService;
 
@@ -35,8 +34,7 @@ public class CancelDeleteTimestampPressHandler extends BaseTextUpdateHandler imp
     protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var chatId = update.message().chat().id();
 
-        userStateService.update(user, UserStatePatch.builder().state(State.None).stateData(StateData.empty()).build());
-        context.setState(State.None);
+        userStateService.with(context).update(user, UserStatePatch.createDefault());
 
         sendDefaultMenuMessage(bot, context, chatId, "Вы отменили удаление фиксации");
     }

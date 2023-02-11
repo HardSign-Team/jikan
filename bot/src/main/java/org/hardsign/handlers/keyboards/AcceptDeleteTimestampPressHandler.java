@@ -13,7 +13,6 @@ import org.hardsign.models.timestamps.TimestampDto;
 import org.hardsign.models.timestamps.requests.DeleteTimestampByIdRequest;
 import org.hardsign.models.timestamps.requests.GetTimestampByIdRequest;
 import org.hardsign.models.users.State;
-import org.hardsign.models.users.StateData;
 import org.hardsign.models.users.UserStatePatch;
 import org.hardsign.services.users.UserStateService;
 
@@ -49,8 +48,7 @@ public class AcceptDeleteTimestampPressHandler extends BaseTextUpdateHandler imp
         var data = state.getStateData();
         var timestampId = data.getTimestampId();
 
-        userStateService.update(user, UserStatePatch.builder().state(State.None).stateData(StateData.empty()).build());
-        context.setState(State.None);
+        userStateService.with(context).update(user, UserStatePatch.createDefault());
 
         var chatId = update.message().chat().id();
         if (timestampId == 0) {

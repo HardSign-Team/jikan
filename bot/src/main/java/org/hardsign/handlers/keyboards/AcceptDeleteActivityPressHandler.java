@@ -15,6 +15,7 @@ import org.hardsign.models.activities.requests.GetActivityByIdRequest;
 import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.users.State;
 import org.hardsign.handlers.keyboards.abstracts.ConfirmationDeleteActivityPressHandler;
+import org.hardsign.models.users.UserStatePatch;
 import org.hardsign.services.users.UserStateService;
 import org.hardsign.utils.TelegramUtils;
 
@@ -48,7 +49,7 @@ public class AcceptDeleteActivityPressHandler extends ConfirmationDeleteActivity
         var state = userStateService.getState(user);
         var activityId = state.getDeleteActivityId();
 
-        clearState(user, userStateService, context);
+        userStateService.with(context).update(user, UserStatePatch.createDefault());
 
         var chatId = update.message().chat().id();
         if (activityId == 0) {

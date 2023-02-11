@@ -83,11 +83,11 @@ public class EditTimestampCommandHandler extends BaseIdCommandsHandler implement
     }
 
     private void handleSuccess(User user, UpdateContext context, Long chatId, TimestampDto timestamp, ZoneId zone) {
-        var state = State.EditTimestamp;
-        var stateData = StateData.builder().timestampId(timestamp.getId()).build();
-        var patch = UserStatePatch.builder().state(state).stateData(stateData).build();
-        userStateService.update(user, patch);
-        context.setState(state);
+        var patch = UserStatePatch.builder()
+                .state(State.EditTimestamp)
+                .stateData(StateData.fromTimestamp(timestamp.getId()))
+                .build();
+        userStateService.with(context).update(user, patch);
 
         var dateText = formatter.format(timestamp.getDateRange(zone));
         var text = "Введите новый период для фиксации " + TelegramUtils.bold(dateText);

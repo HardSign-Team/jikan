@@ -36,8 +36,7 @@ public class SelectCustomDateForTimestampsButton extends BaseTextUpdateHandler i
             return;
         }
 
-        userStateService.setState(user, State.SelectCustomDateRangeTimestamps);
-        context.setState(State.SelectCustomDateRangeTimestamps);
+        userStateService.with(context).setState(user, State.SelectCustomDateRangeTimestamps);
 
         var text = "Укажите период.\n" +
                 "Правильный формат:\n" +

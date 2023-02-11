@@ -35,8 +35,7 @@ public class StartCommandHandler extends BaseTextUpdateHandler implements Comman
     @Override
     protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         if (!context.getState().isDefault()) {
-            userStateService.setState(user, State.None);
-            context.setState(State.None);
+            userStateService.with(context).setState(user, State.None);
         }
 
         var chatId = update.message().chat().id();
