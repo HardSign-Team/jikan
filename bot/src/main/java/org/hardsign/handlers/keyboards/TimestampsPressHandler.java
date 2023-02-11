@@ -4,7 +4,6 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
-import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.factories.TimestampsListFactory;
 import org.hardsign.handlers.BaseTextUpdateHandler;
@@ -13,30 +12,31 @@ import org.hardsign.models.SortDirection;
 import org.hardsign.models.SortField;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
-import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.timestamps.TimestampDto;
 import org.hardsign.models.timestamps.TimestampField;
 import org.hardsign.models.timestamps.requests.FindTimestampsRequest;
+import org.hardsign.services.TimestampsService;
 import org.hardsign.utils.TelegramUtils;
 import org.hardsign.utils.TimezoneHelper;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
 
 public class TimestampsPressHandler extends BaseTextUpdateHandler implements KeyboardPressHandler {
     private final TelegramBot bot;
-    private final JikanApiClient jikanApiClient;
+    private final TimestampsService timestampsService;
     private final TimestampsListFactory timestampsListFactory;
     private final TimezoneHelper timezoneHelper;
+    private final List<SortField<TimestampField>> sort = List.of(
+            new SortField<>(TimestampField.START, SortDirection.Descending));
 
     public TimestampsPressHandler(
             TelegramBot bot,
-            JikanApiClient jikanApiClient,
+            TimestampsService timestampsService,
             TimestampsListFactory timestampsListFactory,
             TimezoneHelper timezoneHelper) {
         this.bot = bot;
-        this.jikanApiClient = jikanApiClient;
+        this.timestampsService = timestampsService;
         this.timestampsListFactory = timestampsListFactory;
         this.timezoneHelper = timezoneHelper;
     }
@@ -65,12 +65,7 @@ public class TimestampsPressHandler extends BaseTextUpdateHandler implements Key
     }
 
     private TimestampDto[] getTimestamps(UpdateContext context, ActivityDto activity) throws Exception {
-        var start = Instant.EPOCH;
-        var end = Instant.now();
-        var sort = List.of(new SortField<>(TimestampField.START, SortDirection.Descending));
-        var request = new BotRequest<>(new FindTimestampsRequest(activity.getId(), start, end, 0, 15, sort), context.getMeta());
-        var timestamps = jikanApiClient.timestamps().find(request).getValueOrThrow();
-
-        return Arrays.stream(timestamps).sorted(TimestampDto::compareAscending).toArray(TimestampDto[]::new);
+        var request = new FindTimestampsRequest(activity.getId(), Instant.EPOCH, Instant.now(), 0, 15, sort);
+        return timestampsService.findTimestamps(request, context.getMeta());
     }
 }

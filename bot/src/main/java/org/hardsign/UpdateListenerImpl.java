@@ -10,6 +10,9 @@ import org.hardsign.factories.UpdateContextFactory;
 import org.hardsign.handlers.UpdateHandler;
 import org.hardsign.handlers.commands.*;
 import org.hardsign.handlers.inputs.*;
+import org.hardsign.services.ActivitiesService;
+import org.hardsign.services.TimestampsService;
+import org.hardsign.services.UsersService;
 import org.hardsign.services.users.UserStateService;
 import org.hardsign.handlers.keyboards.*;
 import org.hardsign.utils.DateParser;
@@ -37,39 +40,42 @@ public class UpdateListenerImpl implements UpdatesListener {
         var timezoneHelper = new TimezoneHelper();
         var dateParser = new DateParserFromUpdate(new DateParser(), timezoneHelper);
         var timestampsListFactory = new TimestampsListFactory(timeFormatter);
+        var usersService = new UsersService(jikanApiClient);
+        var activitiesService = new ActivitiesService(jikanApiClient);
+        var timestampsService = new TimestampsService(jikanApiClient);
 
         updateContextFactory = new UpdateContextFactory(jikanApiClient, userStateService);
         updateHandlers.add(new BackPressHandler(bot, userStateService));
 
-        updateHandlers.add(new CreateActivityInputHandler(bot, jikanApiClient, userStateService));
-        updateHandlers.add(new CustomDateActivityStatisticsInputHandler(bot, jikanApiClient, userStateService, timeFormatter, dateParser));
-        updateHandlers.add(new AddTimestampInputHandler(bot, jikanApiClient, userStateService, dateParser));
-        updateHandlers.add(new CustomDateTimestampsInputHandler(bot, jikanApiClient, userStateService, dateParser, timestampsListFactory, timezoneHelper));
-        updateHandlers.add(new EditTimestampInputHandler(bot, jikanApiClient, userStateService, dateParser));
+        updateHandlers.add(new CreateActivityInputHandler(bot, activitiesService, userStateService));
+        updateHandlers.add(new CustomDateActivityStatisticsInputHandler(bot, activitiesService, userStateService, timeFormatter, dateParser));
+        updateHandlers.add(new AddTimestampInputHandler(bot, timestampsService, userStateService, dateParser));
+        updateHandlers.add(new CustomDateTimestampsInputHandler(bot, timestampsService, userStateService, dateParser, timestampsListFactory, timezoneHelper));
+        updateHandlers.add(new EditTimestampInputHandler(bot, timestampsService, userStateService, dateParser));
 
-        updateHandlers.add(new StartCommandHandler(bot, jikanApiClient, userStateService));
-        updateHandlers.add(new SelectActivityCommandHandler(bot, jikanApiClient, userStateService));
-        updateHandlers.add(new UnselectActivityCommandHandler(bot, jikanApiClient, userStateService));
-        updateHandlers.add(new DeleteActivityCommandHandler(bot, jikanApiClient, userStateService));
-        updateHandlers.add(new DeleteTimestampCommandHandler(bot, jikanApiClient, userStateService, timeFormatter, timezoneHelper));
+        updateHandlers.add(new StartCommandHandler(bot, usersService, userStateService));
+        updateHandlers.add(new SelectActivityCommandHandler(bot, activitiesService, timestampsService, userStateService));
+        updateHandlers.add(new UnselectActivityCommandHandler(bot, activitiesService, userStateService));
+        updateHandlers.add(new DeleteActivityCommandHandler(bot, activitiesService, userStateService));
+        updateHandlers.add(new DeleteTimestampCommandHandler(bot, activitiesService, timestampsService, userStateService, timeFormatter, timezoneHelper));
 
-        updateHandlers.add(new ActivitiesPressHandler(bot, jikanApiClient));
-        updateHandlers.add(new TimestampsPressHandler(bot, jikanApiClient, timestampsListFactory, timezoneHelper));
-        updateHandlers.add(new AcceptDeleteActivityPressHandler(bot, jikanApiClient, userStateService));
+        updateHandlers.add(new ActivitiesPressHandler(bot, activitiesService));
+        updateHandlers.add(new TimestampsPressHandler(bot, timestampsService, timestampsListFactory, timezoneHelper));
+        updateHandlers.add(new AcceptDeleteActivityPressHandler(bot, activitiesService, userStateService));
         updateHandlers.add(new CreateActivityPressHandler(bot, userStateService));
         updateHandlers.add(new CancelDeleteActivityPressHandler(bot, userStateService));
-        updateHandlers.add(new StartPressHandler(bot, jikanApiClient));
-        updateHandlers.add(new StopPressHandler(bot, jikanApiClient, timeFormatter));
+        updateHandlers.add(new StartPressHandler(bot, activitiesService));
+        updateHandlers.add(new StopPressHandler(bot, activitiesService, timeFormatter));
         updateHandlers.add(new StatisticsPressHandler(bot));
-        updateHandlers.add(new CurrentMonthActivityPressHandler(bot, jikanApiClient, timeFormatter, timezoneHelper));
-        updateHandlers.add(new CurrentDayActivityPressHandler(bot, jikanApiClient, timeFormatter, timezoneHelper));
+        updateHandlers.add(new CurrentMonthActivityPressHandler(bot, activitiesService, timeFormatter, timezoneHelper));
+        updateHandlers.add(new CurrentDayActivityPressHandler(bot, activitiesService, timeFormatter, timezoneHelper));
         updateHandlers.add(new CustomDateActivityPressHandler(bot, userStateService));
         updateHandlers.add(new SelectCustomDateForTimestampsButton(bot, userStateService));
         updateHandlers.add(new SinceLastStartActivityPressHandler(bot, timeFormatter));
         updateHandlers.add(new ActivityMenuPressHandler(bot));
-        updateHandlers.add(new EditTimestampCommandHandler(bot, jikanApiClient, userStateService, timeFormatter, timezoneHelper));
+        updateHandlers.add(new EditTimestampCommandHandler(bot, activitiesService, timestampsService, userStateService, timeFormatter, timezoneHelper));
         updateHandlers.add(new AddTimestampPressHandler(bot, userStateService));
-        updateHandlers.add(new AcceptDeleteTimestampPressHandler(bot, jikanApiClient, userStateService));
+        updateHandlers.add(new AcceptDeleteTimestampPressHandler(bot, timestampsService, userStateService));
         updateHandlers.add(new CancelDeleteTimestampPressHandler(bot, userStateService));
     }
 

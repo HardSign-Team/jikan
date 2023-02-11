@@ -4,33 +4,29 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
-import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.Emoji;
 import org.hardsign.models.UpdateContext;
-import org.hardsign.models.activities.ActivityDto;
-import org.hardsign.models.activities.requests.DeleteActivityRequest;
-import org.hardsign.models.activities.requests.GetActivityByIdRequest;
-import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.users.State;
 import org.hardsign.handlers.keyboards.abstracts.ConfirmationDeleteActivityPressHandler;
 import org.hardsign.models.users.UserStatePatch;
+import org.hardsign.services.ActivitiesService;
 import org.hardsign.services.users.UserStateService;
 import org.hardsign.utils.TelegramUtils;
 
 public class AcceptDeleteActivityPressHandler extends ConfirmationDeleteActivityPressHandler implements KeyboardPressHandler {
 
     private final TelegramBot bot;
-    private final JikanApiClient jikanApiClient;
+    private final ActivitiesService activitiesService;
     private final UserStateService userStateService;
 
     public AcceptDeleteActivityPressHandler(
             TelegramBot bot,
-            JikanApiClient jikanApiClient,
+            ActivitiesService activitiesService,
             UserStateService userStateService) {
         this.bot = bot;
-        this.jikanApiClient = jikanApiClient;
+        this.activitiesService = activitiesService;
         this.userStateService = userStateService;
     }
 
@@ -57,27 +53,16 @@ public class AcceptDeleteActivityPressHandler extends ConfirmationDeleteActivity
             return;
         }
 
-        var activity = getActivity(context, activityId);
+        var activity = activitiesService.findActivity(activityId, context.getMeta()).orElse(null);
         if (activity == null) {
             handleNotFoundActivity(bot, chatId, context);
             return;
         }
 
-        deleteActivity(activity, context);
+        activitiesService.deleteActivity(activity.getId(), context.getMeta());
 
         var keyboard = KeyboardFactory.createMainMenu(context);
         var text = "Вы удалили активность " + TelegramUtils.bold(activity.getName()) + " " + Emoji.Pensive.value();
         bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard).parseMode(TelegramUtils.PARSE_MODE));
-    }
-
-    private void deleteActivity(ActivityDto activity, UpdateContext context) throws Exception {
-        var request = new BotRequest<>(new DeleteActivityRequest(activity.getId()), context.getMeta());
-        jikanApiClient.activities().delete(request).ensureSuccess();
-    }
-
-    private ActivityDto getActivity(UpdateContext context, long activityId) throws Exception {
-        var request = new BotRequest<>(new GetActivityByIdRequest(activityId), context.getMeta());
-        var response = jikanApiClient.activities().getById(request);
-        return response.notFound() ? null : response.getValueOrThrow();
     }
 }

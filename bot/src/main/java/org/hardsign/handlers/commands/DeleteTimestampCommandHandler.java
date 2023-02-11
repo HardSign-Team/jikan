@@ -4,44 +4,42 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
-import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.handlers.commands.abstracts.BaseIdCommandsHandler;
 import org.hardsign.models.UpdateContext;
-import org.hardsign.models.activities.ActivityDto;
-import org.hardsign.models.activities.requests.GetActivityByIdRequest;
-import org.hardsign.models.auth.TelegramUserMeta;
-import org.hardsign.models.requests.BotRequest;
 import org.hardsign.models.timestamps.TimestampDto;
-import org.hardsign.models.timestamps.requests.GetTimestampByIdRequest;
 import org.hardsign.models.users.State;
 import org.hardsign.models.users.StateData;
 import org.hardsign.models.users.UserStatePatch;
+import org.hardsign.services.ActivitiesService;
+import org.hardsign.services.TimestampsService;
 import org.hardsign.services.users.UserStateService;
 import org.hardsign.utils.TelegramUtils;
 import org.hardsign.utils.TimeFormatter;
 import org.hardsign.utils.TimezoneHelper;
 import org.hardsign.utils.ValidationHelper;
-import org.jetbrains.annotations.Nullable;
 
 import java.time.ZoneId;
 
 public class DeleteTimestampCommandHandler extends BaseIdCommandsHandler implements CommandHandler {
     private static final String commandPrefix = "/delt_";
     private final TelegramBot bot;
-    private final JikanApiClient jikanApiClient;
+    private final ActivitiesService activitiesService;
+    private final TimestampsService timestampsService;
     private final UserStateService userStateService;
     private final TimeFormatter formatter;
     private final TimezoneHelper timezoneHelper;
 
     public DeleteTimestampCommandHandler(
             TelegramBot bot,
-            JikanApiClient jikanApiClient,
+            ActivitiesService activitiesService,
+            TimestampsService timestampsService,
             UserStateService userStateService,
             TimeFormatter formatter,
             TimezoneHelper timezoneHelper) {
         this.bot = bot;
-        this.jikanApiClient = jikanApiClient;
+        this.activitiesService = activitiesService;
+        this.timestampsService = timestampsService;
         this.userStateService = userStateService;
         this.formatter = formatter;
         this.timezoneHelper = timezoneHelper;
@@ -60,13 +58,13 @@ public class DeleteTimestampCommandHandler extends BaseIdCommandsHandler impleme
     protected void handleInternal(User user, Long id, Update update, UpdateContext context) throws Exception {
         var chatId = update.message().chat().id();
 
-        var timestamp = getTimestamp(id, context.getMeta());
+        var timestamp = timestampsService.findTimestamp(id, context.getMeta()).orElse(null);
         if (timestamp == null) {
             handleTimestampNotFoundError(chatId, context);
             return;
         }
 
-        var activity = getActivity(timestamp.getActivityId(), context.getMeta());
+        var activity = activitiesService.findActivity(timestamp.getActivityId(), context.getMeta()).orElse(null);
         if (activity == null) {
             handleActivityNotFoundError(chatId, context);
             return;
@@ -105,28 +103,5 @@ public class DeleteTimestampCommandHandler extends BaseIdCommandsHandler impleme
 
     private void handleTimestampNotFoundError(Long chatId, UpdateContext context) {
         sendDefaultMenuMessage(bot, context, chatId, "Фиксация не найдена.");
-    }
-
-    @Nullable
-    private ActivityDto getActivity(Long id, TelegramUserMeta meta) throws Exception {
-        var botRequest = new BotRequest<>(new GetActivityByIdRequest(id), meta);
-        var result = jikanApiClient.activities().getById(botRequest);
-        if (result.notFound()) {
-            return null;
-        }
-        result.ensureSuccess();
-        return result.getValue().orElse(null);
-
-    }
-
-    @Nullable
-    private TimestampDto getTimestamp(Long id, TelegramUserMeta meta) throws Exception {
-        var botRequest = new BotRequest<>(new GetTimestampByIdRequest(id), meta);
-        var result = jikanApiClient.timestamps().getById(botRequest);
-        if (result.notFound()) {
-            return null;
-        }
-        result.ensureSuccess();
-        return result.getValue().orElse(null);
     }
 }

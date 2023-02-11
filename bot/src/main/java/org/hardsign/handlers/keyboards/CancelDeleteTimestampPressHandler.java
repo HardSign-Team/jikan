@@ -36,6 +36,7 @@ public class CancelDeleteTimestampPressHandler extends BaseTextUpdateHandler imp
 
         userStateService.with(context).update(user, UserStatePatch.createDefault());
 
-        sendDefaultMenuMessage(bot, context, chatId, "Вы отменили удаление фиксации");
+        var text = "Вы отменили удаление фиксации";
+        sendDefaultMenuMessage(bot, context, chatId, text);
     }
 }

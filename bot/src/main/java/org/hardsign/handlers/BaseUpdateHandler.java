@@ -52,6 +52,16 @@ public abstract class BaseUpdateHandler implements UpdateHandler {
         return State.None;
     }
 
+    protected void handleNotFoundTimestamp(TelegramBot bot, Long chatId, UpdateContext context) {
+        var text = "Фиксация не найдена :(";
+        sendDefaultMenuMessage(bot, context, chatId, text);
+    }
+
+    protected void handleNotFoundActivity(TelegramBot bot, Long chatId, UpdateContext context) {
+        var text = "Произошла ошибка! Не нашли выбранную активность. Попробуйте заново (по-братски)";
+        sendDefaultMenuMessage(bot, context, chatId, text);
+    }
+
     protected void handleNoCurrentActivity(TelegramBot bot, UpdateContext context, Long chatId) {
         var text = "Вы не выбрали активность. Можете сделать это через главное меню.";
         sendDefaultMenuMessage(bot, context, chatId, text);

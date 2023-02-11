@@ -27,8 +27,10 @@ public class CreateActivityPressHandler extends BaseTextUpdateHandler implements
 
     @Override
     protected void handleInternal(User user, Update update, UpdateContext context) {
-        userStateService.with(context).setState(user, State.CreateActivityName);
         var chatId = update.message().chat().id();
+
+        userStateService.with(context).setState(user, State.CreateActivityName);
+
         var text = "Напишите название для активности";
         var replyMarkup = KeyboardFactory.createBackButtonMenu();
         bot.execute(new SendMessage(chatId, text).replyMarkup(replyMarkup));

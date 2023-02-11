@@ -3,12 +3,10 @@ package org.hardsign.handlers.commands;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
-import com.pengrad.telegrambot.request.SendMessage;
-import org.hardsign.clients.JikanApiClient;
-import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.handlers.commands.abstracts.BaseActivityCommandsHandler;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
+import org.hardsign.services.ActivitiesService;
 import org.hardsign.services.users.UserStateService;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,8 +15,8 @@ public class UnselectActivityCommandHandler extends BaseActivityCommandsHandler 
     private final TelegramBot bot;
     private final UserStateService userStateService;
 
-    public UnselectActivityCommandHandler(TelegramBot bot, JikanApiClient jikanApiClient, UserStateService userStateService) {
-        super(jikanApiClient);
+    public UnselectActivityCommandHandler(TelegramBot bot, ActivitiesService activitiesService, UserStateService userStateService) {
+        super(activitiesService);
         this.bot = bot;
         this.userStateService = userStateService;
     }
@@ -42,8 +40,7 @@ public class UnselectActivityCommandHandler extends BaseActivityCommandsHandler 
         context.setActiveTimestamp(null);
 
         var text = "Вы убрали текущую активность. Лентяйкин! :)";
-        var keyboard = KeyboardFactory.createMainMenu(context);
-        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
+        sendDefaultMenuMessage(bot, context, chatId, text);
     }
 
     @Override
@@ -53,7 +50,6 @@ public class UnselectActivityCommandHandler extends BaseActivityCommandsHandler 
 
     private void handleNoActivity(UpdateContext context, Long chatId) {
         var text = "Вы еще ничем не занимались. Лентяйкин! :)";
-        var keyboard = KeyboardFactory.createMainMenu(context);
-        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
+        sendDefaultMenuMessage(bot, context, chatId, text);
     }
 }

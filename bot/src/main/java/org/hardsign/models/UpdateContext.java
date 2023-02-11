@@ -21,4 +21,16 @@ public class UpdateContext {
     private ActivityDto activity;
     @Nullable
     private TimestampDto activeTimestamp;
+
+    public boolean isActiveTimestamp(long timestampId) {
+        return activeTimestamp != null && activeTimestamp.getId() == timestampId;
+    }
+
+    public boolean hasSelectedActivity() {
+        return activity != null;
+    }
+
+    public boolean hasActiveTimestamp() {
+        return activeTimestamp != null;
+    }
 }

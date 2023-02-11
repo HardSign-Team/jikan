@@ -3,8 +3,6 @@ package org.hardsign.handlers.keyboards;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
-import com.pengrad.telegrambot.request.SendMessage;
-import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.users.State;
@@ -26,18 +24,17 @@ public class CancelDeleteActivityPressHandler extends ConfirmationDeleteActivity
     protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var chatId = update.message().chat().id();
         var state = userStateService.getState(user);
-        var activityId = state.getDeleteActivityId();
 
         userStateService.with(context).update(user, UserStatePatch.createDefault());
 
+        var activityId = state.getDeleteActivityId();
         if (activityId == 0) {
             handleNotFoundActivity(bot, chatId, context);
             return;
         }
 
         var text = "Ура! Активность не была удалена! Можете продолжать трекать время :)";
-        var keyboard = KeyboardFactory.createMainMenu(context);
-        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
+        sendDefaultMenuMessage(bot, context, chatId, text);
     }
 
     @Override

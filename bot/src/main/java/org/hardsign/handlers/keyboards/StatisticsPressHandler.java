@@ -24,7 +24,7 @@ public class StatisticsPressHandler extends BaseTextUpdateHandler implements Key
     @Override
     protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var chatId = update.message().chat().id();
-        if (context.getActivity() == null) {
+        if (!context.hasSelectedActivity()) {
             handleNoCurrentActivity(bot, context, chatId);
             return;
         }

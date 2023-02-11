@@ -1,7 +1,6 @@
 package org.hardsign.factories;
 
-import org.hardsign.handlers.commands.DeleteTimestampCommandHandler;
-import org.hardsign.handlers.commands.EditTimestampCommandHandler;
+import org.hardsign.handlers.commands.*;
 import org.hardsign.models.Emoji;
 import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.timestamps.TimestampDto;

@@ -2,11 +2,11 @@ package org.hardsign.handlers.keyboards;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
-import org.hardsign.clients.JikanApiClient;
 import org.hardsign.handlers.keyboards.abstracts.PeriodActivityPressHandler;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.DateRange;
 import org.hardsign.models.activities.ActivityDto;
+import org.hardsign.services.ActivitiesService;
 import org.hardsign.utils.TimeFormatter;
 import org.hardsign.utils.TimezoneHelper;
 import org.jetbrains.annotations.NotNull;
@@ -20,10 +20,11 @@ public class CurrentDayActivityPressHandler extends PeriodActivityPressHandler {
     private final TimezoneHelper timezoneHelper;
 
     public CurrentDayActivityPressHandler(
-            TelegramBot bot, JikanApiClient jikanApiClient,
+            TelegramBot bot,
+            ActivitiesService activitiesService,
             TimeFormatter timeFormatter,
             TimezoneHelper timezoneHelper) {
-        super(bot, jikanApiClient);
+        super(bot, activitiesService);
         this.timeFormatter = timeFormatter;
         this.timezoneHelper = timezoneHelper;
     }

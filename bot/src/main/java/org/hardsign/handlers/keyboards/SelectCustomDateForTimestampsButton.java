@@ -30,6 +30,7 @@ public class SelectCustomDateForTimestampsButton extends BaseTextUpdateHandler i
     @Override
     protected void handleInternal(User user, Update update, UpdateContext context) throws Exception {
         var chatId = update.message().chat().id();
+
         var activity = context.getActivity();
         if (activity == null) {
             handleNoCurrentActivity(bot, context, chatId);

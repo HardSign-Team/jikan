@@ -4,7 +4,6 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
-import org.hardsign.clients.JikanApiClient;
 import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.handlers.commands.abstracts.BaseActivityCommandsHandler;
 import org.hardsign.models.Emoji;
@@ -12,6 +11,7 @@ import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.users.State;
 import org.hardsign.models.users.UserStatePatch;
+import org.hardsign.services.ActivitiesService;
 import org.hardsign.services.users.UserStateService;
 import org.hardsign.utils.TelegramUtils;
 import org.hardsign.utils.ValidationHelper;
@@ -25,9 +25,9 @@ public class DeleteActivityCommandHandler extends BaseActivityCommandsHandler im
 
     public DeleteActivityCommandHandler(
             TelegramBot bot,
-            JikanApiClient jikanApiClient,
+            ActivitiesService activitiesService,
             UserStateService userStateService) {
-        super(jikanApiClient);
+        super(activitiesService);
         this.bot = bot;
         this.userStateService = userStateService;
     }
@@ -83,14 +83,13 @@ public class DeleteActivityCommandHandler extends BaseActivityCommandsHandler im
     }
 
     private void handleNotOwnActivityError(Long chatId, UpdateContext context) {
-        var notOwnText = "Ой! А это не ваша активность, вы ее удалить не можете " + Emoji.FaceWithTongue.value();
-        bot.execute(new SendMessage(chatId, notOwnText).replyMarkup(KeyboardFactory.createMainMenu(context)));
+        var text = "Ой! А это не ваша активность, вы ее удалить не можете " + Emoji.FaceWithTongue.value();
+        sendDefaultMenuMessage(bot, context, chatId, text);
     }
 
     private void handleCurrentActivityError(Long chatId, UpdateContext context) {
         var text = "Ай-яй-яй! Нельзя удалить текущую активность.";
-        var keyboard = KeyboardFactory.createMainMenu(context);
-        bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
+        sendDefaultMenuMessage(bot, context, chatId, text);
     }
 
     private static UserStatePatch createPatch(long activityId) {
