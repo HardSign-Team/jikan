@@ -10,7 +10,6 @@ import org.hardsign.services.LoggingTelegramBotDecorator;
 import org.hardsign.services.auth.AuthorizerImpl;
 import org.hardsign.services.settings.EnvironmentSettingsParserImpl;
 import org.hardsign.services.users.UserStateServiceImpl;
-import org.hibernate.SessionFactory;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URL;
@@ -32,15 +31,7 @@ public class Main {
         var settings = parser.parse();
         Supplier<BotSettings> settingsProvider = () -> settings;
 
-        try (var sessionFactory = HibernateSessionFactoryFactory.create(settings.getDatabase())) {
-            startBot(settings, settingsProvider, sessionFactory);
-        }
-    }
-
-    private static void startBot(
-            BotSettings settings,
-            Supplier<BotSettings> settingsProvider,
-            SessionFactory sessionFactory) {
+        var sessionFactory = HibernateSessionFactoryFactory.create(settings.getDatabase()); // todo: (tebaikin) 13.02.2023 should be disposed and created in same thread where update listener works
         var userStateRepository = new UserStateRepositoryImpl(sessionFactory);
         var userStateService = new UserStateServiceImpl(userStateRepository);
 
