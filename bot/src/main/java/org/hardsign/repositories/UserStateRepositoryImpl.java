@@ -29,7 +29,7 @@ public class UserStateRepositoryImpl implements UserStateRepository {
     public UserStateEntity save(UserStateEntity entity) {
         try (var session = sessionFactory.openSession()) {
             var transaction = session.beginTransaction();
-            session.saveOrUpdate(entity);
+            session.merge(entity);
             transaction.commit();
         }
         return entity;
