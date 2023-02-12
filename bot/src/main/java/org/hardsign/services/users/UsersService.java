@@ -1,4 +1,4 @@
-package org.hardsign.services;
+package org.hardsign.services.users;
 
 import org.hardsign.clients.JikanApiClient;
 import org.hardsign.models.users.UserDto;

@@ -8,7 +8,7 @@ import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.activities.ActivityTotalTimeDto;
 import org.hardsign.models.users.State;
-import org.hardsign.services.ActivitiesService;
+import org.hardsign.services.activities.ActivitiesService;
 import org.hardsign.services.users.UserStateService;
 import org.hardsign.utils.*;
 

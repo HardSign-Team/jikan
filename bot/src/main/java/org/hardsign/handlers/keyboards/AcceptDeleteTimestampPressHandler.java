@@ -9,7 +9,7 @@ import org.hardsign.models.Emoji;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.users.State;
 import org.hardsign.models.users.UserStatePatch;
-import org.hardsign.services.TimestampsService;
+import org.hardsign.services.timestamps.TimestampsService;
 import org.hardsign.services.users.UserStateService;
 
 public class AcceptDeleteTimestampPressHandler extends BaseTextUpdateHandler implements KeyboardPressHandler {

@@ -9,7 +9,7 @@ import org.hardsign.factories.TimestampsListFactory;
 import org.hardsign.handlers.BaseUpdateHandler;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.users.State;
-import org.hardsign.services.TimestampsService;
+import org.hardsign.services.timestamps.TimestampsService;
 import org.hardsign.services.users.UserStateService;
 import org.hardsign.utils.DateParserFromUpdate;
 import org.hardsign.utils.MessagesHelper;

@@ -15,7 +15,7 @@ import org.hardsign.models.activities.ActivityDto;
 import org.hardsign.models.timestamps.TimestampDto;
 import org.hardsign.models.timestamps.TimestampField;
 import org.hardsign.models.timestamps.requests.FindTimestampsRequest;
-import org.hardsign.services.TimestampsService;
+import org.hardsign.services.timestamps.TimestampsService;
 import org.hardsign.utils.TelegramUtils;
 import org.hardsign.utils.TimezoneHelper;
 

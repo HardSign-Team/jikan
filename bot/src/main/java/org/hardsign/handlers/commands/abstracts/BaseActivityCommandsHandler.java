@@ -4,7 +4,7 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
-import org.hardsign.services.ActivitiesService;
+import org.hardsign.services.activities.ActivitiesService;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseActivityCommandsHandler extends BaseIdCommandsHandler {

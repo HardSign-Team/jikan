@@ -1,4 +1,4 @@
-package org.hardsign.services;
+package org.hardsign.services.activities;
 
 import org.hardsign.clients.JikanApiClient;
 import org.hardsign.models.DateRange;

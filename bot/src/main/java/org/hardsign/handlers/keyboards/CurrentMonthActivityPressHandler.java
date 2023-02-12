@@ -6,7 +6,7 @@ import org.hardsign.handlers.keyboards.abstracts.PeriodActivityPressHandler;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.DateRange;
 import org.hardsign.models.activities.ActivityDto;
-import org.hardsign.services.ActivitiesService;
+import org.hardsign.services.activities.ActivitiesService;
 import org.hardsign.utils.TimeFormatter;
 import org.hardsign.utils.TimezoneHelper;
 import org.jetbrains.annotations.NotNull;

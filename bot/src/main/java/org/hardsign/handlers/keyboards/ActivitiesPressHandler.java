@@ -9,7 +9,7 @@ import org.hardsign.factories.KeyboardFactory;
 import org.hardsign.models.ButtonNames;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.handlers.BaseTextUpdateHandler;
-import org.hardsign.services.ActivitiesService;
+import org.hardsign.services.activities.ActivitiesService;
 import org.hardsign.utils.TelegramUtils;
 
 public class ActivitiesPressHandler extends BaseTextUpdateHandler implements KeyboardPressHandler {

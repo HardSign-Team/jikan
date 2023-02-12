@@ -9,7 +9,7 @@ import org.hardsign.models.users.UserDto;
 import org.hardsign.models.users.State;
 import org.hardsign.models.users.requests.CreateUserRequest;
 import org.hardsign.handlers.BaseTextUpdateHandler;
-import org.hardsign.services.UsersService;
+import org.hardsign.services.users.UsersService;
 import org.hardsign.services.users.UserStateService;
 
 import java.util.UUID;

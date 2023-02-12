@@ -8,7 +8,7 @@ import org.hardsign.handlers.keyboards.KeyboardPressHandler;
 import org.hardsign.models.DateRange;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
-import org.hardsign.services.ActivitiesService;
+import org.hardsign.services.activities.ActivitiesService;
 
 import java.time.Duration;
 

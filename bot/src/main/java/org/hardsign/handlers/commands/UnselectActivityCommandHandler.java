@@ -6,7 +6,7 @@ import com.pengrad.telegrambot.model.User;
 import org.hardsign.handlers.commands.abstracts.BaseActivityCommandsHandler;
 import org.hardsign.models.UpdateContext;
 import org.hardsign.models.activities.ActivityDto;
-import org.hardsign.services.ActivitiesService;
+import org.hardsign.services.activities.ActivitiesService;
 import org.hardsign.services.users.UserStateService;
 import org.jetbrains.annotations.Nullable;
 
